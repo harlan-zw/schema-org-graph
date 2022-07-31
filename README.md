@@ -1,4 +1,4 @@
-<h1 align='center'>node-schema-org</h1>
+<h1 align='center'>schema-org-graph-js</h1>
 
 <p align="center">
 <a href='https://github.com/vueuse/schema-org/actions/workflows/test.yml'>

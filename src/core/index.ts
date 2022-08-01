@@ -1,3 +1,4 @@
 export * from './defines'
 export * from './graph'
-export * from './resolver'
+export * from './build'
+export * from './resolve'

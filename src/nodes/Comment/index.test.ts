@@ -18,7 +18,7 @@ describe('defineComment', () => {
       expect(graphNodes).toMatchInlineSnapshot(`
         [
           {
-            "@id": "https://example.com/#/schema/comment/r6tdKofhJ3",
+            "@id": "https://example.com/#/schema/comment/f0AuDJRYrl",
             "@type": "Comment",
             "author": {
               "@id": "https://example.com/#identity",

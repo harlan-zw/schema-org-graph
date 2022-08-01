@@ -53,12 +53,12 @@ export const howToStepResolver = defineSchemaOrgResolver<HowToStep>({
     if (step.url)
       step.url = resolveWithBaseUrl(ctx.meta.canonicalUrl, step.url)
     if (step.image) {
-      step.image = resolveRelation(ctx, step.image, imageResolver, {
+      step.image = resolveRelation(step.image, ctx, imageResolver, {
         root: true,
       })
     }
     if (step.itemListElement)
-      step.itemListElement = resolveRelation(ctx, step.itemListElement, howToStepDirectionResolver)
+      step.itemListElement = resolveRelation(step.itemListElement, ctx, howToStepDirectionResolver)
     return step
   },
 })

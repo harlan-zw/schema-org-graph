@@ -35,18 +35,19 @@ describe('defineQuestion', () => {
                 "FAQPage",
               ],
               "mainEntity": [
+                undefined,
                 {
-                  "@id": "https://example.com/frequently-asked-questions/#/schema/question/lzkOzLZxRj",
+                  "@id": "https://example.com/frequently-asked-questions/#/schema/question/Bj70jLX1Qs",
                 },
                 {
-                  "@id": "https://example.com/frequently-asked-questions/#/schema/question/1RFm6hHsKb",
+                  "@id": "https://example.com/frequently-asked-questions/#/schema/question/Md0T0PnU1O",
                 },
               ],
               "name": "FAQ",
               "url": "https://example.com/frequently-asked-questions",
             },
             {
-              "@id": "https://example.com/frequently-asked-questions/#/schema/question/lzkOzLZxRj",
+              "@id": "https://example.com/frequently-asked-questions/#/schema/question/Bj70jLX1Qs",
               "@type": "Question",
               "acceptedAnswer": {
                 "@type": "Answer",
@@ -56,7 +57,7 @@ describe('defineQuestion', () => {
               "name": "How long is a piece of string?",
             },
             {
-              "@id": "https://example.com/frequently-asked-questions/#/schema/question/1RFm6hHsKb",
+              "@id": "https://example.com/frequently-asked-questions/#/schema/question/Md0T0PnU1O",
               "@type": "Question",
               "acceptedAnswer": {
                 "@type": "Answer",

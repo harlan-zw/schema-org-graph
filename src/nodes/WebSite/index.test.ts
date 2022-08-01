@@ -107,7 +107,7 @@ describe('defineWebSite', () => {
 
       const ctx = injectSchemaOrg()
       expect(ctx.graphNodes.length).toEqual(2)
-      expect(ctx.graphNodes[1]['@id']).toEqual('https://example.com/#/schema/website/C6QWoZBRA9')
+      expect(ctx.graphNodes[1]['@id']).toMatchInlineSnapshot('"https://example.com/#/schema/website/cjjN2aStdJ"')
     })
   })
 

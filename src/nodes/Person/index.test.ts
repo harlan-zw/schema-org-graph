@@ -56,7 +56,7 @@ describe('definePerson', () => {
       ])
 
       const client = injectSchemaOrg()
-      expect(client.graphNodes[1]['@id']).toEqual('https://example.com/#/schema/person/e0K5pxLOks')
+      expect(client.graphNodes[1]['@id']).toMatchInlineSnapshot('"https://example.com/#/schema/person/Q1Nkx8kUSt"')
     })
   })
 

@@ -46,7 +46,7 @@ export const resolveNodeId = <T extends Thing>(node: T, ctx: SchemaOrgContext, r
       const type = asArray(node['@type'])?.[0] || ''
       alias = type.toLowerCase()
     }
-    const hashNodeData = {}
+    const hashNodeData: Record<string, any> = {}
     Object.entries(node).forEach(([key, val]) => {
       // remove runtime private fields
       if (!key.startsWith('_'))

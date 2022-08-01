@@ -1,11 +1,9 @@
-import type { DeepPartial } from 'utility-types'
-import type { Arrayable, IdReference, ResolvableDate, OptionalAtKeys, Thing } from '../../types'
+import type { Optional } from 'utility-types'
+import type { Arrayable, DefaultOptionalKeys, IdReference, ResolvableDate, Thing } from '../../types'
 import {
-  defineSchemaResolver,
   idReference,
-  prefixId,
+  prefixId, provideResolver,
   resolveId,
-  resolveFromMeta,
   setIfEmpty,
 } from '../../utils'
 import type { Article } from '../Article'
@@ -14,10 +12,10 @@ import type { WebPage } from '../WebPage'
 import { PrimaryWebPageId } from '../WebPage'
 import type { Video } from '../Video'
 import type { ImageInput } from '../Image'
-import type { HowToStepInput } from '../HowToStep'
-import { resolveHowToStep } from '../HowToStep'
 import type { ChildPersonInput } from '../Person'
-import { defineSchemaOrgComponent } from '../../components/defineSchemaOrgComponent'
+import type { HowToStepInput } from '../HowTo'
+import { howToStepResolver } from '../HowTo'
+import { defineSchemaOrgResolver, resolveRelation } from '../../core'
 
 export interface Recipe extends Thing {
   '@type': 'Recipe'
@@ -110,40 +108,38 @@ export interface NutritionInformation extends Thing {
 
 export const RecipeId = '#recipe'
 
-export function defineRecipe<T extends OptionalAtKeys<Recipe>>(input: T) {
-  return defineSchemaResolver<T, Recipe>(input, {
-    defaults({ canonicalUrl }) {
-      return {
-        '@type': 'Recipe',
-        '@id': prefixId(canonicalUrl, RecipeId),
-      }
-    },
-    resolve(node, client) {
-      resolveId(node, client.canonicalUrl)
-      // @todo fix types
-      if (node.recipeInstructions)
-        node.recipeInstructions = resolveHowToStep(client, node.recipeInstructions) as HowToStepInput[]
+export const recipeResolver = defineSchemaOrgResolver<Recipe>({
+  defaults: {
+    '@type': 'Recipe',
+  },
+  inheritMeta: [
+    { meta: 'title', key: 'name' },
+    'description',
+    'image',
+    'datePublished',
+  ],
+  resolve(node, ctx) {
+    setIfEmpty(node, '@id', prefixId(ctx.meta.canonicalUrl, RecipeId))
 
-      resolveFromMeta(node, client.meta, [
-        'name',
-        'description',
-        'image',
-        'datePublished',
-      ])
-      return node
-    },
-    rootNodeResolve(node, { findNode }) {
-      const article = findNode<Article>(PrimaryArticleId)
-      const webPage = findNode<WebPage>(PrimaryWebPageId)
-      if (article)
-        setIfEmpty(node, 'mainEntityOfPage', idReference(article))
-      else if (webPage)
-        setIfEmpty(node, 'mainEntityOfPage', idReference(webPage))
-      if (article?.author)
-        setIfEmpty(node, 'author', article.author)
-      return node
-    },
-  })
-}
+    resolveId(node, ctx.meta.canonicalUrl)
+    // @todo fix types
+    if (node.recipeInstructions)
+      node.recipeInstructions = resolveRelation(node.recipeInstructions, ctx, howToStepResolver) as HowToStepInput[]
+    return node
+  },
+  rootNodeResolve(node, { findNode }) {
+    const article = findNode<Article>(PrimaryArticleId)
+    const webPage = findNode<WebPage>(PrimaryWebPageId)
+    if (article)
+      setIfEmpty(node, 'mainEntityOfPage', idReference(article))
+    else if (webPage)
+      setIfEmpty(node, 'mainEntityOfPage', idReference(webPage))
+    if (article?.author)
+      setIfEmpty(node, 'author', article.author)
+    return node
+  },
+})
 
-
+export const defineRecipe
+  = <T extends Recipe>(input?: Optional<T, DefaultOptionalKeys>) =>
+    provideResolver(input, recipeResolver)

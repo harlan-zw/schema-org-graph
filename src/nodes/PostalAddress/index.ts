@@ -1,12 +1,9 @@
-import { hash } from 'ohash'
-import type { DeepPartial } from 'utility-types'
-import type { Arrayable, IdReference, OptionalAtKeys, SchemaOrgContext, Thing } from '../../types'
+import type { Optional } from 'utility-types'
+import type { DefaultOptionalKeys, IdReference, Thing } from '../../types'
 import {
-  defineSchemaResolver,
-  prefixId,
-  resolveArrayable, resolveSchemaResolver,
+  provideResolver,
 } from '../../utils'
-import { defineSchemaOrgComponent } from '../../components/defineSchemaOrgComponent'
+import { defineSchemaOrgResolver } from '../../core'
 
 export interface PostalAddress extends Thing {
   /**
@@ -35,21 +32,14 @@ export interface PostalAddress extends Thing {
   postOfficeBoxNumber?: string
 }
 
-export type RelatedAddressInput = OptionalAtKeys<PostalAddress> | IdReference
+export type RelatedAddressInput = PostalAddress | IdReference
 
-export function defineAddress<T extends OptionalAtKeys<PostalAddress>>(input: T) {
-  return defineSchemaResolver<T, PostalAddress>(input, {
-    defaults(ctx) {
-      return {
-        '@type': 'PostalAddress',
-        '@id': prefixId(ctx.canonicalHost, `#/schema/address/${hash(input)}`),
-      }
-    },
-  })
-}
+export const addressResolver = defineSchemaOrgResolver<PostalAddress>({
+  defaults: {
+    '@type': 'PostalAddress',
+  },
+})
 
-export function resolveAddress(ctx: SchemaOrgContext, input: Arrayable<RelatedAddressInput>) {
-  return resolveArrayable<RelatedAddressInput, PostalAddress>(input, input => resolveSchemaResolver(ctx, defineAddress(input)))
-}
-
-
+export const defineAddress
+  = <T extends PostalAddress>(input?: Optional<T, DefaultOptionalKeys>) =>
+    provideResolver(input, addressResolver)

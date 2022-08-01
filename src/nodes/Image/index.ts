@@ -1,16 +1,15 @@
-import { hash } from 'ohash'
-import type { Arrayable, IdReference, OptionalAtKeys, SchemaOrgContext, Thing } from '../../types'
-import type { ResolverOptions } from '../../utils'
+import type { Optional } from 'utility-types'
+import type { Arrayable, DefaultOptionalKeys, IdReference, Thing } from '../../types'
 import {
   idReference,
-  prefixId, resolveArrayable,
+  prefixId,
+  provideResolver,
   resolveId,
-  resolveWithBaseUrl,
-  setIfEmpty,
+  resolveWithBaseUrl, setIfEmpty,
 } from '../../utils'
 import type { WebPage } from '../WebPage'
 import { PrimaryWebPageId } from '../WebPage'
-import {defineSchemaOrgNode} from "../../core";
+import { defineSchemaOrgResolver } from '../../core'
 
 export interface Image extends Thing {
   '@type': 'ImageObject'
@@ -45,96 +44,53 @@ export interface Image extends Thing {
   inLanguage?: string
 }
 
-export type SingleImageInput = OptionalAtKeys<Image> | IdReference | string
-export type ImageInput = Arrayable<OptionalAtKeys<Image> | IdReference | string>
-
-export interface ResolveImagesOptions extends ResolverOptions {
-  /**
-   * Resolve a primary image from the image list if it's not provided.
-   */
-  resolvePrimaryImage?: boolean
-  /**
-   * Whether the image nodes registered should be moved to the root schema graph or kept inline.
-   */
-  asRootNodes?: boolean
-  /**
-   * Custom data to merge with the entries
-   */
-  mergeWith?: Partial<Image>
-  /**
-   * Return single images as an object
-   */
-  array?: boolean
-}
-
-export function defineImage<T extends Image, Optional>(input: OptionalAtKeys<Image, Optional>) {
-  setIfEmpty(input, '@type', 'Image')
-  return input
-}
-
+export type SingleImageInput = Image | IdReference | string
+export type ImageInput = Arrayable<SingleImageInput>
 
 /**
  * Describes an individual image (usually in the context of an embedded media object).
  */
-export const imageRootResolver = defineSchemaOrgNode<Image>({
-  resolve(image, {options, canonicalHost}) {
-    image.url = resolveWithBaseUrl(canonicalHost, image.url)
-    setIfEmpty(image, '@id', prefixId(canonicalHost, `#/schema/image/${hash(image.url)}`))
-    resolveId(image, canonicalHost)
-    setIfEmpty(image, 'inLanguage', options.defaultLanguage)
+export const imageResolver = defineSchemaOrgResolver<Image>({
+  root: true,
+  alias: 'image',
+  cast(input) {
+    if (typeof input === 'string') {
+      input = {
+        url: input,
+      }
+    }
+    return input
+  },
+  defaults: {
+    '@type': 'ImageObject',
+  },
+  inheritMeta: [
+    // @todo possibly only do if there's a caption
+    'inLanguage',
+  ],
+  resolve(image, { meta }) {
+    image.url = resolveWithBaseUrl(meta.canonicalHost, image.url)
+    resolveId(image, meta.canonicalHost)
     setIfEmpty(image, 'contentUrl', image.url)
     // image height and width are required to render
     if (image.height && !image.width)
       delete image.height
     if (image.width && !image.height)
       delete image.width
-    // set the caption language if we're able to
-    if (image.caption && options.defaultLanguage)
-      setIfEmpty(image, 'inLanguage', options.defaultLanguage)
     return image
+  },
+  rootNodeResolve(image, { findNode, meta }) {
+    const hasPrimaryImage = !!findNode('#primaryimage')
+    if (/* options.resolvePrimaryImage && */!hasPrimaryImage) {
+      const webPage = findNode<WebPage>(PrimaryWebPageId)
+      if (webPage) {
+        image['@id'] = prefixId(meta.canonicalUrl, '#primaryimage')
+        setIfEmpty(webPage, 'primaryImageOfPage', idReference(image))
+      }
+    }
   },
 })
 
-function resolveImage(ctx: SchemaOrgContext, options: ResolveImagesOptions = {}) {
-  let hasPrimaryImage = false
-  return (input: ImageInput) => {
-    const { addNode, findNode, canonicalUrl } = ctx
-    if (findNode('#primaryimage'))
-      hasPrimaryImage = true
-
-    if (typeof input === 'string') {
-      input = {
-        url: input,
-      }
-    }
-    const imageInput = {
-      ...input,
-      ...(options.mergeWith ?? {}),
-    } as OptionalAtKeys<Image>
-    const image = imageRootResolver.resolve(imageInput, ctx)
-
-    if (options.resolvePrimaryImage && !hasPrimaryImage) {
-      const webPage = findNode<WebPage>(PrimaryWebPageId)
-      if (webPage) {
-        image['@id'] = prefixId(canonicalUrl, '#primaryimage')
-        setIfEmpty(webPage, 'primaryImageOfPage', idReference(image))
-      }
-      hasPrimaryImage = true
-    }
-
-    if (options.asRootNodes) {
-      addNode(image, ctx)
-      return idReference(image['@id'])
-    }
-    return image
-  }
-}
-
-/**
- * Describes an offer for a Product (typically prices, stock availability, etc).
- */
-export function resolveImages(client: SchemaOrgContext, input: SingleImageInput | ImageInput, options: ResolveImagesOptions = {}) {
-  return resolveArrayable<ImageInput, Image>(input, resolveImage(client, options), options)
-}
-
-
+export const defineImage
+  = <T extends Image>(input?: Optional<T, DefaultOptionalKeys>) =>
+    provideResolver(input, imageResolver)

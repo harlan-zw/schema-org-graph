@@ -1,12 +1,11 @@
 import { expect } from 'vitest'
-import { useSetup } from '../../../.test'
-import { injectSchemaOrg, useSchemaOrg } from '../../useSchemaOrg'
+import { injectSchemaOrg, useSchemaOrg, useSetup } from '../../../.test'
 import { definePerson } from '../Person'
 import { IdentityId, idReference, prefixId } from '../../utils'
 import { defineOrganization } from '../Organization'
-import { defineWebPagePartial } from '../WebPage'
+import { defineWebPage } from '../WebPage'
 import type { WebSite } from './index'
-import { PrimaryWebSiteId, asSearchAction, defineWebSite } from './index'
+import { PrimaryWebSiteId, defineWebSite } from './index'
 
 describe('defineWebSite', () => {
   it('can be registered', () => {
@@ -60,9 +59,9 @@ describe('defineWebSite', () => {
         defineWebSite({
           name: 'test',
           potentialAction: [
-            asSearchAction({
+            {
               target: '/search?query={search_term_string}',
-            }),
+            },
           ],
         }),
       ])
@@ -108,14 +107,14 @@ describe('defineWebSite', () => {
 
       const ctx = injectSchemaOrg()
       expect(ctx.graphNodes.length).toEqual(2)
-      expect(ctx.graphNodes[1]['@id']).toEqual('https://example.com/#/schema/website/3sLkvEmSMU')
+      expect(ctx.graphNodes[1]['@id']).toEqual('https://example.com/#/schema/website/C6QWoZBRA9')
     })
   })
 
   it('relation resolving works both ways', () => {
     useSetup(() => {
       useSchemaOrg([
-        defineWebPagePartial(),
+        defineWebPage(),
       ])
 
       useSchemaOrg([
@@ -147,7 +146,7 @@ describe('defineWebSite', () => {
       ])
 
       useSchemaOrg([
-        defineWebPagePartial(),
+        defineWebPage(),
       ])
 
       useSchemaOrg([
@@ -178,7 +177,7 @@ describe('defineWebSite', () => {
       ])
 
       useSchemaOrg([
-        defineWebPagePartial(),
+        defineWebPage(),
       ])
 
       const { findNode } = injectSchemaOrg()

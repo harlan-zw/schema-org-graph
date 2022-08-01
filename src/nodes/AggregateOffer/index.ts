@@ -1,12 +1,13 @@
-import { hash } from 'ohash'
-import type { Arrayable, IdReference, OptionalAtKeys, SchemaOrgContext, Thing } from '../../types'
+import type { Optional } from 'utility-types'
+import type { DefaultOptionalKeys, IdReference, Thing } from '../../types'
 import {
-  prefixId,
-  resolveArrayable, setIfEmpty,
+  asArray,
+  provideResolver,
+  setIfEmpty,
 } from '../../utils'
 import type { OfferInput } from '../Offer'
-import { resolveOffer } from '../Offer'
-import {defineSchemaOrgNode, resolveSchemaResolver} from "../../core";
+import { defineSchemaOrgResolver, resolveRelation } from '../../core'
+import { offerResolver } from '../Offer'
 
 export interface AggregateOffer extends Thing {
   '@type': 'AggregateOffer'
@@ -33,32 +34,21 @@ export interface AggregateOffer extends Thing {
 }
 
 export type AggregateOfferOptionalKeys = 'priceCurrency' | 'offerCount'
-export type AggregateOfferInput = OptionalAtKeys<AggregateOffer, AggregateOfferOptionalKeys> | IdReference
+export type AggregateOfferInput = Optional<AggregateOffer, AggregateOfferOptionalKeys> | IdReference
 
-export function defineAggregateOffer<T extends AggregateOffer, Optional = AggregateOfferOptionalKeys>(input: OptionalAtKeys<AggregateOffer, Optional>) {
-  setIfEmpty(input, '@type', 'AggregateOffer')
-  input._resolver = aggregateOfferResolver
-  return input
-}
-
-export const aggregateOfferResolver = defineSchemaOrgNode<AggregateOffer>({
-  defaults(ctx) {
-    return {
-      '@type': 'AggregateOffer'
-    }
+export const aggregateOfferResolver = defineSchemaOrgResolver<AggregateOffer>({
+  defaults: {
+    '@type': 'AggregateOffer',
   },
   resolve(node, ctx) {
-    setIfEmpty('@id', prefixId(ctx.canonicalHost, `#/schema/aggregate-offer/${hash(node)}`))
-    if (node.offers) {
-      // @todo fix type
-      node.offers = resolveOffer(ctx, node.offers) as OfferInput[]
-    }
-    setIfEmpty(node, 'offerCount', Array.isArray(node.offers) ? node.offers.length : 1)
+    if (node.offers)
+      node.offers = resolveRelation(node.offers, ctx, offerResolver)
+
+    setIfEmpty(node, 'offerCount', asArray(node.offers).length)
     return node
   },
 })
 
-export function resolveAggregateOffer(ctx: SchemaOrgContext, input: Arrayable<AggregateOfferInput>) {
-  return resolveArrayable<AggregateOfferInput, AggregateOffer>(input, input => resolveSchemaResolver(ctx, aggregateOfferResolver(input)))
-}
-
+export const defineAggregateOffer
+  = <T extends AggregateOffer>(input?: Optional<T, DefaultOptionalKeys | AggregateOfferOptionalKeys>) =>
+    provideResolver(input, aggregateOfferResolver)

@@ -1,8 +1,9 @@
-import { expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { defineOrganization } from '../Organization'
+import { injectSchemaOrg, useSchemaOrg, useSetup } from '../../../.test'
+import type { Article } from '../Article'
+import { PrimaryArticleId, defineArticle } from '../Article'
 import { definePerson } from './index'
-import {injectSchemaOrg, useSchemaOrg, useSetup} from "../../../.test";
-import {Article, defineArticle, PrimaryArticleId} from "../Article";
 
 describe('definePerson', () => {
   it('can be registered', () => {
@@ -19,20 +20,20 @@ describe('definePerson', () => {
       expect(graphNodes).toMatchInlineSnapshot(`
         [
           {
-            "@id": "https://example.com/#/schema/image/rcLPLbzeDf",
+            "@id": "https://example.com/#identity",
+            "@type": "Person",
+            "image": {
+              "@id": "https://example.com/#/schema/image/7mDWiFHrBp",
+            },
+            "name": "test",
+            "url": "https://example.com/",
+          },
+          {
+            "@id": "https://example.com/#/schema/image/7mDWiFHrBp",
             "@type": "ImageObject",
             "contentUrl": "https://example.com/logo.png",
             "inLanguage": "en-AU",
             "url": "https://example.com/logo.png",
-          },
-          {
-            "@id": "https://example.com/#identity",
-            "@type": "Person",
-            "image": {
-              "@id": "https://example.com/#/schema/image/rcLPLbzeDf",
-            },
-            "name": "test",
-            "url": "https://example.com/",
           },
         ]
       `)
@@ -55,7 +56,7 @@ describe('definePerson', () => {
       ])
 
       const client = injectSchemaOrg()
-      expect(client.graphNodes[2]['@id']).toEqual('https://example.com/#/schema/person/6i3hesDjDU')
+      expect(client.graphNodes[1]['@id']).toEqual('https://example.com/#/schema/person/e0K5pxLOks')
     })
   })
 
@@ -69,21 +70,19 @@ describe('definePerson', () => {
         }),
       ])
 
-      const client = injectSchemaOrg()
-
       useSchemaOrg([
         definePerson({
           name: 'Author',
         }),
       ])
 
+      const client = injectSchemaOrg()
+
       const article = client.findNode<Article>(PrimaryArticleId)
       expect(article?.author).toMatchInlineSnapshot(`
-        [
           {
             "@id": "https://example.com/#identity",
-          },
-        ]
+          }
       `)
     })
   })

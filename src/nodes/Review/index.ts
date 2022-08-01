@@ -1,16 +1,9 @@
-import { hash } from 'ohash'
-import type { DeepPartial } from 'utility-types'
-import type { Arrayable, IdReference, ResolvableDate, OptionalAtKeys, SchemaOrgContext, Thing } from '../../types'
-import {
-  defineSchemaResolver,
-  prefixId,
-  resolveArrayable, resolveSchemaResolver,
-} from '../../utils'
-import { defineSchemaOrgComponent } from '../../components/defineSchemaOrgComponent'
+import type { Arrayable, IdReference, ResolvableDate, Thing } from '../../types'
 import type { RatingInput } from '../Rating'
-import { resolveRating } from '../Rating'
+import { ratingResolver } from '../Rating'
 import type { ChildPersonInput } from '../Person'
-import { resolvePerson } from '../Person'
+import { defineSchemaOrgResolver, resolveRelation } from '../../core'
+import { personResolver } from '../Person'
 
 export interface Review extends Thing {
   '@type': 'Review'
@@ -40,29 +33,21 @@ export interface Review extends Thing {
   reviewBody?: string
 }
 
-export type RelatedReviewInput = OptionalAtKeys<Review> | IdReference
+export type RelatedReviewInput = Review | IdReference
 
-export function defineReview<T extends OptionalAtKeys<Review>>(input: T) {
-  return defineSchemaResolver<T, Review>(input, {
-    defaults(ctx) {
-      return {
-        '@type': 'Review',
-        '@id': prefixId(ctx.canonicalHost, `#/schema/review/${hash(input)}`),
-        'inLanguage': ctx.options.defaultLanguage,
-      }
-    },
-    resolve(review, ctx) {
-      if (review.reviewRating)
-        review.reviewRating = resolveRating(ctx, typeof review.reviewRating === 'number' ? { ratingValue: review.reviewRating } : review.reviewRating) as RatingInput
-      if (review.author)
-        review.author = resolvePerson(ctx, typeof review.author === 'string' ? { name: review.author } : review.author)
-      return review
-    },
-  })
-}
-
-export function resolveReviews(ctx: SchemaOrgContext, input: Arrayable<RelatedReviewInput>) {
-  return resolveArrayable<RelatedReviewInput, Review>(input, input => resolveSchemaResolver(ctx, defineReview(input)))
-}
-
+export const reviewResolver = defineSchemaOrgResolver<Review>({
+  defaults: {
+    '@type': 'Review',
+  },
+  inheritMeta: [
+    'inLanguage',
+  ],
+  resolve(review, ctx) {
+    if (review.reviewRating)
+      review.reviewRating = resolveRelation(review.reviewRating, ctx, ratingResolver) as RatingInput
+    if (review.author)
+      review.author = resolveRelation(review.author, ctx, personResolver)
+    return review
+  },
+})
 

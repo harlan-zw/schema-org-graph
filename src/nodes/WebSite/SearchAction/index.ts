@@ -1,6 +1,5 @@
-import { defu } from 'defu'
-import { resolveWithBaseUrl } from '../../utils'
-import type { SchemaOrgContext } from '../../types'
+import { resolveWithBaseUrl } from '../../../utils'
+import { defineSchemaOrgResolver } from '../../../core'
 
 export interface SearchActionInput {
   /**
@@ -35,31 +34,37 @@ export interface SearchAction {
   }
 }
 
-export function asSearchAction(searchActionInput: SearchActionInput) {
-  return (ctx: SchemaOrgContext) => {
-    const searchAction = defu({
-      'target': {
+export const searchActionResolver = defineSchemaOrgResolver<SearchAction>({
+  defaults: {
+    '@type': 'SearchAction',
+    'target': {
+      '@type': 'EntryPoint',
+    },
+    'query-input': {
+      '@type': 'PropertyValueSpecification',
+      'valueRequired': true,
+      'valueName': 'search_term_string',
+    },
+  },
+  resolve(node, ctx) {
+    if (typeof node.target === 'string') {
+      node.target = {
         '@type': 'EntryPoint',
-        'urlTemplate': searchActionInput.target,
-      },
-      'query-input': {
-        '@type': 'PropertyValueSpecification',
-        'valueRequired': true,
-        'valueName': searchActionInput.queryInput,
-      },
-    }, {
-      '@type': 'SearchAction',
-      'target': {
-        '@type': 'EntryPoint',
-        'urlTemplate': '',
-      },
-      'query-input': {
-        '@type': 'PropertyValueSpecification',
-        'valueRequired': true,
-        'valueName': 'search_term_string',
-      },
-    }) as SearchAction
-    searchAction.target.urlTemplate = resolveWithBaseUrl(ctx.canonicalHost, searchAction.target.urlTemplate)
-    return searchAction
-  }
-}
+        'urlTemplate': resolveWithBaseUrl(ctx.meta.canonicalHost, node.target),
+      }
+    }
+    return node
+  },
+})
+
+/**
+ *    'target': {
+ *       '@type': 'EntryPoint',
+ *       'urlTemplate': searchActionInput.target,
+ *     },
+ *     'query-input': {
+ *       '@type': 'PropertyValueSpecification',
+ *       'valueRequired': true,
+ *       'valueName': searchActionInput.queryInput,
+ *     },
+ */

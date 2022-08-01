@@ -1,6 +1,5 @@
 import { expect } from 'vitest'
-import { useSetup } from '../../../.test'
-import { injectSchemaOrg, useSchemaOrg } from '../../useSchemaOrg'
+import { injectSchemaOrg, useSchemaOrg, useSetup } from '../../../.test'
 import { defineOrganization } from './index'
 
 describe('defineOrganization', () => {
@@ -23,18 +22,9 @@ describe('defineOrganization', () => {
       expect(client.graphNodes).toMatchInlineSnapshot(`
         [
           {
-            "@id": "https://example.com/#logo",
-            "@type": "ImageObject",
-            "caption": "test",
-            "contentUrl": "https://example.com/logo.png",
-            "inLanguage": "en-AU",
-            "url": "https://example.com/logo.png",
-          },
-          {
             "@id": "https://example.com/#identity",
             "@type": "Organization",
             "address": {
-              "@id": "https://example.com/#/schema/address/xxJtONDjEO",
               "@type": "PostalAddress",
               "addressCountry": "Australia",
               "postalCode": "2000",
@@ -45,6 +35,14 @@ describe('defineOrganization', () => {
             },
             "name": "test",
             "url": "https://example.com/",
+          },
+          {
+            "@id": "https://example.com/#logo",
+            "@type": "ImageObject",
+            "caption": "test",
+            "contentUrl": "https://example.com/logo.png",
+            "inLanguage": "en-AU",
+            "url": "https://example.com/logo.png",
           },
         ]
       `)

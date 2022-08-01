@@ -1,16 +1,14 @@
-import { hash } from 'ohash'
-import type { DeepPartial } from 'utility-types'
-import type { ResolvableDate, OptionalAtKeys, Thing } from '../../types'
+import type { Optional } from 'utility-types'
+import type {DefaultOptionalKeys, Id, ResolvableDate, Thing} from '../../types'
 import {
-  defineSchemaResolver,
-  prefixId,
+  asArray,
+  provideResolver,
   resolveDateToIso,
-  resolveId, resolveFromMeta,
-  resolveWithBaseUrl,
-  setIfEmpty,
+  resolveId,
+  resolveWithBaseUrl, setIfEmpty,
 } from '../../utils'
 import type { Image } from '../Image'
-import { defineSchemaOrgComponent } from '../../components/defineSchemaOrgComponent'
+import { defineSchemaOrgResolver } from '../../core'
 
 export interface Video extends Thing {
   '@type': 'VideoObject'
@@ -76,35 +74,33 @@ export interface Video extends Thing {
 /**
  * Describes an individual video (usually in the context of an embedded media object).
  */
-export function defineVideo<T extends OptionalAtKeys<Video>>(input: T) {
-  return defineSchemaResolver<T, Video>(input, {
-    defaults({ meta }) {
-      const defaults: Partial<Video> = {
-        '@type': 'VideoObject',
-      }
-      resolveFromMeta(defaults, meta, [
-        'name',
-        'description',
-        'image',
-        'uploadDate',
-      ])
-      return defaults
-    },
-    resolve(video, { canonicalHost }) {
-      if (video.uploadDate)
-        video.uploadDate = resolveDateToIso(video.uploadDate)
-      video.url = resolveWithBaseUrl(canonicalHost, video.url)
-      setIfEmpty(video, '@id', prefixId(canonicalHost, `#/schema/video/${hash(video.url)}`))
-      resolveId(video, canonicalHost)
-      return video
-    },
-    rootNodeResolve(video, { findNode }) {
-      if (video.image && !video.thumbnailUrl) {
-        const firstImage = (Array.isArray(video.image) ? video.image[0] : video.image) as Image
-        setIfEmpty(video, 'thumbnailUrl', findNode<Image>(firstImage['@id'])?.url)
-      }
-    },
-  })
-}
+export const videoResolver = defineSchemaOrgResolver<Video>({
+  alias: 'video',
+  defaults: {
+    '@type': 'VideoObject',
+  },
+  inheritMeta: [
+    { meta: 'title', key: 'name' },
+    'description',
+    'image',
+    'inLanguage',
+    { meta: 'publishedAt', key: 'uploadDate' },
+  ],
+  resolve(video, { meta }) {
+    if (video.uploadDate)
+      video.uploadDate = resolveDateToIso(video.uploadDate)
+    video.url = resolveWithBaseUrl(meta.canonicalHost, video.url)
+    resolveId(video, meta.canonicalHost)
+    return video
+  },
+  rootNodeResolve(video, { findNode }) {
+    if (video.image && !video.thumbnailUrl) {
+      const firstImage = asArray(video.image)[0] as Image
+      setIfEmpty(video, 'thumbnailUrl', findNode<Image>(firstImage['@id'] as Id)?.url)
+    }
+  },
+})
 
-
+export const defineVideo
+  = <T extends Video>(input?: Optional<T, DefaultOptionalKeys>) =>
+    provideResolver(input, videoResolver)

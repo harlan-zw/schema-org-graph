@@ -1,6 +1,5 @@
 import { expect } from 'vitest'
-import { useSetup } from '../../../.test'
-import { injectSchemaOrg, useSchemaOrg } from '../../useSchemaOrg'
+import { injectSchemaOrg, useSchemaOrg, useSetup } from '../../../.test'
 import { defineVideo } from './index'
 
 describe('defineVideo', () => {
@@ -19,8 +18,9 @@ describe('defineVideo', () => {
       expect(graphNodes).toMatchInlineSnapshot(`
         [
           {
-            "@id": "https://example.com/#/schema/video/maGcIV09t0",
+            "@id": "https://example.com/#/schema/video/WApNoejwRL",
             "@type": "VideoObject",
+            "inLanguage": "en-AU",
             "name": "My cool video",
             "uploadDate": "2020-11-10T00:00:00.000Z",
             "url": "https://example.com/image.png",

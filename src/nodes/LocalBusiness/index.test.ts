@@ -1,6 +1,5 @@
-import { expect } from 'vitest'
-import { useSetup } from '../../../.test'
-import { injectSchemaOrg, useSchemaOrg } from '../../useSchemaOrg'
+import { describe, expect, it } from 'vitest'
+import { injectSchemaOrg, useSchemaOrg, useSetup } from '../../../.test'
 import { defineLocalBusiness } from './index'
 
 describe('defineLocalBusiness', () => {
@@ -43,7 +42,6 @@ describe('defineLocalBusiness', () => {
               "Dentist",
             ],
             "address": {
-              "@id": "https://example.com/#/schema/address/xxJtONDjEO",
               "@type": "PostalAddress",
               "addressCountry": "Australia",
               "postalCode": "2000",

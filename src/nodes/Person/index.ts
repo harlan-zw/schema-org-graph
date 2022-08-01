@@ -1,11 +1,10 @@
-import { hash } from 'ohash'
-import type { Arrayable, IdReference, OptionalAtKeys, SchemaOrgContext, Thing } from '../../types'
+import type { Optional } from 'utility-types'
+import type { DefaultOptionalKeys, IdReference, Thing } from '../../types'
 import {
   IdentityId,
-  dedupeMerge,
   idReference,
   prefixId,
-  resolveArrayable, resolveId, resolveNodesGraphKey,  setIfEmpty,
+  provideResolver, resolveAsGraphKey, resolveId, setIfEmpty,
 } from '../../utils'
 import type { ImageInput } from '../Image'
 import type { WebPage } from '../WebPage'
@@ -15,7 +14,7 @@ import { PrimaryWebSiteId } from '../WebSite'
 import type { Article } from '../Article'
 import { PrimaryArticleId } from '../Article'
 import type { Organization } from '../Organization'
-import {defineSchemaOrgNode} from "../../core";
+import { defineSchemaOrgResolver } from '../../core'
 
 /**
  * A person (alive, dead, undead, or fictional).
@@ -45,36 +44,39 @@ export interface Person extends Thing {
   url?: string
 }
 
-export type ChildPersonInput = OptionalAtKeys<Person> | IdReference
-
-export function definePerson<T extends Person, Optional>(input: OptionalAtKeys<T, Optional>) {
-  setIfEmpty(input, '@type', 'Person')
-  input._resolver = personRootResolver
-  return input
-}
+export type ChildPersonInput = Optional<Person, '@type'> | IdReference
 
 /**
  * Describes an individual person. Most commonly used to identify the author of a piece of content (such as an Article or Comment).
  */
-export const personRootResolver = defineSchemaOrgNode<Person>({
-  resolve(node, {canonicalHost, findNode}) {
-    resolveId(node, canonicalHost)
+export const personResolver = defineSchemaOrgResolver<Person>({
+  root: true,
+  cast(node) {
+    if (typeof node === 'string') {
+      return {
+        name: node,
+      }
+    }
+    return node
+  },
+  defaults: {
+    '@type': 'Person',
+  },
+  resolve(node, { meta, findNode }) {
+    resolveId(node, meta.canonicalHost)
     // create id if not set
     if (!node['@id']) {
       // may be re-registering the primary person
       const identity = findNode<Person | Organization>(IdentityId)
       if (!identity)
-        node['@id'] = prefixId(canonicalHost, IdentityId)
-      else
-        node['@id'] = prefixId(canonicalHost, `#/schema/person/${hash(node.name)}`)
+        node['@id'] = prefixId(meta.canonicalHost, IdentityId)
     }
     return node as Person
   },
-  rootNodeResolve(node, {findNode, nodes, canonicalHost}) {
-    console.log('resolving Person as root node')
+  rootNodeResolve(node, { findNode, meta }) {
     // if this person is the identity
-    if (resolveNodesGraphKey(node['@id'] || '') === IdentityId) {
-      setIfEmpty(node, 'url', canonicalHost)
+    if (resolveAsGraphKey(node['@id'] || '') === IdentityId) {
+      setIfEmpty(node, 'url', meta.canonicalHost)
 
       const webPage = findNode<WebPage>(PrimaryWebPageId)
       if (webPage)
@@ -86,19 +88,11 @@ export const personRootResolver = defineSchemaOrgNode<Person>({
     }
     // add ourselves as the author
     const article = findNode<Article>(PrimaryArticleId)
-    console.log('article', article, nodes)
     if (article)
       setIfEmpty(article, 'author', idReference(node))
   },
 })
 
-export function resolvePerson(ctx: SchemaOrgContext, input: Arrayable<ChildPersonInput>) {
-  return resolveArrayable<ChildPersonInput, IdReference>(input, (input) => {
-    setIfEmpty(input, '@id', prefixId(ctx.canonicalHost, `#/schema/person/${hash(input.name)}`))
-    const person = personRootResolver(definePerson(input)).resolve(ctx)
-    ctx.addNode(person, ctx)
-    return idReference(person['@id'])
-  })
-}
-
-
+export const definePerson
+  = <T extends Person>(input?: Optional<T, DefaultOptionalKeys>) =>
+    provideResolver(input, personResolver)

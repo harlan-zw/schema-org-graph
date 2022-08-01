@@ -1,12 +1,5 @@
-import { hash } from 'ohash'
-import type { DeepPartial } from 'utility-types'
-import type { Arrayable, IdReference, OptionalAtKeys, SchemaOrgContext, Thing } from '../../types'
-import {
-  defineSchemaResolver,
-  prefixId,
-  resolveArrayable, resolveSchemaResolver,
-} from '../../utils'
-import { defineSchemaOrgComponent } from '../../components/defineSchemaOrgComponent'
+import type { IdReference, Thing } from '../../types'
+import { defineSchemaOrgResolver } from '../../core'
 
 export interface Rating extends Thing {
   '@type': 'Rating'
@@ -29,23 +22,21 @@ export interface Rating extends Thing {
   worstRating?: number
 }
 
-export type RatingInput = OptionalAtKeys<Rating> | IdReference
+export type RatingInput = Rating | IdReference
 
-export function defineRating<T extends OptionalAtKeys<Rating>>(input: T) {
-  return defineSchemaResolver<T, Rating>(input, {
-    defaults(ctx) {
+export const ratingResolver = defineSchemaOrgResolver<Rating>({
+  cast(node) {
+    if (node === 'number') {
       return {
-        '@type': 'Rating',
-        '@id': prefixId(ctx.canonicalHost, `#/schema/rating/${hash(input)}`),
-        'bestRating': 5,
-        'worstRating': 1,
+        ratingValue: node,
       }
-    },
-  })
-}
-
-export function resolveRating(ctx: SchemaOrgContext, input: Arrayable<RatingInput>) {
-  return resolveArrayable<RatingInput, Rating>(input, input => resolveSchemaResolver(ctx, defineRating(input)))
-}
-
+    }
+    return node
+  },
+  defaults: {
+    '@type': 'Rating',
+    'bestRating': 5,
+    'worstRating': 1,
+  },
+})
 

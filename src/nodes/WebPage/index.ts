@@ -1,10 +1,9 @@
 import { withoutTrailingSlash } from 'ufo'
-import type { DeepPartial } from 'utility-types'
-import type { Arrayable, MaybeIdReference, MaybeRef, ResolvableDate, OptionalAtKeys, Thing } from '../../types'
+import type { Optional } from 'utility-types'
+import type { Arrayable, DefaultOptionalKeys, MaybeIdReference, ResolvableDate, Thing } from '../../types'
 import {
   IdentityId,
-  defineSchemaResolver,
-  idReference, prefixId, resolveDateToIso, resolveId, resolveFromMeta, resolveType, setIfEmpty,
+  idReference, prefixId, provideResolver, resolveDateToIso, resolveId, resolveType, setIfEmpty,
 } from '../../utils'
 import type { WebSite } from '../WebSite'
 import { PrimaryWebSiteId } from '../WebSite'
@@ -14,12 +13,11 @@ import type { Image, SingleImageInput } from '../Image'
 import type { Breadcrumb } from '../Breadcrumb'
 import type { Video } from '../Video'
 import { PrimaryBreadcrumbId } from '../Breadcrumb'
-import { defineSchemaOrgComponent } from '../../components/defineSchemaOrgComponent'
-import type { ReadAction } from './asReadAction'
+import { defineSchemaOrgResolver, resolveRelation } from '../../core'
+import type { ReadAction } from './ReadAction'
+import { readActionResolver } from './ReadAction'
 
 type ValidSubTypes = 'WebPage' | 'AboutPage' | 'CheckoutPage' | 'CollectionPage' | 'ContactPage' | 'FAQPage' | 'ItemPage' | 'MedicalWebPage' | 'ProfilePage' | 'QAPage' | 'RealEstateListing' | 'SearchResultsPage'
-
-export * from './asReadAction'
 
 /**
  * A web page.
@@ -91,90 +89,97 @@ export interface WebPage extends Thing {
 
 export const PrimaryWebPageId = '#webpage'
 
-export function defineWebPage<T extends OptionalAtKeys<WebPage>>(input: MaybeRef<T>) {
-  return defineSchemaResolver<T, WebPage>(input as T, {
-    defaults({ canonicalUrl, meta }) {
-      // try match the @type for the canonicalUrl
-      const endPath = withoutTrailingSlash(canonicalUrl.substring(canonicalUrl.lastIndexOf('/') + 1))
-      let type: ValidSubTypes = 'WebPage'
-      switch (endPath) {
-        case 'about':
-        case 'about-us':
-          type = 'AboutPage'
-          break
-        case 'search':
-          type = 'SearchResultsPage'
-          break
-        case 'checkout':
-          type = 'CheckoutPage'
-          break
-        case 'contact':
-        case 'get-in-touch':
-        case 'contact-us':
-          type = 'ContactPage'
-          break
-        case 'faq':
-          type = 'FAQPage'
-          break
-      }
-      const defaults: Partial<WebPage> = {
-        '@type': type,
-        '@id': prefixId(canonicalUrl, PrimaryWebPageId),
-        'url': canonicalUrl,
-      }
-      resolveFromMeta(defaults, meta, ['name', 'description', 'datePublished', 'dateModified'])
-      return defaults
-    },
-    resolve(webPage, ctx) {
-      resolveId(webPage, ctx.canonicalUrl)
-      if (webPage.dateModified)
-        webPage.dateModified = resolveDateToIso(webPage.dateModified)
+export const webPageResolver = defineSchemaOrgResolver<WebPage>({
+  defaults({ meta }) {
+    // try match the @type for the canonicalUrl
+    const endPath = withoutTrailingSlash(meta.canonicalUrl.substring(meta.canonicalUrl.lastIndexOf('/') + 1))
+    let type: ValidSubTypes = 'WebPage'
+    switch (endPath) {
+      case 'about':
+      case 'about-us':
+        type = 'AboutPage'
+        break
+      case 'search':
+        type = 'SearchResultsPage'
+        break
+      case 'checkout':
+        type = 'CheckoutPage'
+        break
+      case 'contact':
+      case 'get-in-touch':
+      case 'contact-us':
+        type = 'ContactPage'
+        break
+      case 'faq':
+        type = 'FAQPage'
+        break
+    }
+    const defaults: Partial<WebPage> = {
+      '@type': type,
+      '@id': prefixId(meta.canonicalUrl, PrimaryWebPageId),
+      'url': meta.canonicalUrl,
+    }
+    return defaults
+  },
+  inheritMeta: [
+    { meta: 'title', key: 'name' },
+    'description',
+    'datePublished',
+    'dateModified',
+  ],
+  resolve(node, ctx) {
+    resolveId(node, ctx.meta.canonicalUrl)
+    if (node.dateModified)
+      node.dateModified = resolveDateToIso(node.dateModified)
 
-      if (webPage.datePublished)
-        webPage.datePublished = resolveDateToIso(webPage.datePublished)
+    if (node.datePublished)
+      node.datePublished = resolveDateToIso(node.datePublished)
 
-      if (webPage['@type'])
-        webPage['@type'] = resolveType(webPage['@type'], 'WebPage') as Arrayable<ValidSubTypes>
+    if (node['@type'])
+      node['@type'] = resolveType(node['@type'], 'WebPage') as Arrayable<ValidSubTypes>
 
-      // actions may be a function that need resolving
-      webPage.potentialAction = webPage.potentialAction?.map(a => typeof a === 'function' ? a(ctx) : a)
+    // actions may be a function that need resolving
+    if (node.potentialAction)
+      node.potentialAction = resolveRelation(node.potentialAction, ctx, readActionResolver)
 
-      if (webPage['@type'] === 'WebPage') {
-        // if the type hasn't been augmented
-        setIfEmpty(webPage, 'potentialAction', [
-          {
-            '@type': 'ReadAction',
-            'target': [ctx.canonicalUrl],
-          },
-        ])
-      }
-      return webPage
-    },
-    rootNodeResolve(webPage, { findNode, canonicalUrl, canonicalHost }) {
-      const identity = findNode<Person | Organization>(IdentityId)
-      const webSite = findNode<WebSite>(PrimaryWebSiteId)
-      const logo = findNode<Image>('#logo')
+    if (node['@type'] === 'WebPage') {
+      // if the type hasn't been augmented
+      setIfEmpty(node, 'potentialAction', [
+        {
+          '@type': 'ReadAction',
+          'target': [ctx.meta.canonicalUrl],
+        },
+      ])
+    }
+    return node
+  },
+  rootNodeResolve(webPage, { findNode, meta }) {
+    const identity = findNode<Person | Organization>(IdentityId)
+    const webSite = findNode<WebSite>(PrimaryWebSiteId)
+    const logo = findNode<Image>('#logo')
 
-      /*
-       * When it's a homepage, add additional about property which references the identity of the site.
-       */
-      if (identity && canonicalUrl === canonicalHost)
-        setIfEmpty(webPage, 'about', idReference(identity))
+    /*
+     * When it's a homepage, add additional about property which references the identity of the site.
+     */
+    if (identity && meta.canonicalUrl === meta.canonicalHost)
+      setIfEmpty(webPage, 'about', idReference(identity))
 
-      if (logo)
-        setIfEmpty(webPage, 'primaryImageOfPage', idReference(logo))
+    if (logo)
+      setIfEmpty(webPage, 'primaryImageOfPage', idReference(logo))
 
-      if (webSite)
-        setIfEmpty(webPage, 'isPartOf', idReference(webSite))
+    if (webSite)
+      setIfEmpty(webPage, 'isPartOf', idReference(webSite))
 
-      // it's possible that adding a new web page will revert the breadcrumb data
-      const breadcrumb = findNode<Breadcrumb>(PrimaryBreadcrumbId)
-      if (breadcrumb)
-        setIfEmpty(webPage, 'breadcrumb', idReference(breadcrumb))
+    // it's possible that adding a new web page will revert the breadcrumb data
+    const breadcrumb = findNode<Breadcrumb>(PrimaryBreadcrumbId)
+    if (breadcrumb)
+      setIfEmpty(webPage, 'breadcrumb', idReference(breadcrumb))
 
-      return webPage
-    },
-  })
-}
+    return webPage
+  },
+})
 
+export const defineWebPage
+  = <T extends WebPage>(input?: Optional<T, DefaultOptionalKeys>) =>
+    provideResolver(input, webPageResolver)
 

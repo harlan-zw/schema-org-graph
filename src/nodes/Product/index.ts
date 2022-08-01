@@ -1,29 +1,28 @@
-import type { DeepPartial } from 'utility-types'
 import { hash } from 'ohash'
-import type { Arrayable, IdReference, OptionalAtKeys, Thing } from '../../types'
+import type { Optional } from 'utility-types'
+import type { Arrayable, DefaultOptionalKeys, IdReference, Thing } from '../../types'
 import {
   IdentityId,
-  defineSchemaResolver,
   idReference,
   prefixId,
-  resolveId,
-  resolveFromMeta,
-  setIfEmpty,
+  provideResolver,
+  resolveId, setIfEmpty,
 } from '../../utils'
 import type { WebPage } from '../WebPage'
 import { PrimaryWebPageId } from '../WebPage'
 import type { Person } from '../Person'
 import type { Organization } from '../Organization'
 import type { RelatedReviewInput } from '../Review'
-import { resolveReviews } from '../Review'
+import { reviewResolver } from '../Review'
 import type { ImageInput } from '../Image'
 import type { OfferInput } from '../Offer'
-import { resolveOffer } from '../Offer'
 import type { AggregateRatingInput } from '../AggregateRating'
-import { resolveAggregateRating } from '../AggregateRating'
+import { aggregateRatingResolver } from '../AggregateRating'
 import type { AggregateOfferInput } from '../AggregateOffer'
-import { resolveAggregateOffer } from '../AggregateOffer'
-import { defineSchemaOrgComponent } from '../../components/defineSchemaOrgComponent'
+import { defineSchemaOrgResolver, resolveRelation } from '../../core'
+import { aggregateOfferResolver } from '../AggregateOffer'
+import { offerResolver } from '../Offer'
+import { PrimaryArticleId } from '../Article'
 
 /**
  * Any offered product or service.
@@ -81,48 +80,44 @@ export interface Product extends Thing {
 
 export const ProductId = '#product'
 
-export function defineProduct<T extends OptionalAtKeys<Product>>(input: T) {
-  return defineSchemaResolver<T, Product>(input, {
-    defaults({ canonicalUrl, meta }) {
-      const defaults: Partial<Product> = {
-        '@type': 'Product',
-        '@id': prefixId(canonicalUrl, ProductId),
-      }
-      resolveFromMeta(defaults, meta, [
-        'name',
-        'description',
-        'image',
-      ])
-      return defaults
-    },
-    resolve(product, ctx) {
-      resolveId(product, ctx.canonicalUrl)
-      // provide a default sku
-      setIfEmpty(product, 'sku', hash(product.name))
-      // @todo fix types
-      if (product.aggregateOffer)
-        product.aggregateOffer = resolveAggregateOffer(ctx, product.aggregateOffer) as AggregateOfferInput
-      if (product.aggregateRating)
-        product.aggregateRating = resolveAggregateRating(ctx, product.aggregateRating) as AggregateRatingInput
-      if (product.offers)
-        product.offers = resolveOffer(ctx, product.offers) as OfferInput[]
-      if (product.review)
-        product.review = resolveReviews(ctx, product.review)
-      return product
-    },
-    rootNodeResolve(product, { findNode }) {
-      const webPage = findNode<WebPage>(PrimaryWebPageId)
-      const identity = findNode<Person | Organization>(IdentityId)
+export const productResolver = defineSchemaOrgResolver<Product>({
+  defaults: {
+    '@type': 'Product',
+  },
+  inheritMeta: [
+    'description',
+    'image',
+    { meta: 'title', key: 'name' },
+  ],
+  resolve(node, ctx) {
+    setIfEmpty(node, '@id', prefixId(ctx.meta.canonicalUrl, PrimaryArticleId))
+    resolveId(node, ctx.meta.canonicalUrl)
+    // provide a default sku
+    setIfEmpty(node, 'sku', hash(node.name))
+    if (node.aggregateOffer)
+      node.aggregateOffer = resolveRelation(node.aggregateOffer, ctx, aggregateOfferResolver)
+    if (node.aggregateRating)
+      node.aggregateRating = resolveRelation(node.aggregateRating, ctx, aggregateRatingResolver)
+    if (node.offers)
+      node.offers = resolveRelation(node.offers, ctx, offerResolver)
+    if (node.review)
+      node.review = resolveRelation(node.review, ctx, reviewResolver)
+    return node
+  },
+  rootNodeResolve(product, { findNode }) {
+    const webPage = findNode<WebPage>(PrimaryWebPageId)
+    const identity = findNode<Person | Organization>(IdentityId)
 
-      if (identity)
-        setIfEmpty(product, 'brand', idReference(identity))
+    if (identity)
+      setIfEmpty(product, 'brand', idReference(identity))
 
-      if (webPage)
-        setIfEmpty(product, 'mainEntityOfPage', idReference(webPage))
+    if (webPage)
+      setIfEmpty(product, 'mainEntityOfPage', idReference(webPage))
 
-      return product
-    },
-  })
-}
+    return product
+  },
+})
 
-
+export const defineProduct
+  = <T extends Product>(input?: Optional<T, DefaultOptionalKeys>) =>
+    provideResolver(input, productResolver)

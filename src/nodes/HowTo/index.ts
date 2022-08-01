@@ -1,19 +1,17 @@
-import type { DeepPartial } from 'utility-types'
-import type { IdReference, OptionalAtKeys, Thing } from '../../types'
+import type { Optional } from 'utility-types'
+import type { DefaultOptionalKeys, IdReference, Thing } from '../../types'
 import {
-  defineSchemaResolver,
   idReference,
   prefixId,
-  resolveId,
-  resolveFromMeta,
-  setIfEmpty,
+  provideResolver,
+  resolveId, setIfEmpty,
 } from '../../utils'
 import { PrimaryWebPageId } from '../WebPage'
 import type { Video } from '../Video'
-import type { HowToStepInput } from '../HowToStep'
-import { resolveHowToStep } from '../HowToStep'
 import type { ImageInput } from '../Image'
-import { defineSchemaOrgComponent } from '../../components/defineSchemaOrgComponent'
+import { defineSchemaOrgResolver, resolveRelation } from '../../core'
+import type { HowToStepInput } from './HowToStep'
+import { howToStepResolver } from './HowToStep'
 
 /**
  * Instructions that explain how to achieve a result by performing a sequence of steps.
@@ -72,33 +70,34 @@ export const HowToId = '#howto'
 /**
  * Describes a HowTo guide, which contains a series of steps.
  */
-export function defineHowTo<T extends OptionalAtKeys<HowTo>>(input: T) {
-  return defineSchemaResolver<T, HowTo>(input, {
-    defaults({ canonicalUrl, meta, options }) {
-      const defaults: Partial<HowTo> = {
-        '@type': 'HowTo',
-        '@id': prefixId(canonicalUrl, HowToId),
-        'inLanguage': options.defaultLanguage,
-      }
-      resolveFromMeta(defaults, meta, [
-        'name',
-        'description',
-        'image',
-      ])
-      return defaults
-    },
-    resolve(node, client) {
-      resolveId(node, client.canonicalUrl)
-      if (node.step)
-        node.step = resolveHowToStep(client, node.step) as HowToStepInput[]
-      return node
-    },
-    rootNodeResolve(node, { findNode }) {
-      const webPage = findNode(PrimaryWebPageId)
-      if (webPage)
-        setIfEmpty(node, 'mainEntityOfPage', idReference(webPage))
-    },
-  })
-}
+export const howToResolver = defineSchemaOrgResolver<HowTo>({
+  defaults: {
+    '@type': 'HowTo',
+  },
+  inheritMeta: [
+    'description',
+    'image',
+    'inLanguage',
+    { meta: 'title', key: 'name' },
+  ],
+  resolve(node, ctx) {
+    setIfEmpty(node, '@id', prefixId(ctx.meta.canonicalUrl, HowToId))
+    resolveId(node, ctx.meta.canonicalUrl)
+    if (node.step)
+      node.step = resolveRelation(ctx, node.step, howToStepResolver)
+    return node
+  },
+  rootNodeResolve(node, { findNode }) {
+    const webPage = findNode(PrimaryWebPageId)
+    if (webPage)
+      setIfEmpty(node, 'mainEntityOfPage', idReference(webPage))
+  },
+})
 
+export const defineHowTo
+  = <T extends HowTo>(input?: Optional<T, DefaultOptionalKeys>) =>
+    provideResolver(input, howToResolver)
+
+export * from './HowToStep'
+export * from './HowToStepDirection'
 

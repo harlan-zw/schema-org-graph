@@ -1,6 +1,5 @@
 import { expect } from 'vitest'
-import { useSetup } from '../../../.test'
-import { injectSchemaOrg, useSchemaOrg } from '../../useSchemaOrg'
+import { injectSchemaOrg, useSchemaOrg, useSetup } from '../../../.test'
 import { defineComment } from './index'
 
 describe('defineComment', () => {
@@ -19,17 +18,18 @@ describe('defineComment', () => {
       expect(graphNodes).toMatchInlineSnapshot(`
         [
           {
-            "@id": "https://example.com/#/schema/person/x29kfkAXdv",
-            "@type": "Person",
-            "name": "Harlan Wilton",
-          },
-          {
-            "@id": "https://example.com/#/schema/comment/Tz8dNuamPI",
+            "@id": "https://example.com/#/schema/comment/r6tdKofhJ3",
             "@type": "Comment",
             "author": {
-              "@id": "https://example.com/#/schema/person/x29kfkAXdv",
+              "@id": "https://example.com/#identity",
             },
             "text": "This is a comment",
+          },
+          {
+            "@id": "https://example.com/#identity",
+            "@type": "Person",
+            "name": "Harlan Wilton",
+            "url": "https://example.com/",
           },
         ]
       `)

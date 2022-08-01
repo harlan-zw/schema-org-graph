@@ -1,17 +1,15 @@
-import type { DeepPartial } from 'utility-types'
-import type { OptionalAtKeys, Thing } from '../../types'
+import type { Thing } from '../../types'
 import {
-  defineSchemaResolver,
   idReference,
-  prefixId,
+  prefixId, provideResolver,
   resolveId,
   setIfEmpty,
 } from '../../utils'
 import type { WebPage } from '../WebPage'
 import { PrimaryWebPageId } from '../WebPage'
 import type { ListItem, ListItemInput } from '../ListItem'
-import { resolveListItems } from '../ListItem'
-import { defineSchemaOrgComponent } from '../../components/defineSchemaOrgComponent'
+import { resolveListItem } from '../ListItem'
+import { defineSchemaOrgResolver, resolveRelation } from '../../core'
 
 /**
  * A BreadcrumbList is an ItemList consisting of a chain of linked Web pages,
@@ -46,27 +44,33 @@ export const PrimaryBreadcrumbId = '#breadcrumb'
 /**
  * Describes the hierarchical position a WebPage within a WebSite.
  */
-export function defineBreadcrumb<T extends OptionalAtKeys<Breadcrumb>>(input: T) {
-  return defineSchemaResolver<T, Breadcrumb>(input, {
-    defaults({ canonicalUrl }) {
-      return {
-        '@type': 'BreadcrumbList',
-        '@id': prefixId(canonicalUrl, PrimaryBreadcrumbId),
-      }
-    },
-    resolve(breadcrumb, client) {
-      resolveId(breadcrumb, client.canonicalUrl)
-      if (breadcrumb.itemListElement)
-        breadcrumb.itemListElement = resolveListItems(client, breadcrumb.itemListElement) as ListItemInput[]
-      return breadcrumb
-    },
-    rootNodeResolve(breadcrumb, { findNode }) {
-      // merge breadcrumbs reference into the webpage
-      const webPage = findNode<WebPage>(PrimaryWebPageId)
-      if (webPage)
-        setIfEmpty(webPage, 'breadcrumb', idReference(breadcrumb))
-    },
-  })
-}
+export const breadcrumbResolver = defineSchemaOrgResolver<Breadcrumb>({
+  defaults: {
+    '@type': 'BreadcrumbList',
+  },
+  resolve(breadcrumb, ctx) {
+    setIfEmpty(breadcrumb, '@id', prefixId(ctx.meta.canonicalUrl, PrimaryBreadcrumbId))
+    resolveId(breadcrumb, ctx.meta.canonicalUrl)
+    if (breadcrumb.itemListElement) {
+      let index = 1
 
+      breadcrumb.itemListElement = resolveRelation(breadcrumb.itemListElement, ctx, resolveListItem, {
+        array: true,
+        afterResolve(node) {
+          setIfEmpty(node, 'position', index++)
+        },
+      })
+    }
+    return breadcrumb
+  },
+  rootNodeResolve(breadcrumb, { findNode }) {
+    // merge breadcrumbs reference into the webpage
+    const webPage = findNode<WebPage>(PrimaryWebPageId)
+    if (webPage)
+      setIfEmpty(webPage, 'breadcrumb', idReference(breadcrumb))
+  },
+})
 
+export const defineBreadcrumb
+  = <T extends Breadcrumb>(input?: T) =>
+    provideResolver(input, breadcrumbResolver)

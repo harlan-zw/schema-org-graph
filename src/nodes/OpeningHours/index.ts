@@ -1,10 +1,9 @@
-import type { DeepPartial } from 'utility-types'
-import type { Arrayable, IdReference, OptionalAtKeys, SchemaOrgContext, Thing } from '../../types'
+import type { Optional } from 'utility-types'
+import type { Arrayable, DefaultOptionalKeys, IdReference, Thing } from '../../types'
 import {
-  defineSchemaResolver,
-  resolveArrayable, resolveSchemaResolver,
+  provideResolver,
 } from '../../utils'
-import { defineSchemaOrgComponent } from '../../components/defineSchemaOrgComponent'
+import { defineSchemaOrgResolver } from '../../core'
 
 type DayOfWeek = 'Friday' |
 'Monday' |
@@ -41,22 +40,16 @@ export interface OpeningHours extends Thing {
   validThrough?: string | Date
 }
 
-export type OpeningHoursInput = OptionalAtKeys<OpeningHours> | IdReference
+export type OpeningHoursInput = OpeningHours | IdReference
 
-export function defineOpeningHours<T extends OptionalAtKeys<OpeningHours>>(input: T) {
-  return defineSchemaResolver<T, OpeningHours>(input, {
-    defaults() {
-      return {
-        '@type': 'OpeningHoursSpecification',
-        'opens': '00:00',
-        'closes': '23:59',
-      }
-    },
-  })
-}
+export const resolveOpeningHours = defineSchemaOrgResolver<OpeningHours>({
+  defaults: {
+    '@type': 'OpeningHoursSpecification',
+    'opens': '00:00',
+    'closes': '23:59',
+  },
+})
 
-export function resolveOpeningHours(ctx: SchemaOrgContext, input: Arrayable<OpeningHoursInput>) {
-  return resolveArrayable<OpeningHoursInput, OpeningHours>(input, input => resolveSchemaResolver(ctx, defineOpeningHours(input)))
-}
-
-
+export const defineOpeningHours
+  = <T extends OpeningHours>(input?: Optional<T, DefaultOptionalKeys>) =>
+    provideResolver(input, resolveOpeningHours)

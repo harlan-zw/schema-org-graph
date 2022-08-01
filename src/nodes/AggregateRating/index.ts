@@ -1,12 +1,5 @@
-import { hash } from 'ohash'
-import type { DeepPartial } from 'utility-types'
-import type { Arrayable, IdReference, OptionalAtKeys, SchemaOrgContext, Thing } from '../../types'
-import {
-  defineSchemaResolver,
-  prefixId,
-  resolveArrayable, resolveSchemaResolver,
-} from '../../utils'
-import { defineSchemaOrgComponent } from '../../components/defineSchemaOrgComponent'
+import type { IdReference, Thing } from '../../types'
+import { defineSchemaOrgResolver } from '../../core'
 
 export interface AggregateRating extends Thing {
   '@type': 'AggregateRating'
@@ -37,21 +30,11 @@ export interface AggregateRating extends Thing {
   worstRating?: number
 }
 
-export type AggregateRatingInput = OptionalAtKeys<AggregateRating, '@id' | '@type' | 'reviewCount'> | IdReference
+export type AggregateRatingInput = AggregateRating | IdReference
 
-export function defineAggregateRating<T extends OptionalAtKeys<AggregateRating, '@id' | '@type' | 'reviewCount'>>(input: T) {
-  return defineSchemaResolver<T, AggregateRating>(input, {
-    defaults(ctx) {
-      return {
-        '@type': 'AggregateRating',
-        '@id': prefixId(ctx.canonicalHost, `#/schema/aggregate-rating/${hash(input)}`),
-      }
-    },
-  })
-}
-
-export function resolveAggregateRating(ctx: SchemaOrgContext, input: Arrayable<AggregateRatingInput>) {
-  return resolveArrayable<AggregateRatingInput, AggregateRating>(input, input => resolveSchemaResolver(ctx, defineAggregateRating(input)))
-}
-
+export const aggregateRatingResolver = defineSchemaOrgResolver<AggregateRating>({
+  defaults: {
+    '@type': 'AggregateRating',
+  },
+})
 

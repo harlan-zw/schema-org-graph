@@ -1,6 +1,5 @@
 import { expect } from 'vitest'
-import { useSetup } from '../../../.test'
-import { injectSchemaOrg, useSchemaOrg } from '../../useSchemaOrg'
+import { injectSchemaOrg, useSchemaOrg, useSetup } from '../../../.test'
 import { defineImage } from './index'
 
 describe('defineImage', () => {
@@ -17,7 +16,7 @@ describe('defineImage', () => {
       expect(graphNodes).toMatchInlineSnapshot(`
         [
           {
-            "@id": "https://example.com/#/schema/image/maGcIV09t0",
+            "@id": "https://example.com/#/schema/image/xQn17CWzyz",
             "@type": "ImageObject",
             "contentUrl": "https://example.com/image.png",
             "inLanguage": "en-AU",

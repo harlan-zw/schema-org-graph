@@ -1,13 +1,11 @@
-import type { DeepPartial } from 'utility-types'
-import type { Arrayable, IdReference, OptionalAtKeys, SchemaOrgContext, Thing } from '../../types'
+import type { IdReference, Thing } from '../../types'
 import {
-  defineSchemaResolver,
-  resolveArrayable, resolveSchemaResolver, resolveUrl, setIfEmpty,
+  resolveUrl,
 } from '../../utils'
-import { defineSchemaOrgComponent } from '../../components/defineSchemaOrgComponent'
+import { defineSchemaOrgResolver } from '../../core'
 
 /**
- * An list item, e.g. a step in a checklist or how-to description.
+ * A list item, e.g. a step in a checklist or how-to description.
  */
 export interface ListItem extends Thing {
   '@type': 'ListItem'
@@ -27,31 +25,23 @@ export interface ListItem extends Thing {
   position?: number
 }
 
-export type ListItemInput = OptionalAtKeys<ListItem> | IdReference | string
+export type ListItemInput = ListItem | IdReference | string
 
-export function defineListItem<T extends OptionalAtKeys<ListItem>>(input: T) {
-  return defineSchemaResolver<T, ListItem>(input, {
-    defaults() {
-      return {
-        '@type': 'ListItem',
-      }
-    },
-  })
-}
-
-export function resolveListItems(ctx: SchemaOrgContext, input: Arrayable<ListItemInput>) {
-  let index = 1
-  return resolveArrayable<ListItemInput, ListItem>(input, (input) => {
-    if (typeof input === 'string') {
-      input = {
-        name: input,
+export const resolveListItem = defineSchemaOrgResolver<ListItem>({
+  cast(node) {
+    if (typeof node === 'string') {
+      node = {
+        name: node,
       }
     }
-    const listItem = resolveSchemaResolver(ctx, defineListItem(input))
-    setIfEmpty(listItem, 'position', index++)
-    resolveUrl(listItem, 'item', ctx.canonicalHost)
-    return listItem
-  }, { array: true })
-}
-
+    return node
+  },
+  defaults: {
+    '@type': 'ListItem',
+  },
+  resolve(node, ctx) {
+    resolveUrl(node, 'item', ctx.meta.canonicalHost)
+    return node
+  },
+})
 

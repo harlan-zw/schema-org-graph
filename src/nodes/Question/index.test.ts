@@ -1,20 +1,17 @@
-import { expect } from 'vitest'
-import { mockRoute, useSetup } from '../../../.test'
-import { injectSchemaOrg, useSchemaOrg } from '../../useSchemaOrg'
-import { defineWebPagePartial } from '../WebPage'
+import { describe, expect, it } from 'vitest'
+import { injectSchemaOrg, mockRoute, useSchemaOrg, useSetup } from '../../../.test'
+import { defineWebPage } from '../WebPage'
 import { defineQuestion } from './index'
 
 describe('defineQuestion', () => {
   it('can be registered', () => {
     mockRoute({
-      path: '/frequently-asked-questions',
-      meta: {
-        title: 'FAQ',
-      },
+      canonicalUrl: 'https://example.com/frequently-asked-questions',
+      title: 'FAQ',
     }, () => {
       useSetup(() => {
         useSchemaOrg([
-          defineWebPagePartial({
+          defineWebPage({
             '@type': 'FAQPage',
           }),
           defineQuestion({
@@ -39,17 +36,17 @@ describe('defineQuestion', () => {
               ],
               "mainEntity": [
                 {
-                  "@id": "https://example.com/frequently-asked-questions/#/schema/question/NFmi3kwPwY",
+                  "@id": "https://example.com/frequently-asked-questions/#/schema/question/lzkOzLZxRj",
                 },
                 {
-                  "@id": "https://example.com/frequently-asked-questions/#/schema/question/JT3Yfbekc6",
+                  "@id": "https://example.com/frequently-asked-questions/#/schema/question/1RFm6hHsKb",
                 },
               ],
               "name": "FAQ",
               "url": "https://example.com/frequently-asked-questions",
             },
             {
-              "@id": "https://example.com/frequently-asked-questions/#/schema/question/NFmi3kwPwY",
+              "@id": "https://example.com/frequently-asked-questions/#/schema/question/lzkOzLZxRj",
               "@type": "Question",
               "acceptedAnswer": {
                 "@type": "Answer",
@@ -59,7 +56,7 @@ describe('defineQuestion', () => {
               "name": "How long is a piece of string?",
             },
             {
-              "@id": "https://example.com/frequently-asked-questions/#/schema/question/JT3Yfbekc6",
+              "@id": "https://example.com/frequently-asked-questions/#/schema/question/1RFm6hHsKb",
               "@type": "Question",
               "acceptedAnswer": {
                 "@type": "Answer",

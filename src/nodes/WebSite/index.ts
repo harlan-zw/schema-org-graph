@@ -1,22 +1,21 @@
-import type { DeepPartial } from 'utility-types'
 import { hash } from 'ohash'
-import type { Arrayable, MaybeIdReference, OptionalAtKeys, Thing } from '../../types'
+import type { Optional } from 'utility-types'
+import type { Arrayable, DefaultOptionalKeys, MaybeIdReference, Thing } from '../../types'
 import {
   IdentityId,
-  defineSchemaResolver,
   idReference,
   prefixId,
-  resolveId,
-  resolveNodesGraphKey, setIfEmpty,
+  provideResolver,
+  resolveAsGraphKey, resolveId, setIfEmpty,
 } from '../../utils'
 import type { Person } from '../Person'
 import type { Organization } from '../Organization'
-import { defineSchemaOrgComponent } from '../../components/defineSchemaOrgComponent'
 import type { WebPage } from '../WebPage'
 import { PrimaryWebPageId } from '../WebPage'
-import type { SearchAction } from './asSearchAction'
+import { defineSchemaOrgResolver, resolveRelation } from '../../core'
+import type { SearchAction } from './SearchAction'
+import { searchActionResolver } from './SearchAction'
 
-export * from './asSearchAction'
 /**
  * A WebSite is a set of related web pages and other items typically served from a single web domain and accessible via URLs.
  */
@@ -52,46 +51,50 @@ export interface WebSite extends Thing {
 
 export const PrimaryWebSiteId = '#website'
 
-export function defineWebSite<T extends OptionalAtKeys<WebSite>>(input: T) {
-  return defineSchemaResolver<T, WebSite>(input, {
-    defaults({ canonicalHost, options }) {
-      return {
-        '@type': 'WebSite',
-        'url': canonicalHost,
-        'inLanguage': options.defaultLanguage,
-      }
-    },
-    resolve(node, ctx) {
-      resolveId(node, ctx.canonicalHost)
-      // create id if not set
-      if (!node['@id']) {
-        // may be re-registering the primary website
-        const primary = ctx.findNode<WebPage>(PrimaryWebSiteId)
-        if (!primary || hash(primary?.name) === hash(node.name))
-          node['@id'] = prefixId(ctx.canonicalHost, PrimaryWebSiteId)
-        else
-          node['@id'] = prefixId(ctx.canonicalHost, `#/schema/website/${hash(node.name)}`)
-      }
-      // actions may be a function that need resolving
-      node.potentialAction = node.potentialAction?.map(a => typeof a === 'function' ? a(ctx) : a)
-      return node
-    },
-    rootNodeResolve(node, { findNode }) {
-      // if this person is the identity
-      if (resolveNodesGraphKey(node['@id'] || '') === PrimaryWebSiteId) {
-        const identity = findNode<Person | Organization>(IdentityId)
-        if (identity)
-          setIfEmpty(node, 'publisher', idReference(identity))
+export const webSiteResolver = defineSchemaOrgResolver<WebSite>({
+  root: true,
+  defaults: {
+    '@type': 'WebSite',
+  },
+  inheritMeta: [
+    'inLanguage',
+    { meta: 'canonicalHost', key: 'url' },
+  ],
+  resolve(node, ctx) {
+    resolveId(node, ctx.meta.canonicalHost)
+    // create id if not set
+    if (!node['@id']) {
+      // may be re-registering the primary website
+      const primary = ctx.findNode<WebPage>(PrimaryWebSiteId)
+      if (!primary || hash(primary?.name) === hash(node.name))
+        node['@id'] = prefixId(ctx.meta.canonicalHost, PrimaryWebSiteId)
+    }
+    // actions may be a function that need resolving
+    if (node.potentialAction) {
+      node.potentialAction = resolveRelation(node.potentialAction, ctx, searchActionResolver, {
+        array: true,
+      })
+    }
+    return node
+  },
+  rootNodeResolve(node, { findNode }) {
+    // if this person is the identity
+    if (resolveAsGraphKey(node['@id'] || '') === PrimaryWebSiteId) {
+      const identity = findNode<Person | Organization>(IdentityId)
+      if (identity)
+        setIfEmpty(node, 'publisher', idReference(identity))
 
-        const webPage = findNode<WebPage>(PrimaryWebPageId)
+      const webPage = findNode<WebPage>(PrimaryWebPageId)
 
-        if (webPage)
-          setIfEmpty(webPage, 'isPartOf', idReference(node))
-      }
-      return node
-    },
-  })
-}
+      if (webPage)
+        setIfEmpty(webPage, 'isPartOf', idReference(node))
+    }
+    return node
+  },
+})
 
+export const defineWebSite
+  = <T extends WebSite>(input?: Optional<T, DefaultOptionalKeys>) =>
+    provideResolver(input, webSiteResolver)
 
-
+export * from './SearchAction'

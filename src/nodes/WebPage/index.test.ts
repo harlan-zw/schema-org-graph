@@ -1,12 +1,10 @@
 import { expect } from 'vitest'
-import { computed, unref } from 'vue-demi'
-import { defineOrganization } from '@vueuse/schema-org'
-import { mockRoute, useSetup } from '../../../.test'
-import { injectSchemaOrg, useSchemaOrg } from '../../useSchemaOrg'
+import { injectSchemaOrg, mockRoute, useSchemaOrg, useSetup } from '../../../.test'
 import { PrimaryWebSiteId, defineWebSite } from '../WebSite'
 import { IdentityId, idReference, prefixId } from '../../utils'
+import { defineOrganization } from '../Organization'
 import type { WebPage } from './index'
-import { PrimaryWebPageId, asReadAction, defineWebPage, defineWebPagePartial } from './index'
+import { PrimaryWebPageId, defineWebPage } from './index'
 
 const mockDate = new Date(Date.UTC(2021, 10, 10, 10, 10, 10, 0))
 
@@ -15,7 +13,7 @@ describe('defineWebPage', () => {
     useSetup(() => {
       useSchemaOrg([
         defineWebPage({
-          name: computed(() => 'test'),
+          name: 'test',
           datePublished: mockDate,
           dateModified: mockDate,
         }),
@@ -23,7 +21,7 @@ describe('defineWebPage', () => {
 
       const client = injectSchemaOrg()
       const webPage = client.findNode<WebPage>(PrimaryWebPageId)
-      expect(unref(webPage)).toMatchInlineSnapshot(`
+      expect(webPage).toMatchInlineSnapshot(`
         {
           "@id": "https://example.com/#webpage",
           "@type": "WebPage",
@@ -47,18 +45,16 @@ describe('defineWebPage', () => {
   it('inherits attributes from useRoute()', () => {
     mockRoute({
       path: '/test',
-      meta: {
-        title: 'headline',
-        description: 'description',
-      },
+      title: 'headline',
+      description: 'description',
     }, () => {
       useSetup(() => {
         useSchemaOrg([
-          defineWebPagePartial(),
+          defineWebPage(),
         ])
 
         const client = injectSchemaOrg()
-        const webPage = unref(client.findNode<WebPage>(PrimaryWebPageId))
+        const webPage = client.findNode<WebPage>(PrimaryWebPageId)
 
         expect(webPage?.name).toEqual('headline')
 
@@ -120,18 +116,16 @@ describe('defineWebPage', () => {
   it('adds read action to home page', () => {
     mockRoute({
       path: '/',
-      meta: {
-        title: 'headline',
-        description: 'description',
-      },
+      title: 'headline',
+      description: 'description',
     }, () => {
       useSetup(() => {
         useSchemaOrg([
-          defineWebPagePartial(),
+          defineWebPage(),
         ])
 
         const client = injectSchemaOrg()
-        const webpage = unref(client.findNode<WebPage>(PrimaryWebPageId))
+        const webpage = client.findNode<WebPage>(PrimaryWebPageId)
 
         expect(webpage).toMatchInlineSnapshot(`
           {
@@ -162,25 +156,23 @@ describe('defineWebPage', () => {
         useSchemaOrg([
           defineWebPage({
             name: 'Webpage',
-            potentialAction: [
-              asReadAction(),
-            ],
           }),
         ])
 
         const client = injectSchemaOrg()
         const webpage = client.findNode<WebPage>(PrimaryWebPageId)
 
-        expect(webpage?.potentialAction).toMatchInlineSnapshot(`
-        [
+        expect(webpage).toMatchInlineSnapshot(`
           {
-            "@type": "ReadAction",
-            "target": [
-              "https://example.com/our-pages/about-us",
+            "@id": "https://example.com/our-pages/about-us/#webpage",
+            "@type": [
+              "WebPage",
+              "AboutPage",
             ],
-          },
-        ]
-      `)
+            "name": "Webpage",
+            "url": "https://example.com/our-pages/about-us",
+          }
+        `)
       })
     })
   })
@@ -191,7 +183,7 @@ describe('defineWebPage', () => {
     }, () => {
       useSetup(() => {
         useSchemaOrg([
-          defineWebPagePartial(),
+          defineWebPage(),
         ])
 
         const client = injectSchemaOrg()
@@ -210,20 +202,21 @@ describe('defineWebPage', () => {
   it('allows @type augmentation on matching #id', () => {
     useSetup(() => {
       useSchemaOrg([
-        defineWebPagePartial(),
+        defineWebPage(),
       ])
 
-      const { findNode } = injectSchemaOrg()
-      let webPage = findNode<WebPage>(PrimaryWebPageId)
+      let ctx = injectSchemaOrg()
+      let webPage = ctx.findNode<WebPage>(PrimaryWebPageId)
       expect(webPage?.['@type']).toEqual('WebPage')
 
       useSchemaOrg([
-        defineWebPagePartial({
+        defineWebPage({
           '@type': ['CollectionPage', 'SearchResultsPage'],
         }),
       ])
 
-      webPage = findNode<WebPage>(PrimaryWebPageId)
+      ctx = injectSchemaOrg()
+      webPage = ctx.findNode<WebPage>(PrimaryWebPageId)
       expect(webPage?.['@type']).toEqual(['WebPage', 'CollectionPage', 'SearchResultsPage'])
     })
   })
@@ -231,7 +224,7 @@ describe('defineWebPage', () => {
   it('relation resolving works both ways', () => {
     useSetup(() => {
       useSchemaOrg([
-        defineWebPagePartial(),
+        defineWebPage(),
       ])
 
       useSchemaOrg([
@@ -239,6 +232,111 @@ describe('defineWebPage', () => {
           name: 'Harlan Wilton',
           logo: '/logo.png',
         }),
+      ])
+
+      useSchemaOrg([
+        defineWebSite({
+          name: 'Harlan Wilton',
+        }),
+      ])
+
+      const { findNode, graphNodes } = injectSchemaOrg()
+      const webPage = findNode<WebPage>(PrimaryWebPageId)
+      expect(webPage?.about).toEqual(idReference(prefixId('https://example.com/', IdentityId)))
+      expect(webPage?.isPartOf).toEqual(idReference(prefixId('https://example.com/', PrimaryWebSiteId)))
+      expect(webPage?.primaryImageOfPage).toEqual(idReference(prefixId('https://example.com/', '#primaryimage')))
+
+      expect(graphNodes).toMatchInlineSnapshot(`
+        [
+          {
+            "@id": "https://example.com/#webpage",
+            "@type": "WebPage",
+            "about": {
+              "@id": "https://example.com/#identity",
+            },
+            "isPartOf": {
+              "@id": "https://example.com/#website",
+            },
+            "potentialAction": [
+              {
+                "@type": "ReadAction",
+                "target": [
+                  "https://example.com/",
+                ],
+              },
+            ],
+            "primaryImageOfPage": {
+              "@id": "https://example.com/#primaryimage",
+            },
+            "url": "https://example.com/",
+          },
+          {
+            "@id": "https://example.com/#identity",
+            "@type": "Organization",
+            "logo": {
+              "@id": "https://example.com/#primaryimage",
+            },
+            "name": "Harlan Wilton",
+            "url": "https://example.com/",
+          },
+          {
+            "@id": "https://example.com/#website",
+            "@type": "WebSite",
+            "inLanguage": "en-AU",
+            "name": "Harlan Wilton",
+            "publisher": {
+              "@id": "https://example.com/#identity",
+            },
+            "url": "https://example.com/",
+          },
+          {
+            "@id": "https://example.com/#primaryimage",
+            "@type": "ImageObject",
+            "caption": "Harlan Wilton",
+            "contentUrl": "https://example.com/logo.png",
+            "inLanguage": "en-AU",
+            "url": "https://example.com/logo.png",
+          },
+        ]
+      `)
+      expect(webPage).toMatchInlineSnapshot(`
+        {
+          "@id": "https://example.com/#webpage",
+          "@type": "WebPage",
+          "about": {
+            "@id": "https://example.com/#identity",
+          },
+          "isPartOf": {
+            "@id": "https://example.com/#website",
+          },
+          "potentialAction": [
+            {
+              "@type": "ReadAction",
+              "target": [
+                "https://example.com/",
+              ],
+            },
+          ],
+          "primaryImageOfPage": {
+            "@id": "https://example.com/#primaryimage",
+          },
+          "url": "https://example.com/",
+        }
+      `)
+    })
+  })
+
+  it('relation resolving works both ways #2', () => {
+    useSetup(() => {
+      useSchemaOrg([
+        defineOrganization({
+          name: 'Harlan Wilton',
+          logo: '/logo.png',
+        }),
+      ])
+
+      useSchemaOrg([
+        defineWebPage(),
       ])
 
       useSchemaOrg([
@@ -258,33 +356,6 @@ describe('defineWebPage', () => {
   it('relation resolving works both ways #2', () => {
     useSetup(() => {
       useSchemaOrg([
-        defineOrganization({
-          name: 'Harlan Wilton',
-          logo: '/logo.png',
-        }),
-      ])
-
-      useSchemaOrg([
-        defineWebPagePartial(),
-      ])
-
-      useSchemaOrg([
-        defineWebSite({
-          name: 'Harlan Wilton',
-        }),
-      ])
-
-      const { findNode } = injectSchemaOrg()
-      const webPage = findNode<WebPage>(PrimaryWebPageId)
-      expect(webPage?.about).toEqual(idReference(prefixId('https://example.com/', IdentityId)))
-      expect(webPage?.isPartOf).toEqual(idReference(prefixId('https://example.com/', PrimaryWebSiteId)))
-      expect(webPage?.primaryImageOfPage).toEqual(idReference(prefixId('https://example.com/', '#logo')))
-    })
-  })
-
-  it('relation resolving works both ways #2', () => {
-    useSetup(() => {
-      useSchemaOrg([
         defineWebSite({
           name: 'Harlan Wilton',
         }),
@@ -298,7 +369,7 @@ describe('defineWebPage', () => {
       ])
 
       useSchemaOrg([
-        defineWebPagePartial(),
+        defineWebPage(),
       ])
 
       const { findNode } = injectSchemaOrg()

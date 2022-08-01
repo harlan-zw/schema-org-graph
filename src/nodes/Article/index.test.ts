@@ -1,12 +1,10 @@
-import { expect } from 'vitest'
-import { reactive } from 'vue-demi'
-import { mockCreateSchemaOptions, mockRoute, useSetup } from '../../../.test'
-import { injectSchemaOrg, useSchemaOrg } from '../../useSchemaOrg'
+import { describe, expect, it } from 'vitest'
+import { injectSchemaOrg, mockRoute, useSchemaOrg, useSetup } from '../../../.test'
 import type { WebPage } from '../WebPage'
-import { defineWebPagePartial } from '../WebPage'
 import { defineOrganization } from '../Organization'
+import { defineWebPage } from '../WebPage'
 import type { Article } from './index'
-import { defineArticle, defineArticlePartial } from './index'
+import { defineArticle } from './index'
 
 const mockDate = new Date(Date.UTC(2021, 10, 10, 10, 10, 10, 0))
 
@@ -30,13 +28,6 @@ describe('defineArticle', () => {
       expect(client.graphNodes).toMatchInlineSnapshot(`
         [
           {
-            "@id": "https://example.com/#/schema/image/eI7JYdUrdY",
-            "@type": "ImageObject",
-            "contentUrl": "https://example.com/my-image.png",
-            "inLanguage": "en-AU",
-            "url": "https://example.com/my-image.png",
-          },
-          {
             "@id": "https://example.com/#article",
             "@type": "Article",
             "dateModified": "2021-11-10T10:10:10.000Z",
@@ -44,10 +35,17 @@ describe('defineArticle', () => {
             "description": "test",
             "headline": "test",
             "image": {
-              "@id": "https://example.com/#/schema/image/eI7JYdUrdY",
+              "@id": "https://example.com/#/schema/image/riaRi7jPJC",
             },
             "inLanguage": "en-AU",
             "thumbnailUrl": "https://example.com/my-image.png",
+          },
+          {
+            "@id": "https://example.com/#/schema/image/riaRi7jPJC",
+            "@type": "ImageObject",
+            "contentUrl": "https://example.com/my-image.png",
+            "inLanguage": "en-AU",
+            "url": "https://example.com/my-image.png",
           },
         ]
       `)
@@ -57,40 +55,32 @@ describe('defineArticle', () => {
   it('inherits attributes from useRoute()', () => {
     mockRoute({
       path: '/test',
-      meta: {
-        title: 'Article headline',
-        description: 'my article description',
-        image: '/image.png',
-        datePublished: mockDate,
-        dateModified: mockDate,
-      },
+      title: 'Article headline',
+      description: 'my article description',
+      image: '/image.png',
+      datePublished: mockDate,
+      dateModified: mockDate,
     }, () => {
       useSetup(() => {
         useSchemaOrg([
-          defineArticlePartial(),
+          defineArticle(),
         ])
 
         const client = injectSchemaOrg()
+
         const article = client.findNode<Article>('#article')
 
         expect(article?.headline).toEqual('Article headline')
         expect(article?.description).toEqual('my article description')
         expect(article?.image).toMatchInlineSnapshot(`
           {
-            "@id": "https://example.com/#/schema/image/maGcIV09t0",
+            "@id": "https://example.com/#/schema/image/9zy4GMmGsY",
           }
         `)
 
         expect(client.graphNodes.length).toEqual(2)
         expect(client.graphNodes).toMatchInlineSnapshot(`
           [
-            {
-              "@id": "https://example.com/#/schema/image/maGcIV09t0",
-              "@type": "ImageObject",
-              "contentUrl": "https://example.com/image.png",
-              "inLanguage": "en-AU",
-              "url": "https://example.com/image.png",
-            },
             {
               "@id": "https://example.com/test/#article",
               "@type": "Article",
@@ -99,10 +89,17 @@ describe('defineArticle', () => {
               "description": "my article description",
               "headline": "Article headline",
               "image": {
-                "@id": "https://example.com/#/schema/image/maGcIV09t0",
+                "@id": "https://example.com/#/schema/image/9zy4GMmGsY",
               },
               "inLanguage": "en-AU",
               "thumbnailUrl": "https://example.com/image.png",
+            },
+            {
+              "@id": "https://example.com/#/schema/image/9zy4GMmGsY",
+              "@type": "ImageObject",
+              "contentUrl": "https://example.com/image.png",
+              "inLanguage": "en-AU",
+              "url": "https://example.com/image.png",
             },
           ]
         `)
@@ -168,7 +165,7 @@ describe('defineArticle', () => {
   it('adds read action to web page', () => {
     useSetup(() => {
       useSchemaOrg([
-        defineWebPagePartial(),
+        defineWebPage(),
         defineArticle(defaultArticleInput),
       ])
 
@@ -191,7 +188,7 @@ describe('defineArticle', () => {
   it('clones date to web page', () => {
     useSetup(() => {
       useSchemaOrg([
-        defineWebPagePartial(),
+        defineWebPage(),
         defineArticle({
           '@id': '#my-article',
           ...defaultArticleInput,
@@ -212,7 +209,10 @@ describe('defineArticle', () => {
   it('handles custom author', () => {
     useSetup(() => {
       useSchemaOrg([
-        defineWebPagePartial(),
+        defineOrganization({
+          name: 'Identity',
+        }),
+        defineWebPage(),
         defineArticle({
           ...defaultArticleInput,
           author: [
@@ -227,27 +227,51 @@ describe('defineArticle', () => {
       const client = injectSchemaOrg()
       const articleNode = client.findNode<Article>('#article')
 
+      expect(articleNode).toMatchInlineSnapshot(`
+        {
+          "@id": "https://example.com/#article",
+          "@type": "Article",
+          "author": {
+            "@id": "https://example.com/#/schema/person/xwVZGAwW3S",
+          },
+          "dateModified": "2021-11-10T10:10:10.000Z",
+          "datePublished": "2021-11-10T10:10:10.000Z",
+          "description": "test",
+          "headline": "test",
+          "image": {
+            "@id": "https://example.com/#primaryimage",
+          },
+          "inLanguage": "en-AU",
+          "isPartOf": {
+            "@id": "https://example.com/#webpage",
+          },
+          "mainEntityOfPage": {
+            "@id": "https://example.com/#webpage",
+          },
+          "publisher": {
+            "@id": "https://example.com/#identity",
+          },
+          "thumbnailUrl": "https://example.com/my-image.png",
+        }
+      `)
+
       // @ts-expect-error untyped
       const id = articleNode.author['@id']
 
-      expect(id).toEqual('https://example.com/#/schema/person/x29kfkAXdv')
+      expect(id).toEqual('https://example.com/#/schema/person/xwVZGAwW3S')
 
       const person = client.findNode('https://example.com/#/schema/person/x29kfkAXdv')
-      expect(person).toMatchInlineSnapshot(`
-        {
-          "@id": "https://example.com/#/schema/person/x29kfkAXdv",
-          "@type": "Person",
-          "name": "Harlan Wilton",
-          "url": "https://harlanzw.com",
-        }
-      `)
+      expect(person).toMatchInlineSnapshot('undefined')
     })
   })
 
   it('handles custom authors', () => {
     useSetup(() => {
       useSchemaOrg([
-        defineWebPagePartial(),
+        defineOrganization({
+          name: 'Identity',
+        }),
+        defineWebPage(),
         defineArticle({
           ...defaultArticleInput,
           author: [
@@ -272,27 +296,17 @@ describe('defineArticle', () => {
       expect(client.graphNodes).toMatchInlineSnapshot(`
         [
           {
-            "@id": "https://example.com/#/schema/image/eI7JYdUrdY",
-            "@type": "ImageObject",
-            "contentUrl": "https://example.com/my-image.png",
-            "inLanguage": "en-AU",
-            "url": "https://example.com/my-image.png",
-          },
-          {
-            "@id": "https://example.com/#/schema/person/t3ho9AFmi4",
-            "@type": "Person",
-            "name": "John doe",
-            "url": "https://harlanzw.com",
-          },
-          {
-            "@id": "https://example.com/#/schema/person/4gh9pCDFUz",
-            "@type": "Person",
-            "name": "Jane doe",
-            "url": "https://harlanzw.com",
+            "@id": "https://example.com/#identity",
+            "@type": "Organization",
+            "name": "Identity",
+            "url": "https://example.com/",
           },
           {
             "@id": "https://example.com/#webpage",
             "@type": "WebPage",
+            "about": {
+              "@id": "https://example.com/#identity",
+            },
             "dateModified": "2021-11-10T10:10:10.000Z",
             "datePublished": "2021-11-10T10:10:10.000Z",
             "potentialAction": [
@@ -303,6 +317,9 @@ describe('defineArticle', () => {
                 ],
               },
             ],
+            "primaryImageOfPage": {
+              "@id": "https://example.com/#primaryimage",
+            },
             "url": "https://example.com/",
           },
           {
@@ -310,10 +327,10 @@ describe('defineArticle', () => {
             "@type": "Article",
             "author": [
               {
-                "@id": "https://example.com/#/schema/person/t3ho9AFmi4",
+                "@id": "https://example.com/#/schema/person/xRdko3dItW",
               },
               {
-                "@id": "https://example.com/#/schema/person/4gh9pCDFUz",
+                "@id": "https://example.com/#/schema/person/zhc2uL2FnG",
               },
             ],
             "dateModified": "2021-11-10T10:10:10.000Z",
@@ -321,7 +338,7 @@ describe('defineArticle', () => {
             "description": "test",
             "headline": "test",
             "image": {
-              "@id": "https://example.com/#/schema/image/eI7JYdUrdY",
+              "@id": "https://example.com/#primaryimage",
             },
             "inLanguage": "en-AU",
             "isPartOf": {
@@ -330,7 +347,29 @@ describe('defineArticle', () => {
             "mainEntityOfPage": {
               "@id": "https://example.com/#webpage",
             },
+            "publisher": {
+              "@id": "https://example.com/#identity",
+            },
             "thumbnailUrl": "https://example.com/my-image.png",
+          },
+          {
+            "@id": "https://example.com/#/schema/person/xRdko3dItW",
+            "@type": "Person",
+            "name": "John doe",
+            "url": "https://harlanzw.com",
+          },
+          {
+            "@id": "https://example.com/#/schema/person/zhc2uL2FnG",
+            "@type": "Person",
+            "name": "Jane doe",
+            "url": "https://harlanzw.com",
+          },
+          {
+            "@id": "https://example.com/#primaryimage",
+            "@type": "ImageObject",
+            "contentUrl": "https://example.com/my-image.png",
+            "inLanguage": "en-AU",
+            "url": "https://example.com/my-image.png",
           },
         ]
       `)
@@ -338,90 +377,84 @@ describe('defineArticle', () => {
   })
 
   it('can match yoast schema', () => {
-    mockCreateSchemaOptions({
+    mockRoute({
       canonicalHost: 'https://kootingalpecancompany.com/',
-      defaultLanguage: 'en-US',
-      provider: {
-        // @ts-expect-error mock untyped
-        useRoute: () => reactive({
-          path: '/pecan-tree-kootingal',
-          meta: {
-            title: 'The pecan tree &#8220;Carya illinoinensis&#8221;',
-            image: 'https://res.cloudinary.com/kootingalpecancompany/images/w_1920,h_2560/f_auto,q_auto/v1648723707/IMG_0446/IMG_0446.jpg?_i=AA',
-          },
-        }),
-      },
-    })
-    useSetup(() => {
-      useSchemaOrg([
-        defineOrganization({
-          name: 'Kootingal Pecan Company',
-          logo: 'test',
-        }),
-        defineWebPagePartial(),
-      ])
+      inLanguage: 'en-US',
+      path: '/pecan-tree-kootingal',
+      title: 'The pecan tree &#8220;Carya illinoinensis&#8221;',
+      image: 'https://res.cloudinary.com/kootingalpecancompany/images/w_1920,h_2560/f_auto,q_auto/v1648723707/IMG_0446/IMG_0446.jpg?_i=AA',
+    }, () => {
+      useSetup(() => {
+        useSchemaOrg([
+          defineOrganization({
+            name: 'Kootingal Pecan Company',
+            logo: 'test',
+          }),
+          defineWebPage(),
+        ])
 
-      useSchemaOrg([
-        defineArticlePartial({
-          wordCount: 381,
-          datePublished: '2022-04-06T08:00:51+00:00',
-          dateModified: '2022-04-06T08:00:53+00:00',
-          author: {
-            '@id': '#/schema/person/13c25c1e03aefc2d21fbd03df3d17432',
-            'name': 'Mark BT',
+        useSchemaOrg([
+          defineArticle({
+            wordCount: 381,
+            datePublished: '2022-04-06T08:00:51+00:00',
+            dateModified: '2022-04-06T08:00:53+00:00',
+            author: {
+              '@id': '#/schema/person/13c25c1e03aefc2d21fbd03df3d17432',
+              'name': 'Mark BT',
+            },
+            thumbnailUrl: 'https://res.cloudinary.com/kootingalpecancompany/images/w_1920,h_2560/f_auto,q_auto/v1648723707/IMG_0446/IMG_0446.jpg?_i=AA',
+            keywords: [
+              'certified organic pecans',
+              'Kootingal',
+              'Orchard',
+              'organic nuts',
+              'Pecan tree',
+            ],
+            articleSection: [
+              'Organic pecans, activated pecans, single source, Australian organic pecans',
+              'Pecan tree',
+            ],
+          }),
+        ])
+
+        const { findNode } = injectSchemaOrg()
+
+        expect(findNode('#article')).toEqual({
+          '@type': 'Article',
+          '@id': 'https://kootingalpecancompany.com/pecan-tree-kootingal/#article',
+          'isPartOf': {
+            '@id': 'https://kootingalpecancompany.com/pecan-tree-kootingal/#webpage',
           },
-          thumbnailUrl: 'https://res.cloudinary.com/kootingalpecancompany/images/w_1920,h_2560/f_auto,q_auto/v1648723707/IMG_0446/IMG_0446.jpg?_i=AA',
-          keywords: [
+          'author': {
+            '@id': 'https://kootingalpecancompany.com/#/schema/person/13c25c1e03aefc2d21fbd03df3d17432',
+          },
+          'headline': 'The pecan tree &#8220;Carya illinoinensis&#8221;',
+          'dateModified': '2022-04-06T08:00:53.000Z',
+          'datePublished': '2022-04-06T08:00:51.000Z',
+          'mainEntityOfPage': {
+            '@id': 'https://kootingalpecancompany.com/pecan-tree-kootingal/#webpage',
+          },
+          'wordCount': 381,
+          'publisher': {
+            '@id': 'https://kootingalpecancompany.com/#identity',
+          },
+          'image': {
+            '@id': 'https://kootingalpecancompany.com/pecan-tree-kootingal/#primaryimage',
+          },
+          'thumbnailUrl': 'https://res.cloudinary.com/kootingalpecancompany/images/w_1920,h_2560/f_auto,q_auto/v1648723707/IMG_0446/IMG_0446.jpg?_i=AA',
+          'keywords': [
             'certified organic pecans',
             'Kootingal',
             'Orchard',
             'organic nuts',
             'Pecan tree',
           ],
-          articleSection: [
+          'articleSection': [
             'Organic pecans, activated pecans, single source, Australian organic pecans',
             'Pecan tree',
           ],
-        }),
-      ])
-
-      const { findNode } = injectSchemaOrg()
-
-      expect(findNode('#article')).toEqual({
-        '@type': 'Article',
-        '@id': 'https://kootingalpecancompany.com/pecan-tree-kootingal/#article',
-        'isPartOf': {
-          '@id': 'https://kootingalpecancompany.com/pecan-tree-kootingal/#webpage',
-        },
-        'author': {
-          '@id': 'https://kootingalpecancompany.com/#/schema/person/13c25c1e03aefc2d21fbd03df3d17432',
-        },
-        'headline': 'The pecan tree &#8220;Carya illinoinensis&#8221;',
-        'dateModified': '2022-04-06T08:00:53.000Z',
-        'datePublished': '2022-04-06T08:00:51.000Z',
-        'mainEntityOfPage': {
-          '@id': 'https://kootingalpecancompany.com/pecan-tree-kootingal/#webpage',
-        },
-        'wordCount': 381,
-        'publisher': {
-          '@id': 'https://kootingalpecancompany.com/#identity',
-        },
-        'image': {
-          '@id': 'https://kootingalpecancompany.com/pecan-tree-kootingal/#primaryimage',
-        },
-        'thumbnailUrl': 'https://res.cloudinary.com/kootingalpecancompany/images/w_1920,h_2560/f_auto,q_auto/v1648723707/IMG_0446/IMG_0446.jpg?_i=AA',
-        'keywords': [
-          'certified organic pecans',
-          'Kootingal',
-          'Orchard',
-          'organic nuts',
-          'Pecan tree',
-        ],
-        'articleSection': [
-          'Organic pecans, activated pecans, single source, Australian organic pecans',
-          'Pecan tree',
-        ],
-        'inLanguage': 'en-US',
+          'inLanguage': 'en-US',
+        })
       })
     })
   })

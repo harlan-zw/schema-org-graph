@@ -1,30 +1,38 @@
-import {Arrayable, Id, SchemaNode, OptionalAtKeys} from "../types";
-import {resolveAsGraphKey} from "../utils";
+import type { Arrayable, Id, RegisteredThing, Thing } from '../types'
+import { asArray, resolveAsGraphKey } from '../utils'
 
-export const createSchemaOrgGraph = () => {
-  let nodes: OptionalAtKeys<SchemaNode>[] = []
+export interface SchemaOrgContext {
+  readonly nodes: RegisteredThing[]
+  meta: Record<string, any>
+  addNode: <T extends Arrayable<Thing>>(node: T) => void
+  findNode: <T extends Thing>(id: Id | string) => T | null
+  _ctxUid: number
+}
+
+export const createSchemaOrgGraph = (): SchemaOrgContext => {
+  const nodes: RegisteredThing[] = []
+  const meta = {}
 
   // used for deduping across duplicate context's
   let ctxUid = 0
 
   return {
-    findNode<T extends SchemaNode>(id: Id|string) {
+    findNode<T extends Thing>(id: Id | string) {
       const key = resolveAsGraphKey(id) as Id
       return nodes
         .filter(n => !!n['@id'])
         .find(n => resolveAsGraphKey(n['@id'] as Id) === key) as unknown as T | null
     },
-    addNode(input: Arrayable<OptionalAtKeys<SchemaNode>>) {
-      (Array.isArray(input) ? input : [input]).forEach((node) => {
-        node._uid = ctxUid
-        nodes.push(node)
+    addNode(input: Arrayable<Thing>) {
+      asArray(input).forEach((node) => {
+        const registeredNode = node as RegisteredThing
+        registeredNode._uid = ctxUid++
+        nodes.push(registeredNode)
       })
     },
-    clearUid(uid) {
-      nodes = nodes.filter(n => n._uid !== uid)
-    },
-    uid: ctxUid,
+    _ctxUid: ctxUid,
     nodes,
+    meta,
   }
 }
 

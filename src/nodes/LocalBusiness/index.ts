@@ -1,19 +1,17 @@
-import type { DeepPartial } from 'utility-types'
-import type { OptionalAtKeys } from '../../types'
+import type { Optional } from 'utility-types'
 import {
   IdentityId,
-  defineSchemaResolver,
   prefixId,
-  resolveId, resolveType,
+  provideResolver, resolveId, resolveType, setIfEmpty,
 } from '../../utils'
 import type { Organization } from '../Organization'
-import type { RelatedAddressInput } from '../PostalAddress'
-import { resolveAddress } from '../PostalAddress'
 import type { OpeningHoursInput } from '../OpeningHours'
 import { resolveOpeningHours } from '../OpeningHours'
 import type { SingleImageInput } from '../Image'
-import { resolveImages } from '../Image'
-import { defineSchemaOrgComponent } from '../../components/defineSchemaOrgComponent'
+import { imageResolver } from '../Image'
+import type { DefaultOptionalKeys } from '../../types'
+import { defineSchemaOrgResolver, resolveRelation } from '../../core'
+import { addressResolver } from '../PostalAddress'
 
 type ValidLocalBusinessSubTypes = 'AnimalShelter' |
 'ArchiveOrganization' |
@@ -94,38 +92,39 @@ export interface LocalBusiness extends Organization {
  * Describes a business which allows public visitation.
  * Typically, used to represent the business 'behind' the website, or on a page about a specific business.
  */
-export function defineLocalBusiness<T extends OptionalAtKeys<LocalBusiness>>(input: T) {
-  return defineSchemaResolver<T, LocalBusiness>(input, {
-    defaults({ canonicalHost, options }) {
-      return {
-        '@type': ['Organization', 'LocalBusiness'],
-        '@id': prefixId(canonicalHost, IdentityId),
-        'url': canonicalHost,
-        'currenciesAccepted': options.defaultCurrency,
-      }
-    },
-    resolve(node, client) {
-      if (node['@type'])
-        node['@type'] = resolveType(node['@type'], ['Organization', 'LocalBusiness']) as ['Organization', 'LocalBusiness', ValidLocalBusinessSubTypes]
-      // @todo fix type
-      if (node.address)
-        node.address = resolveAddress(client, node.address) as RelatedAddressInput
-      // @todo fix type
-      if (node.openingHoursSpecification)
-        node.openingHoursSpecification = resolveOpeningHours(client, node.openingHoursSpecification) as OpeningHoursInput[]
+export const localBusinessResolver = defineSchemaOrgResolver<LocalBusiness>({
+  defaults: {
+    '@type': ['Organization', 'LocalBusiness'],
+  },
+  resolve(node, ctx) {
+    setIfEmpty(node, '@id', prefixId(ctx.meta.canonicalHost, IdentityId))
+    setIfEmpty(node, 'url', ctx.meta.canonicalHost)
+    setIfEmpty(node, 'currenciesAccepted', ctx.meta.defaultCurrency)
 
-      if (node.logo) {
-        node.logo = resolveImages(client, node.logo, {
-          mergeWith: {
-            '@id': prefixId(client.canonicalHost, '#logo'),
-            'caption': node.name,
-          },
-        }) as SingleImageInput
-      }
-      resolveId(node, client.canonicalHost)
-      return node
-    },
-  })
-}
+    if (node['@type'])
+      node['@type'] = resolveType(node['@type'], ['Organization', 'LocalBusiness']) as ['Organization', 'LocalBusiness', ValidLocalBusinessSubTypes]
 
+    if (node.address)
+      node.address = resolveRelation(node.address, ctx, addressResolver)
+    if (node.openingHoursSpecification)
+      node.openingHoursSpecification = resolveRelation(node.openingHoursSpecification, ctx, resolveOpeningHours)
 
+    if (node.logo) {
+      node.logo = resolveRelation(node.logo, ctx, imageResolver, {
+        afterResolve(logo) {
+          const hasLogo = !!ctx.findNode('#logo')
+          if (!hasLogo)
+            logo['@id'] = prefixId(ctx.meta.canonicalHost, '#logo')
+
+          setIfEmpty(logo, 'caption', node.name)
+        },
+      }) as SingleImageInput
+    }
+    resolveId(node, ctx.meta.canonicalHost)
+    return node
+  },
+})
+
+export const defineLocalBusiness
+  = <T extends LocalBusiness>(input?: Optional<T, DefaultOptionalKeys>) =>
+    provideResolver(input, localBusinessResolver)

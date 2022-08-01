@@ -1,12 +1,9 @@
-import { hash } from 'ohash'
-import type { DeepPartial } from 'utility-types'
-import type { Arrayable, DefaultOptionalKeys, IdReference, OptionalAtKeys, SchemaOrgContext, Thing } from '../../types'
+import type { Optional } from 'utility-types'
+import type { DefaultOptionalKeys, IdReference, Thing } from '../../types'
 import {
-  defineSchemaResolver,
-  prefixId,
-  resolveArrayable, resolveDateToIso, resolveSchemaResolver,
+  provideResolver, resolveDateToIso, setIfEmpty,
 } from '../../utils'
-import { defineSchemaOrgComponent } from '../../components/defineSchemaOrgComponent'
+import { defineSchemaOrgResolver } from '../../core'
 
 export interface Offer extends Thing {
   '@type': 'Offer'
@@ -30,32 +27,28 @@ export interface Offer extends Thing {
    * The date after which the price is no longer available.
    */
   priceValidUntil?: string | Date
+
+  url?: string
 }
 
-export type OfferInput = OptionalAtKeys<Offer, DefaultOptionalKeys | 'availability' | 'priceCurrency'> | IdReference
+export type OfferInput = Offer | IdReference
 
-export function defineOffer<T extends OptionalAtKeys<Offer, DefaultOptionalKeys | 'availability' | 'priceCurrency'>>(input: T) {
-  return defineSchemaResolver<T, Offer>(input, {
-    defaults(ctx) {
-      return {
-        '@type': 'Offer',
-        '@id': prefixId(ctx.canonicalHost, `#/schema/offer/${hash(input)}`),
-        'priceCurrency': ctx.options.defaultCurrency,
-        'availability': 'https://schema.org/InStock',
-        'url': ctx.canonicalUrl,
-        'priceValidUntil': new Date(Date.UTC(new Date().getFullYear() + 1, 12, -1, 0, 0, 0)),
-      }
-    },
-    resolve(node) {
-      if (node.priceValidUntil)
-        node.priceValidUntil = resolveDateToIso(node.priceValidUntil)
-      return node
-    },
-  })
-}
+export const offerResolver = defineSchemaOrgResolver<Offer>({
+  defaults: {
+    '@type': 'Offer',
+    'availability': 'https://schema.org/InStock',
+  },
+  resolve(node, ctx) {
+    setIfEmpty(node, 'priceCurrency', ctx.meta.defaultCurrency)
+    setIfEmpty(node, 'priceValidUntil', new Date(Date.UTC(new Date().getFullYear() + 1, 12, -1, 0, 0, 0)))
+    setIfEmpty(node, 'url', ctx.meta.canonicalUrl)
 
-export function resolveOffer(ctx: SchemaOrgContext, input: Arrayable<OfferInput>) {
-  return resolveArrayable<OfferInput, Offer>(input, input => resolveSchemaResolver(ctx, defineOffer(input)))
-}
+    if (node.priceValidUntil)
+      node.priceValidUntil = resolveDateToIso(node.priceValidUntil)
+    return node
+  },
+})
 
-
+export const defineOffer
+  = <T extends Offer>(input?: Optional<T, DefaultOptionalKeys | 'availability' | 'priceCurrency'>) =>
+    provideResolver(input, offerResolver)

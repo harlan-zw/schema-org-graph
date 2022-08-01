@@ -1,6 +1,5 @@
 import { expect } from 'vitest'
-import { useSetup } from '../../../.test'
-import { injectSchemaOrg, useSchemaOrg } from '../../useSchemaOrg'
+import { injectSchemaOrg, useSchemaOrg, useSetup } from '../../../.test'
 import { defineRecipe } from './index'
 
 describe('defineRecipe', () => {
@@ -27,17 +26,10 @@ describe('defineRecipe', () => {
       expect(graphNodes).toMatchInlineSnapshot(`
         [
           {
-            "@id": "https://example.com/#/schema/image/D8TJS0PNSo",
-            "@type": "ImageObject",
-            "contentUrl": "https://example.com/photos/1x1/photo.jpg",
-            "inLanguage": "en-AU",
-            "url": "https://example.com/photos/1x1/photo.jpg",
-          },
-          {
             "@id": "https://example.com/#recipe",
             "@type": "Recipe",
             "image": {
-              "@id": "https://example.com/#/schema/image/D8TJS0PNSo",
+              "@id": "https://example.com/#/schema/image/0eC6Cg3aVx",
             },
             "name": "Peanut Butter Cookies",
             "recipeIngredient": [
@@ -54,6 +46,13 @@ describe('defineRecipe', () => {
                 "text": "Eat them up",
               },
             ],
+          },
+          {
+            "@id": "https://example.com/#/schema/image/0eC6Cg3aVx",
+            "@type": "ImageObject",
+            "contentUrl": "https://example.com/photos/1x1/photo.jpg",
+            "inLanguage": "en-AU",
+            "url": "https://example.com/photos/1x1/photo.jpg",
           },
         ]
       `)

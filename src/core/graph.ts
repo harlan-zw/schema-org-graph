@@ -1,5 +1,5 @@
 import type { Arrayable, Id, RegisteredThing, Thing } from '../types'
-import { asArray, resolveAsGraphKey } from '../utils'
+import {asArray, resolveAsGraphKey, setIfEmpty} from '../utils'
 
 export interface SchemaOrgContext {
   readonly nodes: RegisteredThing[]
@@ -26,7 +26,7 @@ export const createSchemaOrgGraph = (): SchemaOrgContext => {
     addNode(input: Arrayable<Thing>) {
       asArray(input).forEach((node) => {
         const registeredNode = node as RegisteredThing
-        registeredNode._uid = ctxUid++
+        setIfEmpty(registeredNode, '_uid', ctxUid++)
         nodes.push(registeredNode)
       })
     },

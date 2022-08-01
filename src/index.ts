@@ -1,3 +1,5 @@
+export * from './types'
+
 export * from './core'
 
 export * from './nodes/Article'
@@ -15,3 +17,4 @@ export * from './nodes/Recipe'
 export * from './nodes/Video'
 export * from './nodes/WebPage'
 export * from './nodes/WebSite'
+

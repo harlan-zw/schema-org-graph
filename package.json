@@ -36,8 +36,8 @@
     "build": "unbuild .",
     "stub": "unbuild . --stub",
     "test": "vitest",
-    "lint": "eslint \"{src,test}/**/*.{ts,vue,json,yml}\" --fix",
-    "webstorm-integration": "vitest --watch --reporter=dot --reporter=json --outputFile=.vitest-result.json"
+    "release": "bumpp package.json --commit --push --tag",
+    "lint": "eslint \"{src,test}/**/*.{ts,vue,json,yml}\" --fix"
   },
   "dependencies": {
     "defu": "^6.0.0",

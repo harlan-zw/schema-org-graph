@@ -1,6 +1,6 @@
 {
   "name": "schema-org-graph-js",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Node Schema.org for Simple and Automated Google Rich Results",
   "author": "Harlan Wilton <harlan@harlanzw.com>",
   "license": "MIT",

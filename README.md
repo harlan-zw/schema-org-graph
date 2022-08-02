@@ -33,11 +33,11 @@ The quickest and easiest way to add Schema.org to JavaScript Runtimes (Browser, 
 - 😊 No Schema.org knowledge required, get up and running in minutes with minimal configuration
 - ✨ 20+ Typed Schemas for best practice ([Google](https://developers.google.com/search/docs/advanced/structured-data/search-gallery), [Yoast](https://developer.yoast.com/features/schema/overview)) Rich Results
 - 🧙 Automated Schema: `@id`, URL / date resolving, route meta and more
-- 🌳 Optimised for tree-shaking
+- 🌳 Minimal code and optimised for tree-shaking
 
 ## Background
 
-This package is being built to power [vueuse/schema-org](https://github.com/vueuse/schema-org).
+This package is being built to power [vueuse/schema-org](https://github.com/vueuse/schema-org) and is a work in progress.
 
 ## Install
 

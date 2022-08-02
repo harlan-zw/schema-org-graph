@@ -1,4 +1,4 @@
-import {buildResolvedGraphCtx, buildSchemaOrgFromNodes, createSchemaOrgGraph} from "../src/core";
+import {buildResolvedGraphCtx, dedupeAndFlattenNodes, createSchemaOrgGraph} from "../src/core";
 import {resolveAsGraphKey} from "../src/utils";
 import {Id} from "../src/types";
 import {joinURL} from "ufo";
@@ -40,7 +40,7 @@ export function useSchemaOrg(args) {
 
 export function injectSchemaOrg() {
   const resolvedCtx = buildResolvedGraphCtx(graph.nodes, ctxData)
-  const graphNodes = buildSchemaOrgFromNodes(resolvedCtx.nodes)['@graph']
+  const graphNodes = dedupeAndFlattenNodes(resolvedCtx.nodes)
   resolvedCtx.findNode = (id) => {
     const key = resolveAsGraphKey(id) as Id
     return graphNodes

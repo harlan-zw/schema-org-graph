@@ -5,7 +5,18 @@ import {createSchemaOrgGraph} from "./graph";
 import {imageResolver} from "../nodes/Image";
 import {executeResolverOnNode, resolveNodeId, resolveRelation} from "./resolve";
 
-export const buildSchemaOrgFromNodes = (nodes: RegisteredThing[]) => {
+export const buildSchemaOrgJson = (nodes: RegisteredThing[]) => {
+  return {
+    '@context': 'https://schema.org',
+    '@graph': Object.values(nodes),
+  }
+}
+
+export const buildSchemaOrgHtml = (nodes: RegisteredThing[], options = { spaces: 2 }) => {
+  return JSON.stringify(buildSchemaOrgJson(nodes), undefined, options.spaces)
+}
+
+export const dedupeAndFlattenNodes = (nodes: RegisteredThing[]) => {
   const keys = nodes
     .sort((a, b) => a._uid - b._uid)
     .keys()
@@ -25,17 +36,12 @@ export const buildSchemaOrgFromNodes = (nodes: RegisteredThing[]) => {
         },
         {},
       )
-    // delete meta fields
+    // node priority is resolved, no longer need
     // @ts-expect-error untyped
     delete dedupedNodes[nodeKey]._uid
-    delete dedupedNodes[nodeKey]._resolver
   }
-  return {
-    '@context': 'https://schema.org',
-    '@graph': Object.values(dedupedNodes),
-  }
+  return Object.values(dedupedNodes)
 }
-
 
 export const buildResolvedGraphCtx = (nodes: Thing[], meta: any) => {
   // create a new graph
@@ -63,6 +69,9 @@ export const buildResolvedGraphCtx = (nodes: Thing[], meta: any) => {
       }
       if (node._resolver?.rootNodeResolve)
         node._resolver.rootNodeResolve(node, ctx)
+
+      // node is resolved, no longer need resolver
+      delete node._resolver
     })
 
   return ctx

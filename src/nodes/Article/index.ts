@@ -1,5 +1,11 @@
-import type { Optional } from 'utility-types'
-import type { Arrayable, DefaultOptionalKeys, IdReference, ResolvableDate, Thing } from '../../types'
+import type {
+  Arrayable,
+  IdReference,
+  Identity,
+  NodeRelations,
+  ResolvableDate,
+  Thing,
+} from '../../types'
 import {
   IdentityId,
   asArray,
@@ -16,25 +22,25 @@ import {
 import type { WebPage } from '../WebPage'
 import { PrimaryWebPageId } from '../WebPage'
 import type { Organization } from '../Organization'
-import type { ChildPersonInput, Person } from '../Person'
-import type { Image, ImageInput } from '../Image'
+import type { Person } from '../Person'
+import type { Image } from '../Image'
 import type { Video } from '../Video'
 import { personResolver } from '../Person'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
 
 type ValidArticleSubTypes = 'Article' | 'AdvertiserContentArticle' | 'NewsArticle' | 'Report' | 'SatiricalArticle' | 'ScholarlyArticle' | 'SocialMediaPosting' | 'TechArticle'
 
-export interface Article extends Thing {
-  ['@type']: Arrayable<ValidArticleSubTypes>
+export interface ArticleLite extends Thing {
+  ['@type']?: Arrayable<ValidArticleSubTypes>
   /**
    * The headline of the article (falling back to the title of the WebPage).
    * Headlines should not exceed 110 characters.
    */
-  headline: string
+  headline?: string
   /**
    * A summary of the article (falling back to the page's meta description content).
    */
-  description: string
+  description?: string
   /**
    * A reference-by-ID to the WebPage node.
    */
@@ -50,15 +56,15 @@ export interface Article extends Thing {
   /**
    * A reference-by-ID to the author of the article.
    */
-  author: Arrayable<ChildPersonInput>
+  author?: NodeRelations<Person>
   /**
    * A reference-by-ID to the publisher of the article.
    */
-  publisher: IdReference | Person | Organization
+  publisher?: NodeRelations<Identity>
   /**
    * An array of all videos in the article content, referenced by ID.
    */
-  video?: Arrayable<IdReference | Video>
+  video?: NodeRelations<Video>
   /**
    * An image object or referenced by ID.
    * - Must be at least 696 pixels wide.
@@ -66,11 +72,11 @@ export interface Article extends Thing {
    *
    * Must have markup of it somewhere on the page.
    */
-  image: Arrayable<ImageInput>
+  image?: NodeRelations<Image | string>
   /**
    * An array of references by ID to comment pieces.
    */
-  comment?: Arrayable<IdReference | Comment>
+  comment?: NodeRelations<Comment>
   /**
    * A thumbnail image relevant to the Article.
    */
@@ -106,12 +112,12 @@ export interface Article extends Thing {
   /**
    * A reference-by-ID to the Organization or Person who holds the copyright.
    */
-  copyrightHolder?: IdReference | Person | Organization
+  copyrightHolder?: NodeRelations<Identity>
 }
 
-export const PrimaryArticleId = '#article'
+export type Article = ArticleLite
 
-export type ResolvableArticleKeys = 'publisher' | 'author' | 'image'
+export const PrimaryArticleId = '#article'
 
 /**
  * Describes an Article on a WebPage.
@@ -183,6 +189,4 @@ export const articleResolver = defineSchemaOrgResolver<Article>({
   },
 })
 
-export const defineArticle
-  = <T extends Article>(input?: Optional<T, DefaultOptionalKeys | ResolvableArticleKeys>) =>
-    provideResolver(input, articleResolver)
+export const defineArticle = <T extends Article>(input?: T) => provideResolver(input, articleResolver)

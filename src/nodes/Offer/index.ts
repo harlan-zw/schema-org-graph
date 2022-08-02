@@ -1,16 +1,15 @@
-import type { Optional } from 'utility-types'
-import type { DefaultOptionalKeys, IdReference, Thing } from '../../types'
+import type { ResolvableDate, Thing } from '../../types'
 import {
   provideResolver, resolveDateToIso, setIfEmpty,
 } from '../../utils'
 import { defineSchemaOrgResolver } from '../../core'
 
-export interface Offer extends Thing {
-  '@type': 'Offer'
+export interface OfferLite extends Thing {
+  '@type'?: 'Offer'
   /**
    * A schema.org URL representing a schema itemAvailability value (e.g., https://schema.org/OutOfStock).
    */
-  availability: string
+  availability?: string
   /**
    * The price, omitting any currency symbols, and using '.' to indicate a decimal place.
    */
@@ -18,7 +17,7 @@ export interface Offer extends Thing {
   /**
    * The currency used to describe the product price, in three-letter ISO 4217 format.
    */
-  priceCurrency: string
+  priceCurrency?: string
   /**
    * @todo A PriceSpecification object, including a valueAddedTaxIncluded property (of either true or false).
    */
@@ -26,14 +25,22 @@ export interface Offer extends Thing {
   /**
    * The date after which the price is no longer available.
    */
-  priceValidUntil?: string | Date
+  priceValidUntil?: ResolvableDate
 
   url?: string
 }
 
-export type OfferInput = Offer | IdReference
+export type Offer = OfferLite
 
 export const offerResolver = defineSchemaOrgResolver<Offer>({
+  cast(node) {
+    if (typeof node === 'number') {
+      return {
+        price: node,
+      }
+    }
+    return node
+  },
   defaults: {
     '@type': 'Offer',
     'availability': 'https://schema.org/InStock',
@@ -49,6 +56,4 @@ export const offerResolver = defineSchemaOrgResolver<Offer>({
   },
 })
 
-export const defineOffer
-  = <T extends Offer>(input?: Optional<T, DefaultOptionalKeys | 'availability' | 'priceCurrency'>) =>
-    provideResolver(input, offerResolver)
+export const defineOffer = <T extends Offer>(input?: T) => provideResolver(input, offerResolver)

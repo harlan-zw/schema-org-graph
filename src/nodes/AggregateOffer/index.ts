@@ -1,16 +1,15 @@
-import type { Optional } from 'utility-types'
-import type { DefaultOptionalKeys, IdReference, Thing } from '../../types'
+import type { NodeRelations, Thing } from '../../types'
 import {
   asArray,
   provideResolver,
   setIfEmpty,
 } from '../../utils'
-import type { OfferInput } from '../Offer'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
+import type { Offer } from '../Offer'
 import { offerResolver } from '../Offer'
 
-export interface AggregateOffer extends Thing {
-  '@type': 'AggregateOffer'
+export interface AggregateOfferLite extends Thing {
+  '@type'?: 'AggregateOffer'
   /**
    * The lowest price of the group, omitting any currency symbols, and using '.' to indicate a decimal place.
    */
@@ -22,19 +21,18 @@ export interface AggregateOffer extends Thing {
   /**
    * The currency used to describe the product price, in a three-letter ISO 4217 format.
    */
-  priceCurrency: string
+  priceCurrency?: string
   /**
    * The number of offers in the group
    */
-  offerCount: number
+  offerCount?: number
   /**
    * An array of Offer pieces, referenced by ID.
    */
-  offers: OfferInput[]
+  offers: NodeRelations<Offer>
 }
 
-export type AggregateOfferOptionalKeys = 'priceCurrency' | 'offerCount'
-export type AggregateOfferInput = Optional<AggregateOffer, AggregateOfferOptionalKeys> | IdReference
+export type AggregateOffer = AggregateOfferLite
 
 export const aggregateOfferResolver = defineSchemaOrgResolver<AggregateOffer>({
   defaults: {
@@ -49,6 +47,4 @@ export const aggregateOfferResolver = defineSchemaOrgResolver<AggregateOffer>({
   },
 })
 
-export const defineAggregateOffer
-  = <T extends AggregateOffer>(input?: Optional<T, DefaultOptionalKeys | AggregateOfferOptionalKeys>) =>
-    provideResolver(input, aggregateOfferResolver)
+export const defineAggregateOffer = <T extends AggregateOffer>(input?: T) => provideResolver(input, aggregateOfferResolver)

@@ -1,5 +1,4 @@
-import type { Optional } from 'utility-types'
-import type { DefaultOptionalKeys, IdReference, Thing } from '../../types'
+import type { IdReference, NodeRelations, Thing } from '../../types'
 import {
   idReference,
   prefixId,
@@ -8,15 +7,15 @@ import {
 } from '../../utils'
 import { PrimaryWebPageId } from '../WebPage'
 import type { Video } from '../Video'
-import type { ImageInput } from '../Image'
+import type { Image } from '../Image'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
-import type { HowToStepInput } from './HowToStep'
+import type { HowToStep } from './HowToStep'
 import { howToStepResolver } from './HowToStep'
 
 /**
  * Instructions that explain how to achieve a result by performing a sequence of steps.
  */
-export interface HowTo extends Thing {
+export interface HowToLite extends Thing {
   /**
    * A string describing the guide.
    */
@@ -24,7 +23,7 @@ export interface HowTo extends Thing {
   /**
    * An array of howToStep objects
    */
-  step: HowToStepInput[]
+  step: NodeRelations<HowToStep | string>[]
   /**
    * Referencing the WebPage by ID.
    */
@@ -49,7 +48,7 @@ export interface HowTo extends Thing {
   /**
    * Image of the completed how-to.
    */
-  image?: ImageInput
+  image?: NodeRelations<Image | string>
   /**
    * A supply consumed when performing instructions or a direction.
    */
@@ -62,8 +61,10 @@ export interface HowTo extends Thing {
    * A video of the how-to. Follow the list of required and recommended Video properties.
    * Mark steps of the video with hasPart.
    */
-  video?: IdReference | Video
+  video?: NodeRelations<Video | string>
 }
+
+export type HowTo = HowToLite
 
 export const HowToId = '#howto'
 
@@ -95,9 +96,7 @@ export const howToResolver = defineSchemaOrgResolver<HowTo>({
   },
 })
 
-export const defineHowTo
-  = <T extends HowTo>(input?: Optional<T, DefaultOptionalKeys>) =>
-    provideResolver(input, howToResolver)
+export const defineHowTo = <T extends HowTo>(input?: T) => provideResolver(input, howToResolver)
 
 export * from './HowToStep'
 export * from './HowToStepDirection'

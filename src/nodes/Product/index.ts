@@ -1,6 +1,5 @@
 import { hash } from 'ohash'
-import type { Optional } from 'utility-types'
-import type { Arrayable, DefaultOptionalKeys, IdReference, Thing } from '../../types'
+import type { NodeRelation, NodeRelations, Thing } from '../../types'
 import {
   IdentityId,
   idReference,
@@ -12,24 +11,23 @@ import type { WebPage } from '../WebPage'
 import { PrimaryWebPageId } from '../WebPage'
 import type { Person } from '../Person'
 import type { Organization } from '../Organization'
-import type { RelatedReviewInput } from '../Review'
+import type { Review } from '../Review'
 import { reviewResolver } from '../Review'
-import type { ImageInput } from '../Image'
-import type { OfferInput } from '../Offer'
-import type { AggregateRatingInput } from '../AggregateRating'
+import type { AggregateRating } from '../AggregateRating'
 import { aggregateRatingResolver } from '../AggregateRating'
-import type { AggregateOfferInput } from '../AggregateOffer'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
+import type { AggregateOffer } from '../AggregateOffer'
 import { aggregateOfferResolver } from '../AggregateOffer'
+import type { Offer } from '../Offer'
 import { offerResolver } from '../Offer'
-import { PrimaryArticleId } from '../Article'
+import type { Image } from '../Image'
 
 /**
  * Any offered product or service.
  * For example: a pair of shoes; a concert ticket; the rental of a car;
  * a haircut; or an episode of a TV show streamed online.
  */
-export interface Product extends Thing {
+export interface ProductLite extends Thing {
   /**
    * The name of the product.
    */
@@ -39,19 +37,19 @@ export interface Product extends Thing {
    * - Must be at least 696 pixels wide.
    * - Must be of the following formats+file extensions: .jpg, .png, .gif ,or .webp.
    */
-  image: Arrayable<ImageInput>
+  image: NodeRelations<Image | string>
   /**
    *  An array of references-by-ID to one or more Offer or aggregateOffer pieces.
    */
-  offers?: OfferInput[]
+  offers?: NodeRelations<Offer | number>
   /**
    *  A reference to an Organization piece, representing brand associated with the Product.
    */
-  brand?: Organization | IdReference
+  brand?: NodeRelation<Organization>
   /**
    * A reference to an Organization piece which represents the WebSite.
    */
-  seller?: Organization | IdReference
+  seller?: NodeRelation<Organization>
   /**
    * A text description of the product.
    */
@@ -59,7 +57,7 @@ export interface Product extends Thing {
   /**
    * An array of references-by-id to one or more Review pieces.
    */
-  review?: Arrayable<RelatedReviewInput>
+  review?: NodeRelations<Review>
   /**
    * A merchant-specific identifier for the Product.
    */
@@ -67,16 +65,18 @@ export interface Product extends Thing {
   /**
    * An AggregateRating object.
    */
-  aggregateRating?: AggregateRatingInput
+  aggregateRating?: NodeRelation<AggregateRating>
   /**
    * An AggregateOffer object.
    */
-  aggregateOffer?: AggregateOfferInput
+  aggregateOffer?: NodeRelation<AggregateOffer>
   /**
    * A reference to an Organization piece, representing the brand which produces the Product.
    */
-  manufacturer?: Organization | IdReference
+  manufacturer?: NodeRelation<Organization>
 }
+
+export type Product = ProductLite
 
 export const ProductId = '#product'
 
@@ -90,7 +90,7 @@ export const productResolver = defineSchemaOrgResolver<Product>({
     { meta: 'title', key: 'name' },
   ],
   resolve(node, ctx) {
-    setIfEmpty(node, '@id', prefixId(ctx.meta.canonicalUrl, PrimaryArticleId))
+    setIfEmpty(node, '@id', prefixId(ctx.meta.canonicalUrl, ProductId))
     resolveId(node, ctx.meta.canonicalUrl)
     // provide a default sku
     setIfEmpty(node, 'sku', hash(node.name))
@@ -118,6 +118,4 @@ export const productResolver = defineSchemaOrgResolver<Product>({
   },
 })
 
-export const defineProduct
-  = <T extends Product>(input?: Optional<T, DefaultOptionalKeys>) =>
-    provideResolver(input, productResolver)
+export const defineProduct = <T extends Product>(input?: T) => provideResolver(input, productResolver)

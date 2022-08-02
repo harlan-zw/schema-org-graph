@@ -1,5 +1,10 @@
-import type { Optional } from 'utility-types'
-import type { Arrayable, DefaultOptionalKeys, IdReference, ResolvableDate, Thing } from '../../types'
+import type {
+  IdReference,
+  NodeRelation,
+  NodeRelations,
+  ResolvableDate,
+  Thing,
+} from '../../types'
 import {
   idReference,
   prefixId, provideResolver,
@@ -11,14 +16,14 @@ import { PrimaryArticleId } from '../Article'
 import type { WebPage } from '../WebPage'
 import { PrimaryWebPageId } from '../WebPage'
 import type { Video } from '../Video'
-import type { ImageInput } from '../Image'
-import type { ChildPersonInput } from '../Person'
-import type { HowToStepInput } from '../HowTo'
+import type { HowToStep } from '../HowTo'
 import { howToStepResolver } from '../HowTo'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
+import type { Image } from '../Image'
+import type { Person } from '../Person'
 
-export interface Recipe extends Thing {
-  '@type': 'Recipe'
+export interface RecipeLite extends Thing {
+  '@type'?: 'Recipe'
   /**
    * Referencing the WebPage or Article by ID.
    */
@@ -26,11 +31,11 @@ export interface Recipe extends Thing {
   /**
    * A string describing the recipe.
    */
-  name: string
+  name?: string
   /**
    * An image representing the completed recipe, referenced by ID.
    */
-  image: ImageInput
+  image?: NodeRelation<Image | string>
   /**
    * An array of strings representing each ingredient and quantity (e.g., "3 apples").
    */
@@ -38,7 +43,7 @@ export interface Recipe extends Thing {
   /**
    * An array of HowToStep objects.
    */
-  recipeInstructions: Arrayable<HowToStepInput>
+  recipeInstructions: NodeRelations<HowToStep | string>
   /**
    * A string describing the recipe.
    */
@@ -83,7 +88,7 @@ export interface Recipe extends Thing {
   /**
    *  A reference to a video representing the recipe instructions, by ID.
    */
-  video?: Arrayable<Video | IdReference>
+  video?: NodeRelations<Video | IdReference>
   /**
    * The language code for the guide; e.g., en-GB.
    */
@@ -91,12 +96,14 @@ export interface Recipe extends Thing {
   /**
    * A reference-by-ID to the author of the article.
    */
-  author?: Arrayable<ChildPersonInput>
+  author?: NodeRelation<Person>
   /**
    * The date when the recipe was added, in ISO 8601 format.
    */
   datePublished?: ResolvableDate
 }
+
+export type Recipe = RecipeLite
 
 export interface NutritionInformation extends Thing {
   '@type': 'NutritionInformation'
@@ -124,7 +131,7 @@ export const recipeResolver = defineSchemaOrgResolver<Recipe>({
     resolveId(node, ctx.meta.canonicalUrl)
     // @todo fix types
     if (node.recipeInstructions)
-      node.recipeInstructions = resolveRelation(node.recipeInstructions, ctx, howToStepResolver) as HowToStepInput[]
+      node.recipeInstructions = resolveRelation(node.recipeInstructions, ctx, howToStepResolver)
     return node
   },
   rootNodeResolve(node, { findNode }) {
@@ -140,6 +147,4 @@ export const recipeResolver = defineSchemaOrgResolver<Recipe>({
   },
 })
 
-export const defineRecipe
-  = <T extends Recipe>(input?: Optional<T, DefaultOptionalKeys>) =>
-    provideResolver(input, recipeResolver)
+export const defineRecipe = <T extends Recipe>(input?: T) => provideResolver(input, recipeResolver)

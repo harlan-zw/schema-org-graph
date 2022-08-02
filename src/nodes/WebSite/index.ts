@@ -1,6 +1,5 @@
 import { hash } from 'ohash'
-import type { Optional } from 'utility-types'
-import type { Arrayable, DefaultOptionalKeys, MaybeIdReference, Thing } from '../../types'
+import type { Arrayable, Identity, NodeRelations, Thing } from '../../types'
 import {
   IdentityId,
   idReference,
@@ -19,8 +18,8 @@ import { searchActionResolver } from './SearchAction'
 /**
  * A WebSite is a set of related web pages and other items typically served from a single web domain and accessible via URLs.
  */
-export interface WebSite extends Thing {
-  '@type': 'WebSite'
+export interface WebSiteLite extends Thing {
+  '@type'?: 'WebSite'
   /**
    * The site's home URL (excluding a trailing slash).
    */
@@ -37,7 +36,7 @@ export interface WebSite extends Thing {
    * A reference-by-ID to the Organization which publishes the WebSite
    * (or an array of Organization and Person in the case that the website represents an individual).
    */
-  publisher?: Arrayable<MaybeIdReference<Person | Organization>>
+  publisher?: NodeRelations<Identity>
   /**
    * A SearchAction object describing the site's internal search.
    */
@@ -48,6 +47,8 @@ export interface WebSite extends Thing {
    */
   inLanguage?: Arrayable<string>
 }
+
+export type WebSite = WebSiteLite
 
 export const PrimaryWebSiteId = '#website'
 
@@ -93,8 +94,6 @@ export const webSiteResolver = defineSchemaOrgResolver<WebSite>({
   },
 })
 
-export const defineWebSite
-  = <T extends WebSite>(input?: Optional<T, DefaultOptionalKeys>) =>
-    provideResolver(input, webSiteResolver)
+export const defineWebSite = <T extends WebSite>(input?: T) => provideResolver(input, webSiteResolver)
 
 export * from './SearchAction'

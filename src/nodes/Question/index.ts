@@ -1,5 +1,4 @@
-import type { Optional } from 'utility-types'
-import type { DefaultOptionalKeys, Thing } from '../../types'
+import type { NodeRelation, Thing } from '../../types'
 import {
   asArray,
   dedupeMerge,
@@ -16,7 +15,7 @@ import { answerResolver } from './Answer'
 /**
  * A specific question - e.g. from a user seeking answers online, or collected in a Frequently Asked Questions (FAQ) document.
  */
-export interface Question extends Thing {
+export interface QuestionLite extends Thing {
   /**
    * The text content of the question.
    */
@@ -24,7 +23,7 @@ export interface Question extends Thing {
   /**
    * An answer object, with a text property which contains the answer to the question.
    */
-  acceptedAnswer: Answer | string
+  acceptedAnswer: NodeRelation<Answer | string>
   /**
    * The language code for the question; e.g., en-GB.
    */
@@ -38,6 +37,8 @@ export interface Question extends Thing {
    */
   answer?: string
 }
+
+export type Question = QuestionLite
 
 /**
  * Describes a Question. Most commonly used in FAQPage or QAPage content.
@@ -69,6 +70,4 @@ export const questionResolver = defineSchemaOrgResolver<Question>({
   },
 })
 
-export const defineQuestion
-  = <T extends Question>(input?: Optional<T, DefaultOptionalKeys>) =>
-    provideResolver(input, questionResolver)
+export const defineQuestion = <T extends Question>(input?: T) => provideResolver(input, questionResolver)

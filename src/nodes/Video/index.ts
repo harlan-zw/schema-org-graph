@@ -1,5 +1,4 @@
-import type { Optional } from 'utility-types'
-import type { DefaultOptionalKeys, Id, ResolvableDate, Thing } from '../../types'
+import type { Id, NodeRelation, ResolvableDate, Thing } from '../../types'
 import {
   asArray,
   provideResolver,
@@ -8,22 +7,23 @@ import {
   resolveWithBaseUrl, setIfEmpty,
 } from '../../utils'
 import type { Image } from '../Image'
-import { defineSchemaOrgResolver } from '../../core'
+import { defineSchemaOrgResolver, resolveRelation } from '../../core'
+import { imageResolver } from '../Image'
 
-export interface Video extends Thing {
-  '@type': 'VideoObject'
+export interface VideoLite extends Thing {
+  '@type'?: 'VideoObject'
   /**
    * The title of the video.
    */
-  name: string
+  name?: string
   /**
    * A description of the video (falling back to the caption, then to 'No description').
    */
-  description: string
+  description?: string
   /**
    * A reference-by-ID to an imageObject.
    */
-  thumbnailUrl: string
+  thumbnailUrl?: NodeRelation<Image>
   /**
    * The date the video was published, in ISO 8601 format (e.g., 2020-01-20).
    */
@@ -71,10 +71,20 @@ export interface Video extends Thing {
   embedUrl?: string
 }
 
+export type Video = VideoLite
+
 /**
  * Describes an individual video (usually in the context of an embedded media object).
  */
 export const videoResolver = defineSchemaOrgResolver<Video>({
+  cast(input) {
+    if (typeof input === 'string') {
+      input = {
+        url: input,
+      }
+    }
+    return input
+  },
   alias: 'video',
   defaults: {
     '@type': 'VideoObject',
@@ -86,11 +96,20 @@ export const videoResolver = defineSchemaOrgResolver<Video>({
     'inLanguage',
     { meta: 'publishedAt', key: 'uploadDate' },
   ],
-  resolve(video, { meta }) {
+  resolve(video, ctx) {
     if (video.uploadDate)
       video.uploadDate = resolveDateToIso(video.uploadDate)
-    video.url = resolveWithBaseUrl(meta.canonicalHost, video.url)
-    resolveId(video, meta.canonicalHost)
+    video.url = resolveWithBaseUrl(ctx.meta.canonicalHost, video.url)
+    resolveId(video, ctx.meta.canonicalHost)
+    if (video.caption && !video.description)
+      video.description = video.caption
+
+    if (!video.description)
+      video.description = 'No description'
+
+    if (video.thumbnailUrl)
+      video.thumbnailUrl = resolveRelation(video.thumbnailUrl, ctx, imageResolver)
+
     return video
   },
   rootNodeResolve(video, { findNode }) {
@@ -101,6 +120,4 @@ export const videoResolver = defineSchemaOrgResolver<Video>({
   },
 })
 
-export const defineVideo
-  = <T extends Video>(input?: Optional<T, DefaultOptionalKeys>) =>
-    provideResolver(input, videoResolver)
+export const defineVideo = <T extends Video>(input?: T) => provideResolver(input, videoResolver)

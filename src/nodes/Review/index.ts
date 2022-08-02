@@ -1,12 +1,13 @@
-import type { Arrayable, IdReference, ResolvableDate, Thing } from '../../types'
-import type { RatingInput } from '../Rating'
+import type { NodeRelation, ResolvableDate, Thing } from '../../types'
+import type { Rating } from '../Rating'
 import { ratingResolver } from '../Rating'
-import type { ChildPersonInput } from '../Person'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
+import type { Person } from '../Person'
 import { personResolver } from '../Person'
+import { provideResolver } from '../../utils'
 
-export interface Review extends Thing {
-  '@type': 'Review'
+export interface ReviewLite extends Thing {
+  '@type'?: 'Review'
   /**
    * A title for the review.
    */
@@ -14,11 +15,11 @@ export interface Review extends Thing {
   /**
    * The author of the review.
    */
-  author: Arrayable<ChildPersonInput> | string
+  author: NodeRelation<Person | string>
   /**
    * An answer object, with a text property which contains the answer to the question.
    */
-  reviewRating: Arrayable<RatingInput> | number
+  reviewRating: NodeRelation<Rating | number>
   /**
    * The language code for the question; e.g., en-GB.
    */
@@ -33,7 +34,7 @@ export interface Review extends Thing {
   reviewBody?: string
 }
 
-export type RelatedReviewInput = Review | IdReference
+export type Review = ReviewLite
 
 export const reviewResolver = defineSchemaOrgResolver<Review>({
   defaults: {
@@ -44,10 +45,12 @@ export const reviewResolver = defineSchemaOrgResolver<Review>({
   ],
   resolve(review, ctx) {
     if (review.reviewRating)
-      review.reviewRating = resolveRelation(review.reviewRating, ctx, ratingResolver) as RatingInput
+      review.reviewRating = resolveRelation(review.reviewRating, ctx, ratingResolver)
     if (review.author)
       review.author = resolveRelation(review.author, ctx, personResolver)
     return review
   },
 })
+
+export const defineReview = <T extends Review>(input?: T) => provideResolver(input, reviewResolver)
 

@@ -1,9 +1,4 @@
-import type { Optional } from 'utility-types'
-import type { DefaultOptionalKeys, Thing } from '../../../types'
-import {
-  provideResolver,
-} from '../../../utils'
-import type { HowToStep } from '../HowToStep'
+import type { Thing } from '../../../types'
 import { defineSchemaOrgResolver } from '../../../core'
 
 export interface HowToDirection extends Thing {
@@ -17,11 +12,15 @@ export interface HowToDirection extends Thing {
  * Describes a HowTo guide, which contains a series of steps.
  */
 export const howToStepDirectionResolver = defineSchemaOrgResolver<HowToDirection>({
+  cast(node) {
+    if (typeof node === 'string') {
+      return {
+        text: node,
+      }
+    }
+    return node
+  },
   defaults: {
     '@type': 'HowToDirection',
   },
 })
-
-export const defineHowToStepDirection
-  = <T extends HowToStep>(input?: Optional<T, DefaultOptionalKeys>) =>
-    provideResolver(input, howToStepDirectionResolver)

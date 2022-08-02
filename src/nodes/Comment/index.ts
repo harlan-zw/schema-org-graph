@@ -1,5 +1,4 @@
-import type { Optional } from 'utility-types'
-import type { Arrayable, DefaultOptionalKeys, IdReference, Thing } from '../../types'
+import type { IdReference, NodeRelation, Thing } from '../../types'
 import {
   idReference,
   provideResolver,
@@ -8,11 +7,11 @@ import {
 } from '../../utils'
 import type { Article } from '../Article'
 import { PrimaryArticleId } from '../Article'
-import type { ChildPersonInput } from '../Person'
+import type { Person } from '../Person'
 import { personResolver } from '../Person'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
 
-export interface Comment extends Thing {
+export interface CommentLite extends Thing {
   /**
    * The textual content of the comment, stripping HTML tags.
    */
@@ -24,8 +23,10 @@ export interface Comment extends Thing {
   /**
    * A reference by ID to the Person who wrote the comment.
    */
-  author: Arrayable<ChildPersonInput>
+  author: NodeRelation<Person>
 }
+
+export type Comment = CommentLite
 
 /**
  * Describes a review. Usually in the context of an Article or a WebPage.
@@ -50,6 +51,4 @@ export const commentResolver = defineSchemaOrgResolver<Comment>({
   },
 })
 
-export const defineComment
-  = <T extends Comment>(input?: Optional<T, DefaultOptionalKeys>) =>
-    provideResolver(input, commentResolver)
+export const defineComment = <T extends Comment>(input?: T) => provideResolver(input, commentResolver)

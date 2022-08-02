@@ -15,20 +15,20 @@ export interface SearchActionInput {
 }
 
 export interface SearchAction {
-  '@type': 'SearchAction'
+  '@type'?: 'SearchAction'
   /**
    * An object of type EntryPoint, with a relative URL which describes the URL pattern of the internal search function
    * (e.g., /search?query={search_term_string}).
    */
   target: {
-    '@type': 'EntryPoint'
+    '@type'?: 'EntryPoint'
     'urlTemplate': string
   }
   /**
    * The search term string as described in the target (e.g., search_term_string).
    */
   'query-input': {
-    '@type': 'PropertyValueSpecification'
+    '@type'?: 'PropertyValueSpecification'
     'valueRequired': boolean
     'valueName': string
   }
@@ -57,14 +57,3 @@ export const searchActionResolver = defineSchemaOrgResolver<SearchAction>({
   },
 })
 
-/**
- *    'target': {
- *       '@type': 'EntryPoint',
- *       'urlTemplate': searchActionInput.target,
- *     },
- *     'query-input': {
- *       '@type': 'PropertyValueSpecification',
- *       'valueRequired': true,
- *       'valueName': searchActionInput.queryInput,
- *     },
- */

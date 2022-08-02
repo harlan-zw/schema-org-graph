@@ -1,19 +1,24 @@
 import { withoutTrailingSlash } from 'ufo'
-import type { Optional } from 'utility-types'
-import type { Arrayable, DefaultOptionalKeys, MaybeIdReference, ResolvableDate, Thing } from '../../types'
+import type {
+  Arrayable,
+  NodeRelation,
+  NodeRelations,
+  ResolvableDate,
+  Thing,
+} from '../../types'
 import {
   IdentityId,
   idReference, prefixId, provideResolver, resolveDateToIso, resolveId, resolveType, setIfEmpty,
 } from '../../utils'
 import type { WebSite } from '../WebSite'
 import { PrimaryWebSiteId } from '../WebSite'
-import type { ChildPersonInput, Person } from '../Person'
 import type { Organization } from '../Organization'
-import type { Image, SingleImageInput } from '../Image'
+import type { Image } from '../Image'
 import type { Breadcrumb } from '../Breadcrumb'
 import type { Video } from '../Video'
 import { PrimaryBreadcrumbId } from '../Breadcrumb'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
+import type { Person } from '../Person'
 import type { ReadAction } from './ReadAction'
 import { readActionResolver } from './ReadAction'
 
@@ -24,8 +29,8 @@ type ValidSubTypes = 'WebPage' | 'AboutPage' | 'CheckoutPage' | 'CollectionPage'
  * Every web page is implicitly assumed to be declared to be of type WebPage,
  * so the various properties about that webpage, such as breadcrumb may be used.
  */
-export interface WebPage extends Thing {
-  ['@type']: Arrayable<ValidSubTypes>
+export interface WebPageLite extends Thing {
+  ['@type']?: Arrayable<ValidSubTypes>
   /**
    * The unmodified canonical URL of the page.
    */
@@ -33,7 +38,7 @@ export interface WebPage extends Thing {
   /**
    * The title of the page.
    */
-  name: string
+  name?: string
   /**
    * The page's meta description content.
    */
@@ -41,16 +46,16 @@ export interface WebPage extends Thing {
   /**
    * A reference-by-ID to the WebSite node.
    */
-  isPartOf?: MaybeIdReference<WebSite>
+  isPartOf?: NodeRelation<WebSite>
   /**
    * A reference-by-ID to the Organisation node.
    * Note: Only for the home page.
    */
-  about?: MaybeIdReference<Organization>
+  about?: NodeRelation<Organization>
   /**
    * A reference-by-ID to the author of the web page.
    */
-  author?: ChildPersonInput
+  author?: NodeRelation<Person | string>
   /**
    * The language code for the page; e.g., en-GB.
    */
@@ -66,15 +71,15 @@ export interface WebPage extends Thing {
   /**
    * A reference-by-ID to a node representing the page's featured image.
    */
-  primaryImageOfPage?: SingleImageInput
+  primaryImageOfPage?: NodeRelation<Image | string>
   /**
    * A reference-by-ID to a node representing the page's breadrumb structure.
    */
-  breadcrumb?: MaybeIdReference<Breadcrumb>
+  breadcrumb?: NodeRelation<Breadcrumb>
   /**
    * An array of all videos in the page content, referenced by ID.
    */
-  video?: Arrayable<MaybeIdReference<Video>>
+  video?: NodeRelations<Video>
   /**
    * A SpeakableSpecification object which identifies any content elements suitable for spoken results.
    */
@@ -86,6 +91,8 @@ export interface WebPage extends Thing {
    */
   potentialAction?: (ReadAction | unknown)[]
 }
+
+export type WebPage = WebPageLite
 
 export const PrimaryWebPageId = '#webpage'
 
@@ -179,7 +186,4 @@ export const webPageResolver = defineSchemaOrgResolver<WebPage>({
   },
 })
 
-export const defineWebPage
-  = <T extends WebPage>(input?: Optional<T, DefaultOptionalKeys>) =>
-    provideResolver(input, webPageResolver)
-
+export const defineWebPage = <T extends WebPage>(input?: T) => provideResolver(input, webPageResolver)

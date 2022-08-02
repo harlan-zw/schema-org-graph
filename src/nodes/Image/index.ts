@@ -1,5 +1,4 @@
-import type { Optional } from 'utility-types'
-import type { Arrayable, DefaultOptionalKeys, IdReference, Thing } from '../../types'
+import type { Thing } from '../../types'
 import {
   idReference,
   prefixId,
@@ -11,8 +10,8 @@ import type { WebPage } from '../WebPage'
 import { PrimaryWebPageId } from '../WebPage'
 import { defineSchemaOrgResolver } from '../../core'
 
-export interface Image extends Thing {
-  '@type': 'ImageObject'
+export interface ImageLite extends Thing {
+  '@type'?: 'ImageObject'
   /**
    * The URL of the image file (e.g., /images/cat.jpg).
    */
@@ -44,8 +43,7 @@ export interface Image extends Thing {
   inLanguage?: string
 }
 
-export type SingleImageInput = Image | IdReference | string
-export type ImageInput = Arrayable<SingleImageInput>
+export type Image = ImageLite
 
 /**
  * Describes an individual image (usually in the context of an embedded media object).
@@ -81,7 +79,7 @@ export const imageResolver = defineSchemaOrgResolver<Image>({
   },
   rootNodeResolve(image, { findNode, meta }) {
     const hasPrimaryImage = !!findNode('#primaryimage')
-    if (/* options.resolvePrimaryImage && */!hasPrimaryImage) {
+    if (image['@id']?.endsWith('#logo') && !hasPrimaryImage) {
       const webPage = findNode<WebPage>(PrimaryWebPageId)
       if (webPage) {
         image['@id'] = prefixId(meta.canonicalUrl, '#primaryimage')
@@ -91,6 +89,4 @@ export const imageResolver = defineSchemaOrgResolver<Image>({
   },
 })
 
-export const defineImage
-  = <T extends Image>(input?: Optional<T, DefaultOptionalKeys>) =>
-    provideResolver(input, imageResolver)
+export const defineImage = <T extends Image>(input?: T) => provideResolver(input, imageResolver)

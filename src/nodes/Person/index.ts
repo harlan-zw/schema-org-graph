@@ -1,12 +1,10 @@
-import type { Optional } from 'utility-types'
-import type { DefaultOptionalKeys, IdReference, Thing } from '../../types'
+import type { NodeRelations, Thing } from '../../types'
 import {
   IdentityId,
   idReference,
   prefixId,
   provideResolver, resolveAsGraphKey, resolveId, setIfEmpty,
 } from '../../utils'
-import type { ImageInput } from '../Image'
 import type { WebPage } from '../WebPage'
 import { PrimaryWebPageId } from '../WebPage'
 import type { WebSite } from '../WebSite'
@@ -15,11 +13,12 @@ import type { Article } from '../Article'
 import { PrimaryArticleId } from '../Article'
 import type { Organization } from '../Organization'
 import { defineSchemaOrgResolver } from '../../core'
+import type { Image } from '../Image'
 
 /**
  * A person (alive, dead, undead, or fictional).
  */
-export interface Person extends Thing {
+export interface PersonLite extends Thing {
   /**
    * The full name of the Person.
    */
@@ -36,7 +35,7 @@ export interface Person extends Thing {
   /**
    * An array of images which represent the person, referenced by ID.
    */
-  image?: ImageInput
+  image?: NodeRelations<Image | string>
   /**
    * The URL of the users' profile page (if they're affiliated with the site in question),
    * or to their personal homepage/website.
@@ -44,7 +43,7 @@ export interface Person extends Thing {
   url?: string
 }
 
-export type ChildPersonInput = Optional<Person, '@type'> | IdReference
+export type Person = PersonLite
 
 /**
  * Describes an individual person. Most commonly used to identify the author of a piece of content (such as an Article or Comment).
@@ -93,6 +92,4 @@ export const personResolver = defineSchemaOrgResolver<Person>({
   },
 })
 
-export const definePerson
-  = <T extends Person>(input?: Optional<T, DefaultOptionalKeys>) =>
-    provideResolver(input, personResolver)
+export const definePerson = <T extends Person>(input?: T) => provideResolver(input, personResolver)

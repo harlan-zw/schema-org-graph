@@ -1,5 +1,4 @@
-import type { Optional } from 'utility-types'
-import type { Arrayable, DefaultOptionalKeys, IdReference, Thing } from '../../types'
+import type { Arrayable, ResolvableDate, Thing } from '../../types'
 import {
   provideResolver,
 } from '../../utils'
@@ -16,8 +15,8 @@ type DayOfWeek = 'Friday' |
 
 type Time = `${number}${number}:${number}${number}`
 
-export interface OpeningHours extends Thing {
-  '@type': 'OpeningHoursSpecification'
+export interface OpeningHoursLite extends Thing {
+  '@type'?: 'OpeningHoursSpecification'
   /**
    * The day of the week for which these opening hours are valid.
    */
@@ -33,14 +32,14 @@ export interface OpeningHours extends Thing {
   /**
    * The date when the item becomes valid.
    */
-  validFrom?: string | Date
+  validFrom?: ResolvableDate
   /**
    * The date after when the item is not valid. For example, the end of an offer, salary period, or a period of opening hours.
    */
-  validThrough?: string | Date
+  validThrough?: ResolvableDate
 }
 
-export type OpeningHoursInput = OpeningHours | IdReference
+export type OpeningHours = OpeningHoursLite
 
 export const resolveOpeningHours = defineSchemaOrgResolver<OpeningHours>({
   defaults: {
@@ -50,6 +49,4 @@ export const resolveOpeningHours = defineSchemaOrgResolver<OpeningHours>({
   },
 })
 
-export const defineOpeningHours
-  = <T extends OpeningHours>(input?: Optional<T, DefaultOptionalKeys>) =>
-    provideResolver(input, resolveOpeningHours)
+export const defineOpeningHours = <T extends OpeningHours>(input?: T) => provideResolver(input, resolveOpeningHours)

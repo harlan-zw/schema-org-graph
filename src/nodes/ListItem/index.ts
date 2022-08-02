@@ -1,4 +1,4 @@
-import type { IdReference, Thing } from '../../types'
+import type { Thing } from '../../types'
 import {
   resolveUrl,
 } from '../../utils'
@@ -7,8 +7,8 @@ import { defineSchemaOrgResolver } from '../../core'
 /**
  * A list item, e.g. a step in a checklist or how-to description.
  */
-export interface ListItem extends Thing {
-  '@type': 'ListItem'
+export interface ListItemLite extends Thing {
+  '@type'?: 'ListItem'
   /**
    *  The name of the page in question, as it appears in the breadcrumb navigation.
    */
@@ -25,7 +25,7 @@ export interface ListItem extends Thing {
   position?: number
 }
 
-export type ListItemInput = ListItem | IdReference | string
+export type ListItem = ListItemLite
 
 export const resolveListItem = defineSchemaOrgResolver<ListItem>({
   cast(node) {

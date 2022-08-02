@@ -1,19 +1,18 @@
 import { hash } from 'ohash'
-import type { Optional } from 'utility-types'
-import type { DefaultOptionalKeys, Thing } from '../../types'
+import type { NodeRelation, NodeRelations, Thing } from '../../types'
 import {
   IdentityId,
   idReference,
   prefixId, provideResolver, resolveAsGraphKey, resolveId, resolveType, setIfEmpty,
 } from '../../utils'
-import type { Image, ImageInput, SingleImageInput } from '../Image'
-import type { RelatedAddressInput } from '../PostalAddress'
+import type { Image } from '../Image'
 import { imageResolver } from '../Image'
 import type { WebPage } from '../WebPage'
 import { PrimaryWebPageId } from '../WebPage'
 import type { WebSite } from '../WebSite'
 import { PrimaryWebSiteId } from '../WebSite'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
+import type { PostalAddress } from '../PostalAddress'
 import { addressResolver } from '../PostalAddress'
 
 /**
@@ -28,7 +27,7 @@ export interface Organization extends Thing {
    * (for example, if the logo is mostly white or gray,
    * it may not look how you want it to look when displayed on a white background).
    */
-  logo: SingleImageInput
+  logo: NodeRelation<Image | string>
   /**
    * The site's home URL.
    */
@@ -45,11 +44,11 @@ export interface Organization extends Thing {
   /**
    * An array of images which represent the organization (including the logo ), referenced by ID.
    */
-  image?: ImageInput
+  image?: NodeRelations<Image | string>
   /**
    * A reference-by-ID to an PostalAddress piece.
    */
-  address?: RelatedAddressInput
+  address?: NodeRelations<PostalAddress>
 }
 
 /**
@@ -106,6 +105,4 @@ export const organizationResolver
     },
   })
 
-export const defineOrganization
-  = <T extends Organization>(input?: Optional<T, DefaultOptionalKeys>) =>
-    provideResolver(input, organizationResolver)
+export const defineOrganization = <T extends Organization>(input?: T) => provideResolver(input, organizationResolver)

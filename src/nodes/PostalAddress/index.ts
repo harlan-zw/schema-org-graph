@@ -1,11 +1,10 @@
-import type { Optional } from 'utility-types'
-import type { DefaultOptionalKeys, IdReference, Thing } from '../../types'
+import type { Thing } from '../../types'
 import {
   provideResolver,
 } from '../../utils'
 import { defineSchemaOrgResolver } from '../../core'
 
-export interface PostalAddress extends Thing {
+export interface PostalAddressLite extends Thing {
   /**
    * The building number and street (e.g., 123 fake road ).
    */
@@ -32,7 +31,7 @@ export interface PostalAddress extends Thing {
   postOfficeBoxNumber?: string
 }
 
-export type RelatedAddressInput = PostalAddress | IdReference
+export type PostalAddress = PostalAddressLite
 
 export const addressResolver = defineSchemaOrgResolver<PostalAddress>({
   defaults: {
@@ -40,6 +39,4 @@ export const addressResolver = defineSchemaOrgResolver<PostalAddress>({
   },
 })
 
-export const defineAddress
-  = <T extends PostalAddress>(input?: Optional<T, DefaultOptionalKeys>) =>
-    provideResolver(input, addressResolver)
+export const defineAddress = <T extends PostalAddress>(input?: T) => provideResolver(input, addressResolver)

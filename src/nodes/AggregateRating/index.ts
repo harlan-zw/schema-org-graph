@@ -1,8 +1,9 @@
-import type { IdReference, Thing } from '../../types'
+import type { Thing } from '../../types'
 import { defineSchemaOrgResolver } from '../../core'
+import { provideResolver } from '../../utils'
 
-export interface AggregateRating extends Thing {
-  '@type': 'AggregateRating'
+export interface AggregateRatingLite extends Thing {
+  '@type'?: 'AggregateRating'
   /**
    * The total number of ratings for the item on your site. At least one of ratingCount or reviewCount is required.
    */
@@ -30,7 +31,7 @@ export interface AggregateRating extends Thing {
   worstRating?: number
 }
 
-export type AggregateRatingInput = AggregateRating | IdReference
+export type AggregateRating = AggregateRatingLite
 
 export const aggregateRatingResolver = defineSchemaOrgResolver<AggregateRating>({
   defaults: {
@@ -38,3 +39,4 @@ export const aggregateRatingResolver = defineSchemaOrgResolver<AggregateRating>(
   },
 })
 
+export const defineAggregateRating = <T extends AggregateRating>(input?: T) => provideResolver(input, aggregateRatingResolver)

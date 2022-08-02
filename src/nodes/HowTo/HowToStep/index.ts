@@ -1,16 +1,15 @@
-import type { Optional } from 'utility-types'
-import type { DefaultOptionalKeys, IdReference, Thing } from '../../../types'
+import type { NodeRelations, Thing } from '../../../types'
 import {
   provideResolver, resolveWithBaseUrl,
 } from '../../../utils'
 import type { Video } from '../../Video'
 import type { HowToDirection } from '../HowToStepDirection'
-import type { ImageInput } from '../../Image'
+import type { Image } from '../../Image'
 import { defineSchemaOrgResolver, resolveRelation } from '../../../core'
 import { imageResolver } from '../../Image'
 import { howToStepDirectionResolver } from '../HowToStepDirection'
 
-export interface HowToStep extends Thing {
+export interface HowToStepLite extends Thing {
   /**
    * A link to a fragment identifier (an 'ID anchor') of the individual step
    * (e.g., https://www.example.com/example-page/#recipe-step-5).
@@ -29,23 +28,31 @@ export interface HowToStep extends Thing {
   /**
    * An image representing the step, referenced by ID.
    */
-  image?: ImageInput
+  image?: NodeRelations<Image | string>
   /**
    * A video for this step or a clip of the video.
    */
-  video?: Video | IdReference
+  video?: NodeRelations<Video | string>
   /**
    * A list of detailed substeps, including directions or tips.
    */
-  itemListElement?: HowToDirection[]
+  itemListElement?: NodeRelations<HowToDirection | string>[]
 }
 
-export type HowToStepInput = HowToStep
+export type HowToStep = HowToStepLite
 
 /**
  * Describes a HowTo guide, which contains a series of steps.
  */
 export const howToStepResolver = defineSchemaOrgResolver<HowToStep>({
+  cast(node) {
+    if (typeof node === 'string') {
+      return {
+        text: node,
+      }
+    }
+    return node
+  },
   defaults: {
     '@type': 'HowToStep',
   },
@@ -63,6 +70,4 @@ export const howToStepResolver = defineSchemaOrgResolver<HowToStep>({
   },
 })
 
-export const defineHowToStep
-  = <T extends HowToStep>(input?: Optional<T, DefaultOptionalKeys>) =>
-    provideResolver(input, howToStepResolver)
+export const defineHowToStep = <T extends HowToStep>(input?: T) => provideResolver(input, howToStepResolver)

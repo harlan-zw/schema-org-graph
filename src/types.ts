@@ -1,12 +1,14 @@
 import type { DeepPartial } from 'utility-types'
-import type { ImageInput } from './nodes/Image'
 import type { SchemaOrgContext } from './core'
+import type { Organization } from './nodes/Organization'
+import type { Person } from './nodes/Person'
+import type { Image } from './nodes/Image'
 
 export type Arrayable<T> = T | Array<T>
-
+export type NodeRelation<T> = T | IdReference
+export type NodeRelations<T> = Arrayable<NodeRelation<T>>
+export type Identity = Person | Organization
 export type ResolvableDate = string | Date
-
-export type DefaultOptionalKeys = '@type'
 
 export interface SchemaOrgNodeDefinition<ResolvedInput> {
   alias?: string
@@ -35,7 +37,12 @@ export interface Thing {
    * - Must be at least 696 pixels wide.
    * - Must be of the following formats+file extensions: .jpg, .png, .gif ,or .webp.
    */
-  image?: Arrayable<ImageInput>
+  image?: NodeRelations<Image | string>
+
+  /**
+   * Allow any arbitrary keys
+   */
+  [key: string]: any
 }
 
 export interface RegisteredThing extends Thing {
@@ -47,7 +54,5 @@ export interface IdReference {
   /** IRI identifying the canonical address of this object. */
   '@id': string
 }
-
-export type MaybeIdReference<T> = T | IdReference
 
 export type Id = `#${string}` | `https://${string}#${string}`

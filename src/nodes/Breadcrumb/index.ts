@@ -1,4 +1,4 @@
-import type { Thing } from '../../types'
+import type { NodeRelations, Thing } from '../../types'
 import {
   idReference,
   prefixId, provideResolver,
@@ -7,7 +7,7 @@ import {
 } from '../../utils'
 import type { WebPage } from '../WebPage'
 import { PrimaryWebPageId } from '../WebPage'
-import type { ListItem, ListItemInput } from '../ListItem'
+import type { ListItem } from '../ListItem'
 import { resolveListItem } from '../ListItem'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
 
@@ -15,12 +15,12 @@ import { defineSchemaOrgResolver, resolveRelation } from '../../core'
  * A BreadcrumbList is an ItemList consisting of a chain of linked Web pages,
  * typically described using at least their URL and their name, and typically ending with the current page.
  */
-export interface Breadcrumb extends Thing {
-  '@type': 'BreadcrumbList'
+export interface BreadcrumbLite extends Thing {
+  '@type'?: 'BreadcrumbList'
   /**
    * Resolved breadcrumb list
    */
-  itemListElement: ListItemInput[]
+  itemListElement: NodeRelations<ListItem>
   /**
    * Type of ordering (e.g. Ascending, Descending, Unordered).
    *
@@ -37,7 +37,7 @@ export interface Breadcrumb extends Thing {
   numberOfItems?: number
 }
 
-export type BreadcrumbItem = ListItem
+export type Breadcrumb = BreadcrumbLite
 
 export const PrimaryBreadcrumbId = '#breadcrumb'
 
@@ -71,6 +71,4 @@ export const breadcrumbResolver = defineSchemaOrgResolver<Breadcrumb>({
   },
 })
 
-export const defineBreadcrumb
-  = <T extends Breadcrumb>(input?: T) =>
-    provideResolver(input, breadcrumbResolver)
+export const defineBreadcrumb = <T extends Breadcrumb>(input?: T) => provideResolver(input, breadcrumbResolver)

@@ -17,12 +17,6 @@ export const renderNodesToSchemaOrgHtml = (nodes: RegisteredThing[], options = {
   return JSON.stringify(renderNodesToSchemaOrgJson(nodes), undefined, options.spaces)
 }
 
-export const renderCtxToSchemaOrgJson = (ctx: SchemaOrgContext, meta: {}) => {
-  const resolvedCtx = buildResolvedGraphCtx(ctx.nodes, meta)
-  const graphNodes = dedupeAndFlattenNodes(resolvedCtx.nodes)
-  return renderNodesToSchemaOrgJson(graphNodes)
-}
-
 export const dedupeAndFlattenNodes = (nodes: RegisteredThing[]) => {
   const keys = nodes
     .sort((a, b) => a._uid - b._uid)
@@ -37,7 +31,6 @@ export const dedupeAndFlattenNodes = (nodes: RegisteredThing[]) => {
       .sort()
       .reduce(
         (obj: any, key) => {
-          // @ts-expect-error untyped
           obj[key] = n[key]
           return obj
         },
@@ -84,4 +77,10 @@ export const buildResolvedGraphCtx = (nodes: Thing[], meta: any) => {
     })
 
   return ctx
+}
+
+export const renderCtxToSchemaOrgJson = (ctx: SchemaOrgContext, meta: {}) => {
+  const resolvedCtx = buildResolvedGraphCtx(ctx.nodes, meta)
+  const graphNodes = dedupeAndFlattenNodes(resolvedCtx.nodes)
+  return renderNodesToSchemaOrgJson(graphNodes)
 }

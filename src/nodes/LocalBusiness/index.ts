@@ -1,15 +1,13 @@
-import type { Optional } from 'utility-types'
 import {
   IdentityId,
   prefixId,
   provideResolver, resolveId, resolveType, setIfEmpty,
 } from '../../utils'
 import type { Organization } from '../Organization'
-import type { OpeningHoursInput } from '../OpeningHours'
+import type { OpeningHours } from '../OpeningHours'
 import { resolveOpeningHours } from '../OpeningHours'
-import type { SingleImageInput } from '../Image'
 import { imageResolver } from '../Image'
-import type { DefaultOptionalKeys } from '../../types'
+import type { NodeRelations } from '../../types'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
 import { addressResolver } from '../PostalAddress'
 
@@ -44,8 +42,8 @@ type ValidLocalBusinessSubTypes = 'AnimalShelter' |
 'TouristInformationCenter' |
 'TravelAgency'
 
-export interface LocalBusiness extends Organization {
-  '@type': ['Organization', 'LocalBusiness'] | ['Organization', 'LocalBusiness', ValidLocalBusinessSubTypes] | ValidLocalBusinessSubTypes
+export interface LocalBusinessLite extends Organization {
+  '@type'?: ['Organization', 'LocalBusiness'] | ['Organization', 'LocalBusiness', ValidLocalBusinessSubTypes] | ValidLocalBusinessSubTypes
   /**
    * The primary public telephone number of the business.
    */
@@ -85,8 +83,10 @@ export interface LocalBusiness extends Organization {
   /**
    * The operating hours of the business.
    */
-  openingHoursSpecification?: OpeningHoursInput[]
+  openingHoursSpecification?: NodeRelations<OpeningHours>
 }
+
+export type LocalBusiness = LocalBusinessLite
 
 /**
  * Describes a business which allows public visitation.
@@ -118,13 +118,11 @@ export const localBusinessResolver = defineSchemaOrgResolver<LocalBusiness>({
 
           setIfEmpty(logo, 'caption', node.name)
         },
-      }) as SingleImageInput
+      })
     }
     resolveId(node, ctx.meta.canonicalHost)
     return node
   },
 })
 
-export const defineLocalBusiness
-  = <T extends LocalBusiness>(input?: Optional<T, DefaultOptionalKeys>) =>
-    provideResolver(input, localBusinessResolver)
+export const defineLocalBusiness = <T extends LocalBusiness>(input?: T) => provideResolver(input, localBusinessResolver)

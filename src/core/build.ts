@@ -1,19 +1,25 @@
 import {Id, RegisteredThing, Thing} from "../types";
 import {resolveAsGraphKey} from "../utils";
 import {hash} from "ohash";
-import {createSchemaOrgGraph} from "./graph";
+import {createSchemaOrgGraph, SchemaOrgContext} from "./graph";
 import {imageResolver} from "../nodes/Image";
 import {executeResolverOnNode, resolveNodeId, resolveRelation} from "./resolve";
 
-export const buildSchemaOrgJson = (nodes: RegisteredThing[]) => {
+export const renderCtxToSchemaOrgJson = (ctx: SchemaOrgContext, meta: {}) => {
+  const resolvedCtx = buildResolvedGraphCtx(ctx.nodes, meta)
+  const graphNodes = dedupeAndFlattenNodes(resolvedCtx.nodes)
+  return renderNodesToSchemaOrgJson(graphNodes)
+}
+
+export const renderNodesToSchemaOrgJson = (nodes: RegisteredThing[]) => {
   return {
     '@context': 'https://schema.org',
     '@graph': Object.values(nodes),
   }
 }
 
-export const buildSchemaOrgHtml = (nodes: RegisteredThing[], options = { spaces: 2 }) => {
-  return JSON.stringify(buildSchemaOrgJson(nodes), undefined, options.spaces)
+export const renderNodesToSchemaOrgHtml = (nodes: RegisteredThing[], options = { spaces: 2 }) => {
+  return JSON.stringify(renderNodesToSchemaOrgJson(nodes), undefined, options.spaces)
 }
 
 export const dedupeAndFlattenNodes = (nodes: RegisteredThing[]) => {

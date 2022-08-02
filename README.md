@@ -51,7 +51,7 @@ will come soon.
 ## Setup Example
 
 ```ts
-import { createSchemaOrgGraph, defineWebPage, defineWebSite } from 'schema-org-graph-js'
+import { createSchemaOrgGraph, defineWebPage, defineWebSite, renderCtxToSchemaOrgJson } from 'schema-org-graph-js'
 
 const ctx = createSchemaOrgGraph()
 

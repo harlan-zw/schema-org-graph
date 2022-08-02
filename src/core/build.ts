@@ -60,8 +60,10 @@ export const buildResolvedGraphCtx = (nodes: Thing[], meta: any) => {
     .sort((a, b) => a._uid - b._uid)
     .forEach((node, key) => {
       const resolver = node._resolver
-      node = executeResolverOnNode(node, ctx, resolver)
-      node = resolveNodeId(node, ctx, resolver)
+      if (resolver) {
+        node = executeResolverOnNode(node, ctx, resolver)
+        node = resolveNodeId(node, ctx, resolver)
+      }
       ctx.nodes[key] = node
     })
 

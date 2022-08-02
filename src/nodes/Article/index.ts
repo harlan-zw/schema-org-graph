@@ -148,7 +148,7 @@ export const articleResolver = defineSchemaOrgResolver<Article>({
       node.headline = trimLength(node.headline, 110)
     return node
   },
-  rootNodeResolve(article, { findNode, meta,  }) {
+  rootNodeResolve(article, { findNode, meta }) {
     const webPage = findNode<WebPage>(PrimaryWebPageId)
     const identity = findNode<Organization | Person>(IdentityId)
 

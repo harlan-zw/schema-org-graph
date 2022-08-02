@@ -1,5 +1,5 @@
 import type { Optional } from 'utility-types'
-import type {DefaultOptionalKeys, Id, ResolvableDate, Thing} from '../../types'
+import type { DefaultOptionalKeys, Id, ResolvableDate, Thing } from '../../types'
 import {
   asArray,
   provideResolver,

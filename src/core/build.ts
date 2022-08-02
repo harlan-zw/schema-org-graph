@@ -1,15 +1,10 @@
-import {Id, RegisteredThing, Thing} from "../types";
-import {resolveAsGraphKey} from "../utils";
-import {hash} from "ohash";
-import {createSchemaOrgGraph, SchemaOrgContext} from "./graph";
-import {imageResolver} from "../nodes/Image";
-import {executeResolverOnNode, resolveNodeId, resolveRelation} from "./resolve";
-
-export const renderCtxToSchemaOrgJson = (ctx: SchemaOrgContext, meta: {}) => {
-  const resolvedCtx = buildResolvedGraphCtx(ctx.nodes, meta)
-  const graphNodes = dedupeAndFlattenNodes(resolvedCtx.nodes)
-  return renderNodesToSchemaOrgJson(graphNodes)
-}
+import { hash } from 'ohash'
+import type { Id, RegisteredThing, Thing } from '../types'
+import { resolveAsGraphKey } from '../utils'
+import { imageResolver } from '../nodes/Image'
+import type { SchemaOrgContext } from './graph'
+import { createSchemaOrgGraph } from './graph'
+import { executeResolverOnNode, resolveNodeId, resolveRelation } from './resolve'
 
 export const renderNodesToSchemaOrgJson = (nodes: RegisteredThing[]) => {
   return {
@@ -20,6 +15,12 @@ export const renderNodesToSchemaOrgJson = (nodes: RegisteredThing[]) => {
 
 export const renderNodesToSchemaOrgHtml = (nodes: RegisteredThing[], options = { spaces: 2 }) => {
   return JSON.stringify(renderNodesToSchemaOrgJson(nodes), undefined, options.spaces)
+}
+
+export const renderCtxToSchemaOrgJson = (ctx: SchemaOrgContext, meta: {}) => {
+  const resolvedCtx = buildResolvedGraphCtx(ctx.nodes, meta)
+  const graphNodes = dedupeAndFlattenNodes(resolvedCtx.nodes)
+  return renderNodesToSchemaOrgJson(graphNodes)
 }
 
 export const dedupeAndFlattenNodes = (nodes: RegisteredThing[]) => {

@@ -1,5 +1,5 @@
 import type { Arrayable, Id, RegisteredThing, Thing } from '../types'
-import {asArray, resolveAsGraphKey, setIfEmpty} from '../utils'
+import { asArray, resolveAsGraphKey, setIfEmpty } from '../utils'
 
 export interface SchemaOrgContext {
   readonly nodes: RegisteredThing[]

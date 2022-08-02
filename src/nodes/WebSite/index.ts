@@ -48,7 +48,7 @@ export interface WebSiteLite extends Thing {
   inLanguage?: Arrayable<string>
 }
 
-export type WebSite = WebSiteLite
+export interface WebSite extends WebSiteLite {}
 
 export const PrimaryWebSiteId = '#website'
 

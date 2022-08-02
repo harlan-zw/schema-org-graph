@@ -34,7 +34,7 @@ export interface ReviewLite extends Thing {
   reviewBody?: string
 }
 
-export type Review = ReviewLite
+export interface Review extends ReviewLite {}
 
 export const reviewResolver = defineSchemaOrgResolver<Review>({
   defaults: {

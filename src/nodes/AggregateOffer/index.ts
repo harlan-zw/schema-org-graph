@@ -32,7 +32,7 @@ export interface AggregateOfferLite extends Thing {
   offers: NodeRelations<Offer>
 }
 
-export type AggregateOffer = AggregateOfferLite
+export interface AggregateOffer extends AggregateOfferLite {}
 
 export const aggregateOfferResolver = defineSchemaOrgResolver<AggregateOffer>({
   defaults: {

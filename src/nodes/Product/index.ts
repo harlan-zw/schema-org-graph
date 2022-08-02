@@ -76,7 +76,7 @@ export interface ProductLite extends Thing {
   manufacturer?: NodeRelation<Organization>
 }
 
-export type Product = ProductLite
+export interface Product extends ProductLite {}
 
 export const ProductId = '#product'
 

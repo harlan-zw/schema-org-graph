@@ -43,7 +43,7 @@ export interface PersonLite extends Thing {
   url?: string
 }
 
-export type Person = PersonLite
+export interface Person extends PersonLite {}
 
 /**
  * Describes an individual person. Most commonly used to identify the author of a piece of content (such as an Article or Comment).

@@ -71,7 +71,7 @@ export interface VideoLite extends Thing {
   embedUrl?: string
 }
 
-export type Video = VideoLite
+export interface Video extends VideoLite {}
 
 /**
  * Describes an individual video (usually in the context of an embedded media object).

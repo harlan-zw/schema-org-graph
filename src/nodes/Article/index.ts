@@ -115,7 +115,7 @@ export interface ArticleLite extends Thing {
   copyrightHolder?: NodeRelations<Identity>
 }
 
-export type Article = ArticleLite
+export interface Article extends ArticleLite {}
 
 export const PrimaryArticleId = '#article'
 

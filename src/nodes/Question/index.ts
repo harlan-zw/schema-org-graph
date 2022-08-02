@@ -37,8 +37,7 @@ export interface QuestionLite extends Thing {
    */
   answer?: string
 }
-
-export type Question = QuestionLite
+export interface Question extends QuestionLite {}
 
 /**
  * Describes a Question. Most commonly used in FAQPage or QAPage content.

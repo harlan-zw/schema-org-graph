@@ -26,7 +26,7 @@ export interface CommentLite extends Thing {
   author: NodeRelation<Person>
 }
 
-export type Comment = CommentLite
+export interface Comment extends CommentLite {}
 
 /**
  * Describes a review. Usually in the context of an Article or a WebPage.

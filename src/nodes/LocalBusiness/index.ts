@@ -86,7 +86,7 @@ export interface LocalBusinessLite extends Organization {
   openingHoursSpecification?: NodeRelations<OpeningHours>
 }
 
-export type LocalBusiness = LocalBusinessLite
+export interface LocalBusiness extends LocalBusinessLite {}
 
 /**
  * Describes a business which allows public visitation.

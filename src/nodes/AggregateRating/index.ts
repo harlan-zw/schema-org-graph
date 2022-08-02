@@ -31,7 +31,7 @@ export interface AggregateRatingLite extends Thing {
   worstRating?: number
 }
 
-export type AggregateRating = AggregateRatingLite
+export interface AggregateRating extends AggregateRatingLite {}
 
 export const aggregateRatingResolver = defineSchemaOrgResolver<AggregateRating>({
   defaults: {

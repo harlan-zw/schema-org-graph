@@ -4,9 +4,11 @@ import type { Thing } from '../../../types'
 /**
  * An answer offered to a question; perhaps correct, perhaps opinionated or wrong.
  */
-export interface Answer extends Thing {
+export interface AnswerLite extends Thing {
   text: string
 }
+
+export interface Answer extends AnswerLite {}
 
 export const answerResolver = defineSchemaOrgResolver<Answer>({
   cast(node) {

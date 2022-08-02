@@ -43,7 +43,7 @@ export interface ImageLite extends Thing {
   inLanguage?: string
 }
 
-export type Image = ImageLite
+export interface Image extends ImageLite {}
 
 /**
  * Describes an individual image (usually in the context of an embedded media object).

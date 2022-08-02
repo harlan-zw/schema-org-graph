@@ -92,7 +92,7 @@ export interface WebPageLite extends Thing {
   potentialAction?: (ReadAction | unknown)[]
 }
 
-export type WebPage = WebPageLite
+export interface WebPage extends WebPageLite {}
 
 export const PrimaryWebPageId = '#webpage'
 

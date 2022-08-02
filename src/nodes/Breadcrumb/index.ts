@@ -37,7 +37,7 @@ export interface BreadcrumbLite extends Thing {
   numberOfItems?: number
 }
 
-export type Breadcrumb = BreadcrumbLite
+export interface Breadcrumb extends BreadcrumbLite {}
 
 export const PrimaryBreadcrumbId = '#breadcrumb'
 

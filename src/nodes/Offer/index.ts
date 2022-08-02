@@ -30,7 +30,7 @@ export interface OfferLite extends Thing {
   url?: string
 }
 
-export type Offer = OfferLite
+export interface Offer extends OfferLite {}
 
 export const offerResolver = defineSchemaOrgResolver<Offer>({
   cast(node) {

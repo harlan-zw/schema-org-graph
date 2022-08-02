@@ -39,7 +39,7 @@ export interface OpeningHoursLite extends Thing {
   validThrough?: ResolvableDate
 }
 
-export type OpeningHours = OpeningHoursLite
+export interface OpeningHours extends OpeningHoursLite {}
 
 export const resolveOpeningHours = defineSchemaOrgResolver<OpeningHours>({
   defaults: {

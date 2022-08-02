@@ -64,7 +64,7 @@ export interface HowToLite extends Thing {
   video?: NodeRelations<Video | string>
 }
 
-export type HowTo = HowToLite
+export interface HowTo extends HowToLite {}
 
 export const HowToId = '#howto'
 

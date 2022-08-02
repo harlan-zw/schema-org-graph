@@ -25,7 +25,7 @@ export interface ListItemLite extends Thing {
   position?: number
 }
 
-export type ListItem = ListItemLite
+export interface ListItem extends ListItemLite {}
 
 export const resolveListItem = defineSchemaOrgResolver<ListItem>({
   cast(node) {

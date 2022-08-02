@@ -18,7 +18,7 @@ import { addressResolver } from '../PostalAddress'
 /**
  * An organization such as a school, NGO, corporation, club, etc.
  */
-export interface Organization extends Thing {
+export interface OrganizationLite extends Thing {
   /**
    * A reference-by-ID to an image of the organization's logo.
    *
@@ -50,6 +50,8 @@ export interface Organization extends Thing {
    */
   address?: NodeRelations<PostalAddress>
 }
+
+export interface Organization extends OrganizationLite {}
 
 /**
  * Describes an organization (a company, business or institution).

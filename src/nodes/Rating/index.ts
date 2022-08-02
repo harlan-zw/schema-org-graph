@@ -22,7 +22,7 @@ export interface RatingLite extends Thing {
   worstRating?: number
 }
 
-export type Rating = RatingLite
+export interface Rating extends RatingLite {}
 
 export const ratingResolver = defineSchemaOrgResolver<Rating>({
   cast(node) {

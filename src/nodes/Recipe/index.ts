@@ -103,7 +103,7 @@ export interface RecipeLite extends Thing {
   datePublished?: ResolvableDate
 }
 
-export type Recipe = RecipeLite
+export interface Recipe extends RecipeLite {}
 
 export interface NutritionInformation extends Thing {
   '@type': 'NutritionInformation'

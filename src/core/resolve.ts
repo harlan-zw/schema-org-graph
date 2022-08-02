@@ -69,6 +69,10 @@ export function resolveRelation(input: Arrayable<any>, ctx: any,
     if (Object.keys(input).length === 1 && input['@id'])
       return a
 
+    // remove resolver if the user is using define functions nested
+    if (a._resolver)
+      delete a._resolver
+
     let node = executeResolverOnNode(a, ctx, resolver)
     if (options.afterResolve)
       options.afterResolve(node)

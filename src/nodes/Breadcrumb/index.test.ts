@@ -72,7 +72,7 @@ describe('defineBreadcrumb', () => {
           ],
         }),
 
-        defineBreadcrumb<{ custom: string }>({
+        defineBreadcrumb({
           '@id': '#subbreadcrumb',
           'custom': 'test',
           'itemListElement': [

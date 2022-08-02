@@ -4,6 +4,7 @@ import { definePerson } from '../Person'
 import { IdentityId, idReference } from '../../utils'
 import type { WebSite } from '../WebSite'
 import { PrimaryWebSiteId, defineWebSite } from '../WebSite'
+import { defineAggregateRating } from '../AggregateRating'
 import { defineProduct } from './index'
 
 describe('defineProduct', () => {
@@ -14,13 +15,13 @@ describe('defineProduct', () => {
           name: 'test',
           image: '/product.png',
           offers: [
-            { price: 50 },
+            50,
           ],
-          aggregateRating: {
-            ratingValue: 88,
-            bestRating: 100,
-            ratingCount: 20,
-          },
+          aggregateRating: defineAggregateRating({
+            ratingCount: 88,
+            reviewCount: 20,
+            ratingValue: '4.5',
+          }),
           review: [
             {
               name: 'Awesome product!',
@@ -40,13 +41,13 @@ describe('defineProduct', () => {
       expect(graphNodes).toMatchInlineSnapshot(`
         [
           {
-            "@id": "https://example.com/#article",
+            "@id": "https://example.com/#product",
             "@type": "Product",
             "aggregateRating": {
               "@type": "AggregateRating",
-              "bestRating": 100,
-              "ratingCount": 20,
-              "ratingValue": 88,
+              "ratingCount": 88,
+              "ratingValue": "4.5",
+              "reviewCount": 20,
             },
             "image": {
               "@id": "https://example.com/#/schema/image/ib91aBv9JW",

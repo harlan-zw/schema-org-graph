@@ -18,8 +18,9 @@ describe('defineVideo', () => {
       expect(graphNodes).toMatchInlineSnapshot(`
         [
           {
-            "@id": "https://example.com/#/schema/video/ZsL0X9JxA1",
+            "@id": "https://example.com/#/schema/video/z7ybA2ARdO",
             "@type": "VideoObject",
+            "description": "No description",
             "inLanguage": "en-AU",
             "name": "My cool video",
             "uploadDate": "2020-11-10T00:00:00.000Z",

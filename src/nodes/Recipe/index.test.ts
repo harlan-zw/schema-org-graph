@@ -10,12 +10,8 @@ describe('defineRecipe', () => {
           name: 'Peanut Butter Cookies',
           image: 'https://example.com/photos/1x1/photo.jpg',
           recipeInstructions: [
-            {
-              text: 'Bake at 200*C for 40 minutes, or until golden-brown, stirring periodically throughout',
-            },
-            {
-              text: 'Eat them up',
-            },
+            'Bake at 200*C for 40 minutes, or until golden-brown, stirring periodically throughout',
+            'Eat them up',
           ],
           recipeIngredient: ['Peanut Butter', 'Cookie Dough'],
         }),

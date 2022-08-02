@@ -211,6 +211,7 @@ describe('defineArticle', () => {
       useSchemaOrg([
         defineOrganization({
           name: 'Identity',
+          logo: 'test.png',
         }),
         defineWebPage(),
         defineArticle({
@@ -239,7 +240,7 @@ describe('defineArticle', () => {
           "description": "test",
           "headline": "test",
           "image": {
-            "@id": "https://example.com/#primaryimage",
+            "@id": "https://example.com/#/schema/image/riaRi7jPJC",
           },
           "inLanguage": "en-AU",
           "isPartOf": {
@@ -270,6 +271,7 @@ describe('defineArticle', () => {
       useSchemaOrg([
         defineOrganization({
           name: 'Identity',
+          logo: '/test.png',
         }),
         defineWebPage(),
         defineArticle({
@@ -298,6 +300,9 @@ describe('defineArticle', () => {
           {
             "@id": "https://example.com/#identity",
             "@type": "Organization",
+            "logo": {
+              "@id": "https://example.com/#logo",
+            },
             "name": "Identity",
             "url": "https://example.com/",
           },
@@ -318,7 +323,7 @@ describe('defineArticle', () => {
               },
             ],
             "primaryImageOfPage": {
-              "@id": "https://example.com/#primaryimage",
+              "@id": "https://example.com/#logo",
             },
             "url": "https://example.com/",
           },
@@ -338,7 +343,7 @@ describe('defineArticle', () => {
             "description": "test",
             "headline": "test",
             "image": {
-              "@id": "https://example.com/#primaryimage",
+              "@id": "https://example.com/#/schema/image/riaRi7jPJC",
             },
             "inLanguage": "en-AU",
             "isPartOf": {
@@ -353,6 +358,14 @@ describe('defineArticle', () => {
             "thumbnailUrl": "https://example.com/my-image.png",
           },
           {
+            "@id": "https://example.com/#logo",
+            "@type": "ImageObject",
+            "caption": "Identity",
+            "contentUrl": "https://example.com/test.png",
+            "inLanguage": "en-AU",
+            "url": "https://example.com/test.png",
+          },
+          {
             "@id": "https://example.com/#/schema/person/xRdko3dItW",
             "@type": "Person",
             "name": "John doe",
@@ -365,7 +378,7 @@ describe('defineArticle', () => {
             "url": "https://harlanzw.com",
           },
           {
-            "@id": "https://example.com/#primaryimage",
+            "@id": "https://example.com/#/schema/image/riaRi7jPJC",
             "@type": "ImageObject",
             "contentUrl": "https://example.com/my-image.png",
             "inLanguage": "en-AU",
@@ -439,7 +452,7 @@ describe('defineArticle', () => {
             '@id': 'https://kootingalpecancompany.com/#identity',
           },
           'image': {
-            '@id': 'https://kootingalpecancompany.com/pecan-tree-kootingal/#primaryimage',
+            '@id': 'https://kootingalpecancompany.com/#/schema/image/A9Tm9pWwUV',
           },
           'thumbnailUrl': 'https://res.cloudinary.com/kootingalpecancompany/images/w_1920,h_2560/f_auto,q_auto/v1648723707/IMG_0446/IMG_0446.jpg?_i=AA',
           'keywords': [

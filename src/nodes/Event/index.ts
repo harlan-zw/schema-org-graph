@@ -1,0 +1,168 @@
+import { withBase } from 'ufo'
+import type {
+  Identity,
+  NodeRelation,
+  NodeRelations,
+  OptionalSchemaOrgPrefix, ResolvableDate,
+  Thing,
+} from '../../types'
+import {
+  IdentityId,
+  idReference,
+  prefixId,
+  provideResolver,
+  resolvableDateToDate,
+  resolvableDateToIso,
+  resolveId,
+  setIfEmpty,
+} from '../../utils'
+import type { Organization } from '../Organization'
+import type { Person } from '../Person'
+import type { Image } from '../Image'
+import { personResolver } from '../Person'
+import { defineSchemaOrgResolver, resolveRelation } from '../../core'
+import type { Offer } from '../Offer'
+import { offerResolver } from '../Offer'
+import { organizationResolver } from '../Organization'
+import type { Place } from './Place'
+import { placeResolver } from './Place'
+import type { VirtualLocation } from './VirtualLocation'
+import { virtualLocationResolver } from './VirtualLocation'
+
+type EventAttendanceModeTypes = 'OfflineEventAttendanceMode' | 'OnlineEventAttendanceMode' | 'MixedEventAttendanceMode'
+type EventStatusTypes = 'EventCancelled' | 'EventMovedOnline' | 'EventPostponed' | 'EventRescheduled' | 'EventScheduled'
+
+export interface EventLite extends Thing {
+  /**
+   * Description of the event.
+   * Describe all details of the event to make it easier for users to understand and attend the event.
+   */
+  description?: string
+  /**
+   * The end date and time of the item (in ISO 8601 date format).
+   */
+  endDate?: ResolvableDate
+  /**
+   * The eventAttendanceMode of an event indicates whether it occurs online, offline, or a mix.
+   */
+  eventAttendanceMode?: OptionalSchemaOrgPrefix<EventAttendanceModeTypes>
+  /**
+   * An eventStatus of an event represents its status; particularly useful when an event is cancelled or rescheduled.
+   */
+  eventStatus?: OptionalSchemaOrgPrefix<EventStatusTypes>
+  /**
+   * Repeated ImageObject or URL
+   *
+   * URL of an image or logo for the event or tour.
+   * Including an image helps users understand and engage with your event.
+   * We recommend that images are 1920px wide (the minimum width is 720px).
+   */
+  image?: NodeRelations<Image | string>
+  /**
+   * The location of the event.
+   * There are different requirements depending on if the event is happening online or at a physical location
+   */
+  location?: NodeRelations<Place | VirtualLocation | string>
+  /**
+   * An offer to provide this item—for example, an offer to sell a product,
+   * rent the DVD of a movie, perform a service, or give away tickets to an event.
+   * Use businessFunction to indicate the kind of transaction offered, i.e. sell, lease, etc.
+   * This property can also be used to describe a Demand.
+   * While this property is listed as expected on a number of common types, it can be used in others.
+   * In that case, using a second type, such as Product or a subtype of Product, can clarify the nature of the offer.
+   */
+  offers?: NodeRelations<Offer | string>
+  /**
+   * An organizer of an Event.
+   */
+  organizer?: NodeRelation<Identity>
+  /**
+   * A performer at the event—for example, a presenter, musician, musical group or actor.
+   */
+  // @todo allow PerformingGroup
+  performer?: NodeRelation<Person>
+  /**
+   * Used in conjunction with eventStatus for rescheduled or cancelled events.
+   * This property contains the previously scheduled start date.
+   * For rescheduled events, the startDate property should be used for the newly scheduled start date.
+   * In the (rare) case of an event that has been postponed and rescheduled multiple times, this field may be repeated.
+   */
+  previousStartDate?: ResolvableDate
+  /**
+   * The start date and time of the item (in ISO 8601 date format).
+   */
+  startDate?: ResolvableDate
+}
+
+export interface Event extends EventLite {}
+
+export const PrimaryEventId = '#event'
+
+/**
+ * Describes an Article on a WebPage.
+ */
+export const eventResolver = defineSchemaOrgResolver<Event>({
+  defaults: {
+    '@type': 'Event',
+  },
+  inheritMeta: [
+    'inLanguage',
+    'description',
+    'image',
+    { meta: 'title', key: 'name' },
+  ],
+  resolve(node, ctx) {
+    // @todo check it doesn't exist
+    setIfEmpty(node, '@id', prefixId(ctx.meta.canonicalUrl, PrimaryEventId))
+    resolveId(node, ctx.meta.canonicalUrl)
+
+    if (node.location) {
+      const isVirtual = node.location === 'string' || node.location?.url !== 'undefined'
+      node.location = resolveRelation(node.location, ctx, isVirtual ? virtualLocationResolver : placeResolver)
+    }
+
+    if (node.performer) {
+      node.performer = resolveRelation(node.performer, ctx, personResolver, {
+        root: true,
+      })
+    }
+    if (node.organizer) {
+      node.organizer = resolveRelation(node.organizer, ctx, organizationResolver, {
+        root: true,
+      })
+    }
+    if (node.offers)
+      node.offers = resolveRelation(node.offers, ctx, offerResolver)
+
+    if (node.eventAttendanceMode)
+      node.eventAttendanceMode = withBase(node.eventAttendanceMode, 'https://schema.org/') as EventAttendanceModeTypes
+    if (node.eventStatus)
+      node.eventStatus = withBase(node.eventStatus, 'https://schema.org/') as EventStatusTypes
+
+    const isOnline = node.eventStatus === 'https://schema.org/EventMovedOnline'
+
+    // dates
+    const dates = ['startDate', 'previousStartDate', 'endDate']
+    // offline events can be passed as simple date strings because it will use the event location
+    dates.forEach((date) => {
+      if (!isOnline) {
+        if (node[date] instanceof Date && node[date].getHours() === 0 && node[date].getMinutes() === 0)
+          node[date] = resolvableDateToDate(node[date])
+      }
+      else {
+        node[date] = resolvableDateToIso(node[date])
+      }
+    })
+
+    setIfEmpty(node, 'endDate', node.startDate)
+    return node
+  },
+  rootNodeResolve(node, { findNode }) {
+    const identity = findNode<Organization | Person>(IdentityId)
+
+    if (identity)
+      setIfEmpty(node, 'organizer', idReference(identity))
+  },
+})
+
+export const defineEvent = <T extends Event>(input?: T) => provideResolver(input, eventResolver)

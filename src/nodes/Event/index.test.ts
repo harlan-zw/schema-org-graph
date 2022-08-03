@@ -146,7 +146,7 @@ describe('defineEvent', () => {
             offers: {
               price: 30,
               url: 'https://www.example.com/event_offer/12345_201803180430',
-              validFrom: new Date(2024, 5, 21, 12),
+              validFrom: new Date(Date.UTC(2024, 5, 21, 12)),
             },
             description: 'The Adventures of Kira and Morrison is coming to Snickertown in a can\'t miss performance.',
             startDate: '2025-07-21T19:00-05:00',
@@ -199,7 +199,7 @@ describe('defineEvent', () => {
                 "priceCurrency": "USD",
                 "priceValidUntil": "2023-12-30T00:00:00.000Z",
                 "url": "https://www.example.com/event_offer/12345_201803180430",
-                "validFrom": 2024-06-21T02:00:00.000Z,
+                "validFrom": 2024-06-21T12:00:00.000Z,
               },
               "organizer": {
                 "@id": "https://example.com/#/schema/organization/klOKg4ARc8",

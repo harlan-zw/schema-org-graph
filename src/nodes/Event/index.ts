@@ -117,6 +117,7 @@ export const eventResolver = defineSchemaOrgResolver<Event>({
     resolveId(node, ctx.meta.canonicalUrl)
 
     if (node.location) {
+      // @ts-expect-error untyped
       const isVirtual = node.location === 'string' || node.location?.url !== 'undefined'
       node.location = resolveRelation(node.location, ctx, isVirtual ? virtualLocationResolver : placeResolver)
     }
@@ -139,6 +140,7 @@ export const eventResolver = defineSchemaOrgResolver<Event>({
     if (node.eventStatus)
       node.eventStatus = withBase(node.eventStatus, 'https://schema.org/') as EventStatusTypes
 
+    // @ts-expect-error untyped
     const isOnline = node.eventStatus === 'https://schema.org/EventMovedOnline'
 
     // dates

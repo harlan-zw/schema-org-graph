@@ -10,7 +10,17 @@ export const idReference = <T extends Thing>(node: T | string) => ({
   '@id': typeof node !== 'string' ? node['@id'] : node,
 })
 
-export const resolveDateToIso = (val: Date | string) => {
+export const resolvableDateToDate = (val: Date | string) => {
+  try {
+    const date = val instanceof Date ? val : new Date(Date.parse(val))
+    return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
+  }
+  // not too fussed if it can't be resolved, this is on the user to validate
+  catch (e) {}
+  return typeof val === 'string' ? val : val.toString()
+}
+
+export const resolvableDateToIso = (val: Date | string) => {
   try {
     if (val instanceof Date)
       return val.toISOString()

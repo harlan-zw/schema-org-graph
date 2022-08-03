@@ -2,7 +2,7 @@ import type { Id, NodeRelation, ResolvableDate, Thing } from '../../types'
 import {
   asArray,
   provideResolver,
-  resolveDateToIso,
+  resolvableDateToIso,
   resolveId,
   resolveWithBaseUrl, setIfEmpty,
 } from '../../utils'
@@ -98,7 +98,7 @@ export const videoResolver = defineSchemaOrgResolver<Video>({
   ],
   resolve(video, ctx) {
     if (video.uploadDate)
-      video.uploadDate = resolveDateToIso(video.uploadDate)
+      video.uploadDate = resolvableDateToIso(video.uploadDate)
     video.url = resolveWithBaseUrl(ctx.meta.canonicalHost, video.url)
     resolveId(video, ctx.meta.canonicalHost)
     if (video.caption && !video.description)

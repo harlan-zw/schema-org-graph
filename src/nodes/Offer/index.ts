@@ -1,6 +1,6 @@
 import type { ResolvableDate, Thing } from '../../types'
 import {
-  provideResolver, resolveDateToIso, setIfEmpty,
+  provideResolver, resolvableDateToIso, setIfEmpty,
 } from '../../utils'
 import { defineSchemaOrgResolver } from '../../core'
 
@@ -51,7 +51,7 @@ export const offerResolver = defineSchemaOrgResolver<Offer>({
     setIfEmpty(node, 'url', ctx.meta.canonicalUrl)
 
     if (node.priceValidUntil)
-      node.priceValidUntil = resolveDateToIso(node.priceValidUntil)
+      node.priceValidUntil = resolvableDateToIso(node.priceValidUntil)
     return node
   },
 })

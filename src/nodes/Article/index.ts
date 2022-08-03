@@ -12,7 +12,7 @@ import {
   idReference,
   prefixId,
   provideResolver,
-  resolveDateToIso,
+  resolvableDateToIso,
   resolveId,
   resolveType,
   resolveWithBaseUrl,
@@ -144,9 +144,9 @@ export const articleResolver = defineSchemaOrgResolver<Article>({
       })
     }
     if (node.dateModified)
-      node.dateModified = resolveDateToIso(node.dateModified)
+      node.dateModified = resolvableDateToIso(node.dateModified)
     if (node.datePublished)
-      node.datePublished = resolveDateToIso(node.datePublished)
+      node.datePublished = resolvableDateToIso(node.datePublished)
     if (node['@type'])
       node['@type'] = resolveType(node['@type'], 'Article') as Arrayable<ValidArticleSubTypes>
     // Headlines should not exceed 110 characters.

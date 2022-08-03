@@ -8,7 +8,7 @@ import type {
 } from '../../types'
 import {
   IdentityId,
-  idReference, prefixId, provideResolver, resolveDateToIso, resolveId, resolveType, setIfEmpty,
+  idReference, prefixId, provideResolver, resolvableDateToIso, resolveId, resolveType, setIfEmpty,
 } from '../../utils'
 import type { WebSite } from '../WebSite'
 import { PrimaryWebSiteId } from '../WebSite'
@@ -137,10 +137,10 @@ export const webPageResolver = defineSchemaOrgResolver<WebPage>({
   resolve(node, ctx) {
     resolveId(node, ctx.meta.canonicalUrl)
     if (node.dateModified)
-      node.dateModified = resolveDateToIso(node.dateModified)
+      node.dateModified = resolvableDateToIso(node.dateModified)
 
     if (node.datePublished)
-      node.datePublished = resolveDateToIso(node.datePublished)
+      node.datePublished = resolvableDateToIso(node.datePublished)
 
     if (node['@type'])
       node['@type'] = resolveType(node['@type'], 'WebPage') as Arrayable<ValidSubTypes>

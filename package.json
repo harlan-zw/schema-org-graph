@@ -6,13 +6,13 @@
   "author": "Harlan Wilton <harlan@harlanzw.com>",
   "license": "MIT",
   "funding": "https://github.com/sponsors/harlan-zw",
-  "homepage": "https://github.com/harlan-zw/node-schema-org#readme",
+  "homepage": "https://github.com/harlan-zw/schema-org-graph-js#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/harlan-zw/node-schema-org.git"
+    "url": "git+https://github.com/harlan-zw/schema-org-graph-js.git"
   },
   "bugs": {
-    "url": "https://github.com/harlan-zw/node-schema-org/issues"
+    "url": "https://github.com/harlan-zw/schema-org-graph-js/issues"
   },
   "keywords": [
     "schema.org",

@@ -9,6 +9,7 @@ export type NodeRelation<T> = T | IdReference
 export type NodeRelations<T> = Arrayable<NodeRelation<T>>
 export type Identity = Person | Organization
 export type ResolvableDate = string | Date
+export type OptionalSchemaOrgPrefix<T extends string> = T | `https://schema.org/${T}`
 
 export interface SchemaOrgNodeDefinition<ResolvedInput> {
   alias?: string

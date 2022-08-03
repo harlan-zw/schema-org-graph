@@ -1,19 +1,32 @@
-import type { ResolvableDate, Thing } from '../../types'
+import { withBase } from 'ufo'
+import type { OptionalSchemaOrgPrefix, ResolvableDate, Thing } from '../../types'
 import {
   provideResolver, resolvableDateToIso, setIfEmpty,
 } from '../../utils'
 import { defineSchemaOrgResolver } from '../../core'
+
+type ItemAvailability =
+  'BackOrder' |
+  'Discontinued' |
+  'InStock' |
+  'InStoreOnly' |
+  'LimitedAvailability' |
+  'OnlineOnly' |
+  'OutOfStock' |
+  'PreOrder' |
+  'PreSale' |
+  'SoldOut'
 
 export interface OfferLite extends Thing {
   '@type'?: 'Offer'
   /**
    * A schema.org URL representing a schema itemAvailability value (e.g., https://schema.org/OutOfStock).
    */
-  availability?: string
+  availability?: OptionalSchemaOrgPrefix<ItemAvailability>
   /**
    * The price, omitting any currency symbols, and using '.' to indicate a decimal place.
    */
-  price: number
+  price: number | string
   /**
    * The currency used to describe the product price, in three-letter ISO 4217 format.
    */
@@ -34,7 +47,7 @@ export interface Offer extends OfferLite {}
 
 export const offerResolver = defineSchemaOrgResolver<Offer>({
   cast(node) {
-    if (typeof node === 'number') {
+    if (typeof node === 'number' || typeof node === 'string') {
       return {
         price: node,
       }
@@ -43,12 +56,15 @@ export const offerResolver = defineSchemaOrgResolver<Offer>({
   },
   defaults: {
     '@type': 'Offer',
-    'availability': 'https://schema.org/InStock',
+    'availability': 'InStock',
   },
   resolve(node, ctx) {
     setIfEmpty(node, 'priceCurrency', ctx.meta.defaultCurrency)
     setIfEmpty(node, 'priceValidUntil', new Date(Date.UTC(new Date().getFullYear() + 1, 12, -1, 0, 0, 0)))
     setIfEmpty(node, 'url', ctx.meta.canonicalUrl)
+
+    if (node.availability)
+      node.availability = withBase(node.availability, 'https://schema.org/') as ItemAvailability
 
     if (node.priceValidUntil)
       node.priceValidUntil = resolvableDateToIso(node.priceValidUntil)

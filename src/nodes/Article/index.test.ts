@@ -262,7 +262,14 @@ describe('defineArticle', () => {
       expect(id).toEqual('https://example.com/#/schema/person/xwVZGAwW3S')
 
       const person = client.findNode('https://example.com/#/schema/person/xwVZGAwW3S')
-      expect(person).toMatchInlineSnapshot('undefined')
+      expect(person).toMatchInlineSnapshot(`
+        {
+          "@id": "https://example.com/#/schema/person/xwVZGAwW3S",
+          "@type": "Person",
+          "name": "Harlan Wilton",
+          "url": "https://harlanzw.com",
+        }
+      `)
     })
   })
 

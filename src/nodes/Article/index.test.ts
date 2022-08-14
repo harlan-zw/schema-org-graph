@@ -389,7 +389,7 @@ describe('defineArticle', () => {
     })
   })
 
-  it.only('can match yoast schema', () => {
+  it('can match yoast schema', () => {
     mockRoute({
       host: 'https://kootingalpecancompany.com/',
       inLanguage: 'en-US',

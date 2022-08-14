@@ -50,7 +50,7 @@ export const searchActionResolver = defineSchemaOrgResolver<SearchAction>({
     if (typeof node.target === 'string') {
       node.target = {
         '@type': 'EntryPoint',
-        'urlTemplate': resolveWithBaseUrl(ctx.meta.canonicalHost, node.target),
+        'urlTemplate': resolveWithBaseUrl(ctx.meta.host, node.target),
       }
     }
     return node

@@ -40,7 +40,7 @@ export const resolveListItem = defineSchemaOrgResolver<ListItem>({
     '@type': 'ListItem',
   },
   resolve(node, ctx) {
-    resolveUrl(node, 'item', ctx.meta.canonicalHost)
+    resolveUrl(node, 'item', ctx.meta.host)
     return node
   },
 })

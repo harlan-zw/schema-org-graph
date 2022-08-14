@@ -111,7 +111,7 @@ describe('defineEvent', () => {
 
   it('replicate google example', () => {
     mockRoute({
-      defaultCurrency: 'USD',
+      currency: 'USD',
     }, () => {
       useSetup(() => {
         useSchemaOrg([
@@ -153,7 +153,6 @@ describe('defineEvent', () => {
             endDate: '2025-07-21T23:00-05:00',
             eventStatus: 'EventScheduled',
             eventAttendanceMode: 'MixedEventAttendanceMode',
-
           }),
         ])
 

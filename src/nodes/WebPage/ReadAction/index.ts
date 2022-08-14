@@ -18,8 +18,8 @@ export const readActionResolver = defineSchemaOrgResolver<ReadAction>({
     '@type': 'ReadAction',
   },
   resolve(node, ctx) {
-    if (!node.target.includes(ctx.meta.canonicalUrl))
-      node.target.unshift(ctx.meta.canonicalUrl)
+    if (!node.target.includes(ctx.meta.url))
+      node.target.unshift(ctx.meta.url)
     return node
   },
 })

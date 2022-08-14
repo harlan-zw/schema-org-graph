@@ -1,5 +1,6 @@
 import { hash } from 'ohash'
-import type { Id, RegisteredThing, Thing } from '../types'
+import { joinURL } from 'ufo'
+import type { Id, MetaInput, RegisteredThing, ResolvedMeta, Thing } from '../types'
 import { resolveAsGraphKey } from '../utils'
 import { imageResolver } from '../nodes/Image'
 import type { SchemaOrgContext } from './graph'
@@ -43,10 +44,39 @@ export const dedupeAndFlattenNodes = (nodes: RegisteredThing[]) => {
   return Object.values(dedupedNodes)
 }
 
-export const buildResolvedGraphCtx = (nodes: Thing[], meta: any) => {
+export const resolveMeta = (meta: MetaInput) => {
+  if (!meta.host && meta.canonicalHost)
+    meta.host = meta.canonicalHost
+  if (!meta.host && typeof document !== 'undefined')
+    meta.host = document.location.host
+
+  if (!meta.url && meta.canonicalUrl)
+    meta.url = meta.canonicalUrl
+
+  if (!meta.url && meta.path)
+    meta.url = joinURL(meta.host, meta.path)
+
+  if (!meta.inLanguage && meta.defaultLanguage)
+    meta.inLanguage = meta.defaultLanguage
+
+  return <ResolvedMeta> {
+    host: meta.host,
+    url: meta.url,
+    currency: meta.currency,
+    image: meta.image,
+    inLanguage: meta.inLanguage,
+    title: meta.title,
+    description: meta.description,
+    datePublished: meta.datePublished,
+    dateModified: meta.dateModified,
+  }
+}
+
+export const buildResolvedGraphCtx = (nodes: Thing[], meta: MetaInput) => {
   // create a new graph
   const ctx = createSchemaOrgGraph()
-  ctx.meta = meta
+  ctx.meta = resolveMeta(meta)
+
   ctx.addNode(nodes)
 
   ctx.nodes
@@ -79,7 +109,7 @@ export const buildResolvedGraphCtx = (nodes: Thing[], meta: any) => {
   return ctx
 }
 
-export const renderCtxToSchemaOrgJson = (ctx: SchemaOrgContext, meta: {}) => {
+export const renderCtxToSchemaOrgJson = (ctx: SchemaOrgContext, meta: MetaInput) => {
   const resolvedCtx = buildResolvedGraphCtx(ctx.nodes, meta)
   const graphNodes = dedupeAndFlattenNodes(resolvedCtx.nodes)
   return renderNodesToSchemaOrgJson(graphNodes)

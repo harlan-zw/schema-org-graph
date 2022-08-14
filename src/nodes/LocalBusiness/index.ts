@@ -96,10 +96,12 @@ export const localBusinessResolver = defineSchemaOrgResolver<LocalBusiness>({
   defaults: {
     '@type': ['Organization', 'LocalBusiness'],
   },
+  inheritMeta: [
+    { key: 'url', meta: 'host' },
+    { key: 'currenciesAccepted', meta: 'currency' },
+  ],
   resolve(node, ctx) {
-    setIfEmpty(node, '@id', prefixId(ctx.meta.canonicalHost, IdentityId))
-    setIfEmpty(node, 'url', ctx.meta.canonicalHost)
-    setIfEmpty(node, 'currenciesAccepted', ctx.meta.defaultCurrency)
+    setIfEmpty(node, '@id', prefixId(ctx.meta.host, IdentityId))
 
     if (node['@type'])
       node['@type'] = resolveType(node['@type'], ['Organization', 'LocalBusiness']) as ['Organization', 'LocalBusiness', ValidLocalBusinessSubTypes]
@@ -114,13 +116,13 @@ export const localBusinessResolver = defineSchemaOrgResolver<LocalBusiness>({
         afterResolve(logo) {
           const hasLogo = !!ctx.findNode('#logo')
           if (!hasLogo)
-            logo['@id'] = prefixId(ctx.meta.canonicalHost, '#logo')
+            logo['@id'] = prefixId(ctx.meta.host, '#logo')
 
           setIfEmpty(logo, 'caption', node.name)
         },
       })
     }
-    resolveId(node, ctx.meta.canonicalHost)
+    resolveId(node, ctx.meta.host)
     return node
   },
 })

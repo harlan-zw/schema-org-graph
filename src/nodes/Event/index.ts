@@ -113,8 +113,8 @@ export const eventResolver = defineSchemaOrgResolver<Event>({
   ],
   resolve(node, ctx) {
     // @todo check it doesn't exist
-    setIfEmpty(node, '@id', prefixId(ctx.meta.canonicalUrl, PrimaryEventId))
-    resolveId(node, ctx.meta.canonicalUrl)
+    setIfEmpty(node, '@id', prefixId(ctx.meta.url, PrimaryEventId))
+    resolveId(node, ctx.meta.url)
 
     if (node.location) {
       // @ts-expect-error untyped

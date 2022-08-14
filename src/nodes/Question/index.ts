@@ -55,7 +55,7 @@ export const questionResolver = defineSchemaOrgResolver<Question>({
     if (question.answer)
       question.acceptedAnswer = question.answer
     // generate dynamic id if none has been set
-    resolveId(question, ctx.meta.canonicalUrl)
+    resolveId(question, ctx.meta.url)
     // resolve string answer to Answer
     question.acceptedAnswer = resolveRelation(question.acceptedAnswer, ctx, answerResolver)
     return question

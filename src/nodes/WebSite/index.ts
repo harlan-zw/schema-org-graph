@@ -59,16 +59,16 @@ export const webSiteResolver = defineSchemaOrgResolver<WebSite>({
   },
   inheritMeta: [
     'inLanguage',
-    { meta: 'canonicalHost', key: 'url' },
+    { meta: 'host', key: 'url' },
   ],
   resolve(node, ctx) {
-    resolveId(node, ctx.meta.canonicalHost)
+    resolveId(node, ctx.meta.host)
     // create id if not set
     if (!node['@id']) {
       // may be re-registering the primary website
       const primary = ctx.findNode<WebPage>(PrimaryWebSiteId)
       if (!primary || hash(primary?.name) === hash(node.name))
-        node['@id'] = prefixId(ctx.meta.canonicalHost, PrimaryWebSiteId)
+        node['@id'] = prefixId(ctx.meta.host, PrimaryWebSiteId)
     }
     // actions may be a function that need resolving
     if (node.potentialAction) {

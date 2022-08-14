@@ -90,8 +90,8 @@ export const productResolver = defineSchemaOrgResolver<Product>({
     { meta: 'title', key: 'name' },
   ],
   resolve(node, ctx) {
-    setIfEmpty(node, '@id', prefixId(ctx.meta.canonicalUrl, ProductId))
-    resolveId(node, ctx.meta.canonicalUrl)
+    setIfEmpty(node, '@id', prefixId(ctx.meta.url, ProductId))
+    resolveId(node, ctx.meta.url)
     // provide a default sku
     setIfEmpty(node, 'sku', hash(node.name))
     if (node.aggregateOffer)

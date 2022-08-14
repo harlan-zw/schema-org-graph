@@ -261,7 +261,7 @@ describe('defineArticle', () => {
 
       expect(id).toEqual('https://example.com/#/schema/person/xwVZGAwW3S')
 
-      const person = client.findNode('https://example.com/#/schema/person/x29kfkAXdv')
+      const person = client.findNode('https://example.com/#/schema/person/xwVZGAwW3S')
       expect(person).toMatchInlineSnapshot('undefined')
     })
   })
@@ -389,9 +389,9 @@ describe('defineArticle', () => {
     })
   })
 
-  it('can match yoast schema', () => {
+  it.only('can match yoast schema', () => {
     mockRoute({
-      canonicalHost: 'https://kootingalpecancompany.com/',
+      host: 'https://kootingalpecancompany.com/',
       inLanguage: 'en-US',
       path: '/pecan-tree-kootingal',
       title: 'The pecan tree &#8220;Carya illinoinensis&#8221;',

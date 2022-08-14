@@ -24,12 +24,11 @@ export const executeResolverOnNode = <T extends Thing>(node: T, ctx: SchemaOrgCo
   }
 
   // handle meta inherits
-  resolver.inheritMeta?.forEach((key) => {
-    if (typeof key === 'string') { setIfEmpty(node, key, ctx.meta?.[key]) }
-    else {
-      // @ts-expect-error untyped
-      setIfEmpty(node, key.key, ctx.meta?.[key.meta])
-    }
+  resolver.inheritMeta?.forEach((entry) => {
+    if (typeof entry === 'string')
+      setIfEmpty(node, entry, ctx.meta?.[entry])
+    else
+      setIfEmpty(node, entry.key, ctx.meta?.[entry.meta])
   })
 
   // handle resolve
@@ -52,7 +51,7 @@ export const resolveNodeId = <T extends Thing>(node: T, ctx: SchemaOrgContext, r
       if (!key.startsWith('_'))
         hashNodeData[key] = val
     })
-    node['@id'] = prefixId(resolver.root ? ctx.meta.canonicalHost : ctx.meta.canonicalUrl, `#/schema/${alias}/${hash(hashNodeData)}`)
+    node['@id'] = prefixId(resolver.root ? ctx.meta.host : ctx.meta.url, `#/schema/${alias}/${hash(hashNodeData)}`)
   }
   return node
 }

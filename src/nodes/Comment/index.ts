@@ -36,7 +36,7 @@ export const commentResolver = defineSchemaOrgResolver<Comment>({
     '@type': 'Comment',
   },
   resolve(node, ctx) {
-    resolveId(node, ctx.meta.canonicalUrl)
+    resolveId(node, ctx.meta.url)
     if (node.author) {
       node.author = resolveRelation(node.author, ctx, personResolver, {
         root: true,

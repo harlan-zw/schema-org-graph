@@ -1,37 +1,19 @@
 import {buildResolvedGraphCtx, dedupeAndFlattenNodes, createSchemaOrgGraph} from "../src/core";
 import {resolveAsGraphKey} from "../src/utils";
-import {Id} from "../src/types";
-import {joinURL} from "ufo";
+import {Id, MetaInput} from "../src/types";
 
-const defaultData = {
-  inLanguage: 'en-AU',
-  canonicalHost: 'https://example.com/',
-  canonicalUrl: 'https://example.com/',
-}
 let graph
-let ctxData: any = defaultData
+let ctxData: any = {}
 
 export function useSetup(fn) {
   graph = createSchemaOrgGraph()
   fn()
 }
 
-export function mockRoute(data: any, fn: () => void) {
-  ctxData = {
-    ...ctxData,
-    ...data
-  }
-  if (ctxData.url) {
-    ctxData.canonicalUrl = ctxData.url
-  }
-  if (ctxData.path) {
-    ctxData.canonicalUrl = joinURL(ctxData.canonicalHost, ctxData.path)
-  }
-  if (!ctxData.canonicalUrl) {
-    ctxData.canonicalUrl = ctxData.canonicalHost
-  }
+export function mockRoute(data: Omit<MetaInput, 'host'>, fn: () => void) {
+  ctxData = data
   fn()
-  ctxData = defaultData
+  ctxData = {}
 }
 
 export function useSchemaOrg(args) {
@@ -39,7 +21,12 @@ export function useSchemaOrg(args) {
 }
 
 export function injectSchemaOrg() {
-  const resolvedCtx = buildResolvedGraphCtx(graph.nodes, ctxData)
+  const resolvedCtx = buildResolvedGraphCtx(graph.nodes, {
+    inLanguage: 'en-AU',
+    host: 'https://example.com/',
+    path: '/',
+    ...ctxData
+  })
   const graphNodes = dedupeAndFlattenNodes(resolvedCtx.nodes)
   resolvedCtx.findNode = (id) => {
     const key = resolveAsGraphKey(id) as Id

@@ -66,14 +66,14 @@ export const organizationResolver
       '@type': 'Organization',
     },
     resolve(node, ctx) {
-      setIfEmpty(node, 'url', ctx.meta.canonicalHost)
-      resolveId(node, ctx.meta.canonicalHost)
+      setIfEmpty(node, 'url', ctx.meta.host)
+      resolveId(node, ctx.meta.host)
       // create id if not set
       if (!node['@id']) {
         // may be re-registering the primary website
         const identity = ctx.findNode<Organization>(IdentityId)
         if (!identity || hash(identity?.name) === hash(node.name))
-          node['@id'] = prefixId(ctx.meta.canonicalHost, IdentityId)
+          node['@id'] = prefixId(ctx.meta.host, IdentityId)
       }
 
       if (node['@type'])
@@ -89,7 +89,7 @@ export const organizationResolver
           root: true,
           afterResolve(logo) {
             if (isIdentity)
-              logo['@id'] = prefixId(ctx.meta.canonicalHost, '#logo')
+              logo['@id'] = prefixId(ctx.meta.host, '#logo')
             setIfEmpty(logo, 'caption', node.name)
           },
         })

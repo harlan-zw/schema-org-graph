@@ -59,9 +59,9 @@ export const offerResolver = defineSchemaOrgResolver<Offer>({
     'availability': 'InStock',
   },
   resolve(node, ctx) {
-    setIfEmpty(node, 'priceCurrency', ctx.meta.defaultCurrency)
+    setIfEmpty(node, 'priceCurrency', ctx.meta.currency)
     setIfEmpty(node, 'priceValidUntil', new Date(Date.UTC(new Date().getFullYear() + 1, 12, -1, 0, 0, 0)))
-    setIfEmpty(node, 'url', ctx.meta.canonicalUrl)
+    setIfEmpty(node, 'url', ctx.meta.url)
 
     if (node.availability)
       node.availability = withBase(node.availability, 'https://schema.org/') as ItemAvailability

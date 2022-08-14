@@ -94,13 +94,13 @@ export const videoResolver = defineSchemaOrgResolver<Video>({
     'description',
     'image',
     'inLanguage',
-    { meta: 'publishedAt', key: 'uploadDate' },
+    { meta: 'datePublished', key: 'uploadDate' },
   ],
   resolve(video, ctx) {
     if (video.uploadDate)
       video.uploadDate = resolvableDateToIso(video.uploadDate)
-    video.url = resolveWithBaseUrl(ctx.meta.canonicalHost, video.url)
-    resolveId(video, ctx.meta.canonicalHost)
+    video.url = resolveWithBaseUrl(ctx.meta.host, video.url)
+    resolveId(video, ctx.meta.host)
     if (video.caption && !video.description)
       video.description = video.caption
 

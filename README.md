@@ -28,16 +28,19 @@ The quickest and easiest way to add Schema.org to JavaScript Runtimes (Browser, 
 </table>
 </p>
 
+## Background
+
+This package provides a JS low-level API that frameworks can build their Schema.org implementations from, without any specific
+JS runtimes requirements.
+
+It was built for [@vueuse/schema-org](https://github.com/vueuse/schema-org).
+
 ## Features
 
 - 😊 No Schema.org knowledge required, get up and running in minutes with minimal configuration
 - ✨ 20+ Typed Schemas for best practice ([Google](https://developers.google.com/search/docs/advanced/structured-data/search-gallery), [Yoast](https://developer.yoast.com/features/schema/overview)) Rich Results
 - 🧙 Automated Schema: `@id`, URL / date resolving, route meta and more
 - 🌳 Minimal code and optimised for tree-shaking
-
-## Background
-
-This package is being built to power [vueuse/schema-org](https://github.com/vueuse/schema-org) and is a work in progress.
 
 ## Install
 
@@ -72,8 +75,8 @@ ctx.addNode([
 ])
 
 const schemaJson = renderCtxToSchemaOrgJson(ctx, {
-  canonicalHost: 'https://v3.nuxtjs.org/',
-  canonicalUrl: 'https://v3.nuxtjs.org/getting-started/quick-start',
+  host: 'https://v3.nuxtjs.org/',
+  path: '/getting-started/quick-start',
   title: 'Nuxt 3 - Quick Start',
   description: 'Starting fresh? Getting started with Nuxt 3 is straightforward!', 
 })

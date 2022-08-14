@@ -136,8 +136,8 @@ export const articleResolver = defineSchemaOrgResolver<Article>({
   ],
   resolve(node, ctx) {
     // @todo check it doesn't exist
-    setIfEmpty(node, '@id', prefixId(ctx.meta.canonicalUrl, PrimaryArticleId))
-    resolveId(node, ctx.meta.canonicalUrl)
+    setIfEmpty(node, '@id', prefixId(ctx.meta.url, PrimaryArticleId))
+    resolveId(node, ctx.meta.url)
     if (node.author) {
       node.author = resolveRelation(node.author, ctx, personResolver, {
         root: true,
@@ -161,7 +161,7 @@ export const articleResolver = defineSchemaOrgResolver<Article>({
     if (article.image && !article.thumbnailUrl) {
       const firstImage = asArray(article.image)[0] as Image
       if (typeof firstImage === 'string')
-        setIfEmpty(article, 'thumbnailUrl', resolveWithBaseUrl(meta.canonicalHost, firstImage))
+        setIfEmpty(article, 'thumbnailUrl', resolveWithBaseUrl(meta.host, firstImage))
       else if (firstImage?.['@id'])
         setIfEmpty(article, 'thumbnailUrl', findNode<Image>(firstImage['@id'])?.url)
     }
@@ -177,7 +177,7 @@ export const articleResolver = defineSchemaOrgResolver<Article>({
       setIfEmpty(webPage, 'potentialAction', [
         {
           '@type': 'ReadAction',
-          'target': [meta.canonicalUrl],
+          'target': [meta.url],
         },
       ])
       // clone the dates to the webpage

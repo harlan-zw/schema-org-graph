@@ -1,9 +1,9 @@
-import type { Arrayable, Id, RegisteredThing, Thing } from '../types'
+import type { Arrayable, Id, RegisteredThing, ResolvedMeta, Thing } from '../types'
 import { asArray, resolveAsGraphKey, setIfEmpty } from '../utils'
 
 export interface SchemaOrgContext {
   readonly nodes: RegisteredThing[]
-  meta: Record<string, any>
+  meta: ResolvedMeta
   addNode: <T extends Arrayable<Thing>>(node: T) => void
   findNode: <T extends Thing>(id: Id | string) => T | null
   _ctxUid: number
@@ -11,7 +11,7 @@ export interface SchemaOrgContext {
 
 export const createSchemaOrgGraph = (): SchemaOrgContext => {
   const nodes: RegisteredThing[] = []
-  const meta = {}
+  const meta = {} as ResolvedMeta
 
   // used for deduping across duplicate context's
   let ctxUid = 0

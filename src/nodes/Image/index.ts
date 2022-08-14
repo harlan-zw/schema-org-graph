@@ -67,8 +67,8 @@ export const imageResolver = defineSchemaOrgResolver<Image>({
     'inLanguage',
   ],
   resolve(image, { meta }) {
-    image.url = resolveWithBaseUrl(meta.canonicalHost, image.url)
-    resolveId(image, meta.canonicalHost)
+    image.url = resolveWithBaseUrl(meta.host, image.url)
+    resolveId(image, meta.host)
     setIfEmpty(image, 'contentUrl', image.url)
     // image height and width are required to render
     if (image.height && !image.width)
@@ -82,7 +82,7 @@ export const imageResolver = defineSchemaOrgResolver<Image>({
     if (image['@id']?.endsWith('#logo') && !hasPrimaryImage) {
       const webPage = findNode<WebPage>(PrimaryWebPageId)
       if (webPage) {
-        image['@id'] = prefixId(meta.canonicalUrl, '#primaryimage')
+        image['@id'] = prefixId(meta.url, '#primaryimage')
         setIfEmpty(webPage, 'primaryImageOfPage', idReference(image))
       }
     }

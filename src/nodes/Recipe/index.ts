@@ -126,9 +126,9 @@ export const recipeResolver = defineSchemaOrgResolver<Recipe>({
     'datePublished',
   ],
   resolve(node, ctx) {
-    setIfEmpty(node, '@id', prefixId(ctx.meta.canonicalUrl, RecipeId))
+    setIfEmpty(node, '@id', prefixId(ctx.meta.url, RecipeId))
 
-    resolveId(node, ctx.meta.canonicalUrl)
+    resolveId(node, ctx.meta.url)
     // @todo fix types
     if (node.recipeInstructions)
       node.recipeInstructions = resolveRelation(node.recipeInstructions, ctx, howToStepResolver)

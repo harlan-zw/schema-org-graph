@@ -11,11 +11,52 @@ export type Identity = Person | Organization
 export type ResolvableDate = string | Date
 export type OptionalSchemaOrgPrefix<T extends string> = T | `https://schema.org/${T}`
 
+export interface ResolvedMeta {
+  host: string
+  url: string
+  currency?: string
+  inLanguage?: string
+  image?: string
+  title?: string
+  description?: string
+  datePublished?: string
+  dateModified?: string
+}
+
+export interface MetaInput {
+  host: string
+  url?: string
+  path?: string
+  currency?: string
+  image?: string
+  inLanguage?: string
+  title?: string
+  description?: string
+  datePublished?: string
+  dateModified?: string
+  /**
+   * @deprecated use `language`
+   */
+  defaultLanguage?: string
+  /**
+   * @deprecated use `currency`
+   */
+  defaultCurrency?: string
+  /**
+   * @deprecated use `host`
+   */
+  canonicalHost?: string
+  /**
+   * @deprecated use `url` or `path`
+   */
+  canonicalUrl?: string
+}
+
 export interface SchemaOrgNodeDefinition<ResolvedInput> {
   alias?: string
   root?: boolean
   cast?: (node: any, ctx: SchemaOrgContext) => ResolvedInput
-  inheritMeta?: (keyof ResolvedInput | { key: keyof ResolvedInput; meta: string })[]
+  inheritMeta?: (keyof ResolvedMeta | { key: keyof ResolvedInput; meta: keyof ResolvedMeta })[]
   defaults?: DeepPartial<ResolvedInput> | ((ctx: SchemaOrgContext) => DeepPartial<any>)
   required?: (keyof ResolvedInput)[]
   resolve?: (node: ResolvedInput, ctx: SchemaOrgContext) => ResolvedInput

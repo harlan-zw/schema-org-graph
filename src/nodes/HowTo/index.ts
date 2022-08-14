@@ -82,8 +82,8 @@ export const howToResolver = defineSchemaOrgResolver<HowTo>({
     { meta: 'title', key: 'name' },
   ],
   resolve(node, ctx) {
-    setIfEmpty(node, '@id', prefixId(ctx.meta.canonicalUrl, HowToId))
-    resolveId(node, ctx.meta.canonicalUrl)
+    setIfEmpty(node, '@id', prefixId(ctx.meta.url, HowToId))
+    resolveId(node, ctx.meta.url)
     if (node.step)
       node.step = resolveRelation(node.step, ctx, howToStepResolver)
 

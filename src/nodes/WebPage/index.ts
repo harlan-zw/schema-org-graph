@@ -98,8 +98,8 @@ export const PrimaryWebPageId = '#webpage'
 
 export const webPageResolver = defineSchemaOrgResolver<WebPage>({
   defaults({ meta }) {
-    // try match the @type for the canonicalUrl
-    const endPath = withoutTrailingSlash(meta.canonicalUrl.substring(meta.canonicalUrl.lastIndexOf('/') + 1))
+    // try match the @type for the url
+    const endPath = withoutTrailingSlash(meta.url.substring(meta.url.lastIndexOf('/') + 1))
     let type: ValidSubTypes = 'WebPage'
     switch (endPath) {
       case 'about':
@@ -123,8 +123,8 @@ export const webPageResolver = defineSchemaOrgResolver<WebPage>({
     }
     const defaults: Partial<WebPage> = {
       '@type': type,
-      '@id': prefixId(meta.canonicalUrl, PrimaryWebPageId),
-      'url': meta.canonicalUrl,
+      '@id': prefixId(meta.url, PrimaryWebPageId),
+      'url': meta.url,
     }
     return defaults
   },
@@ -135,7 +135,7 @@ export const webPageResolver = defineSchemaOrgResolver<WebPage>({
     'dateModified',
   ],
   resolve(node, ctx) {
-    resolveId(node, ctx.meta.canonicalUrl)
+    resolveId(node, ctx.meta.url)
     if (node.dateModified)
       node.dateModified = resolvableDateToIso(node.dateModified)
 
@@ -154,7 +154,7 @@ export const webPageResolver = defineSchemaOrgResolver<WebPage>({
       setIfEmpty(node, 'potentialAction', [
         {
           '@type': 'ReadAction',
-          'target': [ctx.meta.canonicalUrl],
+          'target': [ctx.meta.url],
         },
       ])
     }
@@ -168,7 +168,7 @@ export const webPageResolver = defineSchemaOrgResolver<WebPage>({
     /*
      * When it's a homepage, add additional about property which references the identity of the site.
      */
-    if (identity && meta.canonicalUrl === meta.canonicalHost)
+    if (identity && meta.url === meta.host)
       setIfEmpty(webPage, 'about', idReference(identity))
 
     if (logo)

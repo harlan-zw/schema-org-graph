@@ -49,8 +49,8 @@ export const breadcrumbResolver = defineSchemaOrgResolver<Breadcrumb>({
     '@type': 'BreadcrumbList',
   },
   resolve(breadcrumb, ctx) {
-    setIfEmpty(breadcrumb, '@id', prefixId(ctx.meta.canonicalUrl, PrimaryBreadcrumbId))
-    resolveId(breadcrumb, ctx.meta.canonicalUrl)
+    setIfEmpty(breadcrumb, '@id', prefixId(ctx.meta.url, PrimaryBreadcrumbId))
+    resolveId(breadcrumb, ctx.meta.url)
     if (breadcrumb.itemListElement) {
       let index = 1
 

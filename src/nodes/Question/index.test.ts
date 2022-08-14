@@ -6,7 +6,7 @@ import { defineQuestion } from './index'
 describe('defineQuestion', () => {
   it('can be registered', () => {
     mockRoute({
-      canonicalUrl: 'https://example.com/frequently-asked-questions',
+      url: 'https://example.com/frequently-asked-questions',
       title: 'FAQ',
     }, () => {
       useSetup(() => {

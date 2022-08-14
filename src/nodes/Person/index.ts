@@ -62,20 +62,20 @@ export const personResolver = defineSchemaOrgResolver<Person>({
     '@type': 'Person',
   },
   resolve(node, { meta, findNode }) {
-    resolveId(node, meta.canonicalHost)
+    resolveId(node, meta.host)
     // create id if not set
     if (!node['@id']) {
       // may be re-registering the primary person
       const identity = findNode<Person | Organization>(IdentityId)
       if (!identity)
-        node['@id'] = prefixId(meta.canonicalHost, IdentityId)
+        node['@id'] = prefixId(meta.host, IdentityId)
     }
     return node as Person
   },
   rootNodeResolve(node, { findNode, meta }) {
     // if this person is the identity
     if (resolveAsGraphKey(node['@id'] || '') === IdentityId) {
-      setIfEmpty(node, 'url', meta.canonicalHost)
+      setIfEmpty(node, 'url', meta.host)
 
       const webPage = findNode<WebPage>(PrimaryWebPageId)
       if (webPage)

@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-The quickest and easiest way to add Schema.org to JavaScript Runtimes (Browser, Node, etc).
+The quickest and easiest way to build Schema.org graphs for JavaScript Runtimes (Browser, Node, etc).
 </p>
 
 <p align="center">

@@ -8,6 +8,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '#provider': './src/runtime/simple',
+      'schema-org-graph-js': './src/index',
     }
   },
   test: {

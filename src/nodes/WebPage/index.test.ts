@@ -199,24 +199,28 @@ describe('defineWebPage', () => {
     })
   })
 
-  it('allows @type augmentation on matching #id', () => {
+  it('has default @type WebPage', () => {
     useSetup(() => {
       useSchemaOrg([
         defineWebPage(),
       ])
 
-      let ctx = injectSchemaOrg()
-      let webPage = ctx.findNode<WebPage>(PrimaryWebPageId)
+      const ctx = injectSchemaOrg()
+      const webPage = ctx.findNode<WebPage>(PrimaryWebPageId)
       expect(webPage?.['@type']).toEqual('WebPage')
+    })
+  })
 
+  it('supports augmentation with defaults', () => {
+    useSetup(() => {
       useSchemaOrg([
         defineWebPage({
           '@type': ['CollectionPage', 'SearchResultsPage'],
         }),
       ])
 
-      ctx = injectSchemaOrg()
-      webPage = ctx.findNode<WebPage>(PrimaryWebPageId)
+      const ctx = injectSchemaOrg()
+      const webPage = ctx.findNode<WebPage>(PrimaryWebPageId)
       expect(webPage?.['@type']).toEqual(['WebPage', 'CollectionPage', 'SearchResultsPage'])
     })
   })
@@ -244,7 +248,7 @@ describe('defineWebPage', () => {
       const webPage = findNode<WebPage>(PrimaryWebPageId)
       expect(webPage?.about).toEqual(idReference(prefixId('https://example.com/', IdentityId)))
       expect(webPage?.isPartOf).toEqual(idReference(prefixId('https://example.com/', PrimaryWebSiteId)))
-      expect(webPage?.primaryImageOfPage).toEqual(idReference(prefixId('https://example.com/', '#primaryimage')))
+      expect(webPage?.primaryImageOfPage).toEqual(idReference(prefixId('https://example.com/', '#logo')))
 
       expect(graphNodes).toMatchInlineSnapshot(`
         [
@@ -266,7 +270,7 @@ describe('defineWebPage', () => {
               },
             ],
             "primaryImageOfPage": {
-              "@id": "https://example.com/#primaryimage",
+              "@id": "https://example.com/#logo",
             },
             "url": "https://example.com/",
           },
@@ -274,7 +278,7 @@ describe('defineWebPage', () => {
             "@id": "https://example.com/#identity",
             "@type": "Organization",
             "logo": {
-              "@id": "https://example.com/#primaryimage",
+              "@id": "https://example.com/#logo",
             },
             "name": "Harlan Wilton",
             "url": "https://example.com/",
@@ -290,7 +294,7 @@ describe('defineWebPage', () => {
             "url": "https://example.com/",
           },
           {
-            "@id": "https://example.com/#primaryimage",
+            "@id": "https://example.com/#logo",
             "@type": "ImageObject",
             "caption": "Harlan Wilton",
             "contentUrl": "https://example.com/logo.png",
@@ -318,7 +322,7 @@ describe('defineWebPage', () => {
             },
           ],
           "primaryImageOfPage": {
-            "@id": "https://example.com/#primaryimage",
+            "@id": "https://example.com/#logo",
           },
           "url": "https://example.com/",
         }

@@ -1,13 +1,7 @@
 import type { Thing } from '../../types'
 import {
-  idReference,
-  prefixId,
-  provideResolver,
-  resolveId,
-  resolveWithBaseUrl, setIfEmpty,
+  resolveWithBase, setIfEmpty,
 } from '../../utils'
-import type { WebPage } from '../WebPage'
-import { PrimaryWebPageId } from '../WebPage'
 import { defineSchemaOrgResolver } from '../../core'
 
 export interface ImageLite extends Thing {
@@ -49,7 +43,6 @@ export interface Image extends ImageLite {}
  * Describes an individual image (usually in the context of an embedded media object).
  */
 export const imageResolver = defineSchemaOrgResolver<Image>({
-  root: true,
   alias: 'image',
   cast(input) {
     if (typeof input === 'string') {
@@ -66,9 +59,9 @@ export const imageResolver = defineSchemaOrgResolver<Image>({
     // @todo possibly only do if there's a caption
     'inLanguage',
   ],
+  idPrefix: 'host',
   resolve(image, { meta }) {
-    image.url = resolveWithBaseUrl(meta.host, image.url)
-    resolveId(image, meta.host)
+    image.url = resolveWithBase(meta.host, image.url)
     setIfEmpty(image, 'contentUrl', image.url)
     // image height and width are required to render
     if (image.height && !image.width)
@@ -77,7 +70,8 @@ export const imageResolver = defineSchemaOrgResolver<Image>({
       delete image.width
     return image
   },
-  rootNodeResolve(image, { findNode, meta }) {
+  // @todo re-implement #primaryimage
+  /* rootNodeResolve(image, { findNode, meta }) {
     const hasPrimaryImage = !!findNode('#primaryimage')
     if (image['@id']?.endsWith('#logo') && !hasPrimaryImage) {
       const webPage = findNode<WebPage>(PrimaryWebPageId)
@@ -86,5 +80,5 @@ export const imageResolver = defineSchemaOrgResolver<Image>({
         setIfEmpty(webPage, 'primaryImageOfPage', idReference(image))
       }
     }
-  },
+  }, */
 })

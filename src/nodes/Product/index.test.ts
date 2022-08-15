@@ -61,7 +61,6 @@ describe('defineProduct', () => {
             "review": {
               "@type": "Review",
               "author": {
-                "@id": "https://example.com/#identity",
                 "@type": "Person",
                 "name": "Harlan Wilton",
               },

@@ -1,4 +1,4 @@
-import { resolveWithBaseUrl } from '../../../utils'
+import { resolveWithBase } from '../../../utils'
 import { defineSchemaOrgResolver } from '../../../core'
 
 export interface SearchActionInput {
@@ -20,7 +20,7 @@ export interface SearchAction {
    * An object of type EntryPoint, with a relative URL which describes the URL pattern of the internal search function
    * (e.g., /search?query={search_term_string}).
    */
-  target: {
+  target: string | {
     '@type'?: 'EntryPoint'
     'urlTemplate': string
   }
@@ -50,7 +50,7 @@ export const searchActionResolver = defineSchemaOrgResolver<SearchAction>({
     if (typeof node.target === 'string') {
       node.target = {
         '@type': 'EntryPoint',
-        'urlTemplate': resolveWithBaseUrl(ctx.meta.host, node.target),
+        'urlTemplate': resolveWithBase(ctx.meta.host, node.target),
       }
     }
     return node

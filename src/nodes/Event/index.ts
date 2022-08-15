@@ -11,7 +11,6 @@ import {
   idReference,
   resolvableDateToDate,
   resolvableDateToIso,
-  resolveId,
   setIfEmpty,
 } from '../../utils'
 import type { Organization } from '../Organization'
@@ -109,29 +108,21 @@ export const eventResolver = defineSchemaOrgResolver<Event>({
     'image',
     { meta: 'title', key: 'name' },
   ],
+  idPrefix: ['url', PrimaryEventId],
   resolve(node, ctx) {
-    // @todo check it doesn't exist
-    setIfEmpty(node, '@id', prefixId(ctx.meta.url, PrimaryEventId))
-    resolveId(node, ctx.meta.url)
-
     if (node.location) {
       // @ts-expect-error untyped
       const isVirtual = node.location === 'string' || node.location?.url !== 'undefined'
       node.location = resolveRelation(node.location, ctx, isVirtual ? virtualLocationResolver : placeResolver)
     }
 
-    if (node.performer) {
-      node.performer = resolveRelation(node.performer, ctx, personResolver, {
-        root: true,
-      })
-    }
-    if (node.organizer) {
-      node.organizer = resolveRelation(node.organizer, ctx, organizationResolver, {
-        root: true,
-      })
-    }
-    if (node.offers)
-      node.offers = resolveRelation(node.offers, ctx, offerResolver)
+    node.performer = resolveRelation(node.performer, ctx, personResolver, {
+      root: true,
+    })
+    node.organizer = resolveRelation(node.organizer, ctx, organizationResolver, {
+      root: true,
+    })
+    node.offers = resolveRelation(node.offers, ctx, offerResolver)
 
     if (node.eventAttendanceMode)
       node.eventAttendanceMode = withBase(node.eventAttendanceMode, 'https://schema.org/') as EventAttendanceModeTypes
@@ -153,13 +144,11 @@ export const eventResolver = defineSchemaOrgResolver<Event>({
         node[date] = resolvableDateToIso(node[date])
       }
     })
-
     setIfEmpty(node, 'endDate', node.startDate)
     return node
   },
   rootNodeResolve(node, { findNode }) {
     const identity = findNode<Organization | Person>(IdentityId)
-
     if (identity)
       setIfEmpty(node, 'organizer', idReference(identity))
   },

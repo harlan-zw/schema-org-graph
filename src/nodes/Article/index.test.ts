@@ -363,14 +363,6 @@ describe('defineArticle', () => {
             "thumbnailUrl": "https://example.com/my-image.png",
           },
           {
-            "@id": "https://example.com/#logo",
-            "@type": "ImageObject",
-            "caption": "Identity",
-            "contentUrl": "https://example.com/test.png",
-            "inLanguage": "en-AU",
-            "url": "https://example.com/test.png",
-          },
-          {
             "@id": "https://example.com/#/schema/person/xRdko3dItW",
             "@type": "Person",
             "name": "John doe",
@@ -381,6 +373,14 @@ describe('defineArticle', () => {
             "@type": "Person",
             "name": "Jane doe",
             "url": "https://harlanzw.com",
+          },
+          {
+            "@id": "https://example.com/#logo",
+            "@type": "ImageObject",
+            "caption": "Identity",
+            "contentUrl": "https://example.com/test.png",
+            "inLanguage": "en-AU",
+            "url": "https://example.com/test.png",
           },
           {
             "@id": "https://example.com/#/schema/image/riaRi7jPJC",

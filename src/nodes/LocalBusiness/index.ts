@@ -100,29 +100,21 @@ export const localBusinessResolver = defineSchemaOrgResolver<LocalBusiness>({
     { key: 'url', meta: 'host' },
     { key: 'currenciesAccepted', meta: 'currency' },
   ],
+  idPrefix: ['host', IdentityId],
   resolve(node, ctx) {
-    setIfEmpty(node, '@id', prefixId(ctx.meta.host, IdentityId))
+    resolveDefaultType(node, ['Organization', 'LocalBusiness'])
 
-    if (node['@type'])
-      node['@type'] = resolveType(node['@type'], ['Organization', 'LocalBusiness']) as ['Organization', 'LocalBusiness', ValidLocalBusinessSubTypes]
+    node.address = resolveRelation(node.address, ctx, addressResolver)
+    node.openingHoursSpecification = resolveRelation(node.openingHoursSpecification, ctx, resolveOpeningHours)
+    node.logo = resolveRelation(node.logo, ctx, imageResolver, {
+      afterResolve(logo) {
+        const hasLogo = !!ctx.findNode('#logo')
+        if (!hasLogo)
+          logo['@id'] = prefixId(ctx.meta.host, '#logo')
 
-    if (node.address)
-      node.address = resolveRelation(node.address, ctx, addressResolver)
-    if (node.openingHoursSpecification)
-      node.openingHoursSpecification = resolveRelation(node.openingHoursSpecification, ctx, resolveOpeningHours)
-
-    if (node.logo) {
-      node.logo = resolveRelation(node.logo, ctx, imageResolver, {
-        afterResolve(logo) {
-          const hasLogo = !!ctx.findNode('#logo')
-          if (!hasLogo)
-            logo['@id'] = prefixId(ctx.meta.host, '#logo')
-
-          setIfEmpty(logo, 'caption', node.name)
-        },
-      })
-    }
-    resolveId(node, ctx.meta.host)
+        setIfEmpty(logo, 'caption', node.name)
+      },
+    })
     return node
   },
 })

@@ -1,4 +1,3 @@
-import { hash } from 'ohash'
 import type { NodeRelation, NodeRelations, Thing } from '../../types'
 import {
   IdentityId,
@@ -27,7 +26,7 @@ export interface OrganizationLite extends Thing {
    * (for example, if the logo is mostly white or gray,
    * it may not look how you want it to look when displayed on a white background).
    */
-  logo: NodeRelation<Image | string>
+  logo?: NodeRelation<Image | string>
   /**
    * The site's home URL.
    */
@@ -65,25 +64,19 @@ export const organizationResolver
     defaults: {
       '@type': 'Organization',
     },
+    idPrefix: ['host', IdentityId],
+    inheritMeta: [
+      { meta: 'host', key: 'url' },
+    ],
     resolve(node, ctx) {
-      setIfEmpty(node, 'url', ctx.meta.host)
-      resolveId(node, ctx.meta.host)
-      // create id if not set
-      if (!node['@id']) {
-        // may be re-registering the primary website
-        const identity = ctx.findNode<Organization>(IdentityId)
-        if (!identity || hash(identity?.name) === hash(node.name))
-          node['@id'] = prefixId(ctx.meta.host, IdentityId)
-      }
-
-      if (node['@type'])
-        node['@type'] = resolveType(node['@type'], 'Organization')
-      if (node.address)
-        node.address = resolveRelation(node.address, ctx, addressResolver)
-
-      const isIdentity = resolveAsGraphKey(node['@id'] || '') === IdentityId
+      resolveDefaultType(node, 'Organization')
+      node.address = resolveRelation(node.address, ctx, addressResolver)
+      return node
+    },
+    rootNodeResolve(node, ctx) {
+      const isIdentity = resolveAsGraphKey(node['@id']) === IdentityId
+      // logo
       const webPage = ctx.findNode<WebPage>(PrimaryWebPageId)
-
       if (node.logo) {
         node.logo = resolveRelation(node.logo, ctx, imageResolver, {
           root: true,
@@ -97,12 +90,12 @@ export const organizationResolver
         if (webPage)
           setIfEmpty(webPage, 'primaryImageOfPage', idReference(node.logo as Image))
       }
+
       if (isIdentity && webPage)
         setIfEmpty(webPage, 'about', idReference(node as Organization))
 
       const webSite = ctx.findNode<WebSite>(PrimaryWebSiteId)
       if (webSite)
         setIfEmpty(webSite, 'publisher', idReference(node as Organization))
-      return node
     },
   })

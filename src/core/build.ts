@@ -27,7 +27,7 @@ export const dedupeAndFlattenNodes = (nodes: RegisteredThing[]) => {
   const dedupedNodes: Record<Id, RegisteredThing> = {}
   for (const key of keys) {
     const n = nodes[key]
-    const nodeKey = resolveAsGraphKey(n['@id'] || hash(n))
+    const nodeKey = resolveAsGraphKey(n['@id'] || hash(n)) as Id
     dedupedNodes[nodeKey] = Object.keys(n)
       .sort()
       .reduce(
@@ -85,7 +85,7 @@ export const buildResolvedGraphCtx = (nodes: Thing[], meta: MetaInput) => {
       const resolver = node._resolver
       if (resolver) {
         node = executeResolverOnNode(node, ctx, resolver)
-        node = resolveNodeId(node, ctx, resolver)
+        node = resolveNodeId(node, ctx, resolver, true)
       }
       ctx.nodes[key] = node
     })

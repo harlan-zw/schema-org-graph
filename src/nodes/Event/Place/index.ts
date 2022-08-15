@@ -19,9 +19,7 @@ export const placeResolver = defineSchemaOrgResolver<Place>({
     '@type': 'Place',
   },
   resolve(node, ctx) {
-    if (node.address)
-      node.address = resolveRelation(node.address, ctx, addressResolver)
-
+    node.address = resolveRelation(node.address, ctx, addressResolver)
     return node
   },
 })

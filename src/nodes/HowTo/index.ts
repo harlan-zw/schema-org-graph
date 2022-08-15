@@ -1,4 +1,4 @@
-import type { IdReference, NodeRelations, Thing } from '../../types'
+import type { NodeRelations, Thing } from '../../types'
 import {
   idReference, setIfEmpty,
 } from '../../utils'
@@ -21,10 +21,6 @@ export interface HowToLite extends Thing {
    * An array of howToStep objects
    */
   step: NodeRelations<HowToStep | string>[]
-  /**
-   * Referencing the WebPage by ID.
-   */
-  mainEntityOfPage?: IdReference
   /**
    * The total time required to perform all instructions or directions (including time to prepare the supplies),
    * in ISO 8601 duration format.
@@ -78,12 +74,9 @@ export const howToResolver = defineSchemaOrgResolver<HowTo>({
     'inLanguage',
     { meta: 'title', key: 'name' },
   ],
+  idPrefix: ['url', HowToId],
   resolve(node, ctx) {
-    setIfEmpty(node, '@id', prefixId(ctx.meta.url, HowToId))
-    resolveId(node, ctx.meta.url)
-    if (node.step)
-      node.step = resolveRelation(node.step, ctx, howToStepResolver)
-
+    node.step = resolveRelation(node.step, ctx, howToStepResolver)
     return node
   },
   rootNodeResolve(node, { findNode }) {

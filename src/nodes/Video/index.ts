@@ -2,8 +2,7 @@ import type { Id, NodeRelation, ResolvableDate, Thing } from '../../types'
 import {
   asArray,
   resolvableDateToIso,
-  resolveId,
-  resolveWithBaseUrl, setIfEmpty,
+  resolveWithBase, setIfEmpty,
 } from '../../utils'
 import type { Image } from '../Image'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
@@ -26,7 +25,7 @@ export interface VideoLite extends Thing {
   /**
    * The date the video was published, in ISO 8601 format (e.g., 2020-01-20).
    */
-  uploadDate: ResolvableDate
+  uploadDate?: ResolvableDate
   /**
    * Whether the video should be considered 'family friendly'
    */
@@ -95,11 +94,11 @@ export const videoResolver = defineSchemaOrgResolver<Video>({
     'inLanguage',
     { meta: 'datePublished', key: 'uploadDate' },
   ],
+  idPrefix: 'host',
   resolve(video, ctx) {
     if (video.uploadDate)
       video.uploadDate = resolvableDateToIso(video.uploadDate)
-    video.url = resolveWithBaseUrl(ctx.meta.host, video.url)
-    resolveId(video, ctx.meta.host)
+    video.url = resolveWithBase(ctx.meta.host, video.url)
     if (video.caption && !video.description)
       video.description = video.caption
 

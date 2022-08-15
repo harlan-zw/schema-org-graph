@@ -10,7 +10,6 @@ import type { WebSite } from '../WebSite'
 import { PrimaryWebSiteId } from '../WebSite'
 import type { Article } from '../Article'
 import { PrimaryArticleId } from '../Article'
-import type { Organization } from '../Organization'
 import { defineSchemaOrgResolver } from '../../core'
 import type { Image } from '../Image'
 
@@ -48,7 +47,6 @@ export interface Person extends PersonLite {}
  * Describes an individual person. Most commonly used to identify the author of a piece of content (such as an Article or Comment).
  */
 export const personResolver = defineSchemaOrgResolver<Person>({
-  root: true,
   cast(node) {
     if (typeof node === 'string') {
       return {
@@ -60,20 +58,10 @@ export const personResolver = defineSchemaOrgResolver<Person>({
   defaults: {
     '@type': 'Person',
   },
-  resolve(node, { meta, findNode }) {
-    resolveId(node, meta.host)
-    // create id if not set
-    if (!node['@id']) {
-      // may be re-registering the primary person
-      const identity = findNode<Person | Organization>(IdentityId)
-      if (!identity)
-        node['@id'] = prefixId(meta.host, IdentityId)
-    }
-    return node as Person
-  },
+  idPrefix: ['host', IdentityId],
   rootNodeResolve(node, { findNode, meta }) {
     // if this person is the identity
-    if (resolveAsGraphKey(node['@id'] || '') === IdentityId) {
+    if (resolveAsGraphKey(node['@id']) === IdentityId) {
       setIfEmpty(node, 'url', meta.host)
 
       const webPage = findNode<WebPage>(PrimaryWebPageId)

@@ -43,10 +43,8 @@ export const reviewResolver = defineSchemaOrgResolver<Review>({
     'inLanguage',
   ],
   resolve(review, ctx) {
-    if (review.reviewRating)
-      review.reviewRating = resolveRelation(review.reviewRating, ctx, ratingResolver)
-    if (review.author)
-      review.author = resolveRelation(review.author, ctx, personResolver)
+    review.reviewRating = resolveRelation(review.reviewRating, ctx, ratingResolver)
+    review.author = resolveRelation(review.author, ctx, personResolver)
     return review
   },
 })

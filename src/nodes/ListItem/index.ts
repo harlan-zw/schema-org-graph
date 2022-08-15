@@ -1,8 +1,6 @@
 import type { Thing } from '../../types'
-import {
-  resolveUrl,
-} from '../../utils'
 import { defineSchemaOrgResolver } from '../../core'
+import { resolveWithBase } from '../../utils'
 
 /**
  * A list item, e.g. a step in a checklist or how-to description.
@@ -40,7 +38,9 @@ export const resolveListItem = defineSchemaOrgResolver<ListItem>({
     '@type': 'ListItem',
   },
   resolve(node, ctx) {
-    resolveUrl(node, 'item', ctx.meta.host)
+    if (typeof node.item === 'string')
+      node.item = resolveWithBase(ctx.meta.host, node.item as string)
+
     return node
   },
 })

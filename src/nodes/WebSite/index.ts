@@ -1,4 +1,3 @@
-import { hash } from 'ohash'
 import type { Arrayable, Identity, NodeRelations, Thing } from '../../types'
 import {
   IdentityId,
@@ -51,7 +50,6 @@ export interface WebSite extends WebSiteLite {}
 export const PrimaryWebSiteId = '#website'
 
 export const webSiteResolver = defineSchemaOrgResolver<WebSite>({
-  root: true,
   defaults: {
     '@type': 'WebSite',
   },
@@ -59,26 +57,17 @@ export const webSiteResolver = defineSchemaOrgResolver<WebSite>({
     'inLanguage',
     { meta: 'host', key: 'url' },
   ],
+  idPrefix: ['host', PrimaryWebSiteId],
   resolve(node, ctx) {
-    resolveId(node, ctx.meta.host)
-    // create id if not set
-    if (!node['@id']) {
-      // may be re-registering the primary website
-      const primary = ctx.findNode<WebPage>(PrimaryWebSiteId)
-      if (!primary || hash(primary?.name) === hash(node.name))
-        node['@id'] = prefixId(ctx.meta.host, PrimaryWebSiteId)
-    }
     // actions may be a function that need resolving
-    if (node.potentialAction) {
-      node.potentialAction = resolveRelation(node.potentialAction, ctx, searchActionResolver, {
-        array: true,
-      })
-    }
+    node.potentialAction = resolveRelation(node.potentialAction, ctx, searchActionResolver, {
+      array: true,
+    })
     return node
   },
   rootNodeResolve(node, { findNode }) {
     // if this person is the identity
-    if (resolveAsGraphKey(node['@id'] || '') === PrimaryWebSiteId) {
+    if (resolveAsGraphKey(node['@id']) === PrimaryWebSiteId) {
       const identity = findNode<Person | Organization>(IdentityId)
       if (identity)
         setIfEmpty(node, 'publisher', idReference(identity))

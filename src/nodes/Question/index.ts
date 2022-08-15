@@ -47,13 +47,12 @@ export const questionResolver = defineSchemaOrgResolver<Question>({
   inheritMeta: [
     'inLanguage',
   ],
+  idPrefix: 'url',
   resolve(question, ctx) {
     if (question.question)
       question.name = question.question
     if (question.answer)
       question.acceptedAnswer = question.answer
-    // generate dynamic id if none has been set
-    resolveId(question, ctx.meta.url)
     // resolve string answer to Answer
     question.acceptedAnswer = resolveRelation(question.acceptedAnswer, ctx, answerResolver)
     return question

@@ -6,7 +6,7 @@ import type {
   Thing,
 } from '../types'
 import type { ResolverOptions } from '../utils'
-import { asArray, idReference, prefixId, setIfEmpty } from '../utils'
+import { asArray, idReference, prefixId, setIfEmpty, stripEmptyProperties } from '../utils'
 import type { SchemaOrgContext } from './graph'
 
 export const executeResolverOnNode = <T extends Thing>(node: T, ctx: SchemaOrgContext, resolver: SchemaOrgNodeDefinition<T>) => {
@@ -26,19 +26,41 @@ export const executeResolverOnNode = <T extends Thing>(node: T, ctx: SchemaOrgCo
   // handle meta inherits
   resolver.inheritMeta?.forEach((entry) => {
     if (typeof entry === 'string')
-      setIfEmpty(node, entry, ctx.meta?.[entry])
+      setIfEmpty(node, entry, ctx.meta[entry])
     else
-      setIfEmpty(node, entry.key, ctx.meta?.[entry.meta])
+      setIfEmpty(node, entry.key, ctx.meta[entry.meta])
   })
 
   // handle resolve
   if (resolver?.resolve)
     node = resolver.resolve(node, ctx)
 
+  stripEmptyProperties(node)
   return node
 }
 
-export const resolveNodeId = <T extends Thing>(node: T, ctx: SchemaOrgContext, resolver: SchemaOrgNodeDefinition<T>) => {
+export const resolveNodeId = <T extends Thing>(node: T, ctx: SchemaOrgContext, resolver: SchemaOrgNodeDefinition<T>, resolveAsRoot = false) => {
+  const prefix = Array.isArray(resolver.idPrefix) ? resolver.idPrefix[0] : resolver.idPrefix
+
+  // may not need an @id
+  if (!prefix)
+    return node
+
+  // transform #my-id into https://host.com/#my-id
+  if (node['@id'] && !(node['@id'] as string).startsWith(ctx.meta.host)) {
+    node['@id'] = prefixId(ctx.meta[prefix], node['@id'])
+    return node
+  }
+
+  const rootId = Array.isArray(resolver.idPrefix) ? resolver.idPrefix?.[1] : undefined
+  // transform ['host', PrimaryWebPageId] to https://host.com/#webpage
+  if (resolveAsRoot && rootId) {
+    // make sure it doesn't exist
+    const existingNode = ctx.findNode(rootId)
+    if (!existingNode)
+      node['@id'] = prefixId(ctx.meta[prefix], rootId)
+  }
+  // transform 'host' to https://host.com/#schema/webpage/gj5g59gg
   if (!node['@id']) {
     let alias = resolver?.alias
     if (!alias) {
@@ -51,12 +73,12 @@ export const resolveNodeId = <T extends Thing>(node: T, ctx: SchemaOrgContext, r
       if (!key.startsWith('_'))
         hashNodeData[key] = val
     })
-    node['@id'] = prefixId(resolver.root ? ctx.meta.host : ctx.meta.url, `#/schema/${alias}/${hash(hashNodeData)}`)
+    node['@id'] = prefixId(ctx.meta[prefix], `#/schema/${alias}/${hash(hashNodeData)}`)
   }
   return node
 }
 
-export function resolveRelation(input: Arrayable<any>, ctx: any,
+export function resolveRelation(input: Arrayable<any>, ctx: SchemaOrgContext,
   resolver: SchemaOrgNodeDefinition<any>,
   options: ResolverOptions = {},
 ) {
@@ -78,12 +100,12 @@ export function resolveRelation(input: Arrayable<any>, ctx: any,
 
     // root nodes need ids
     if (options.generateId || options.root)
-      node = resolveNodeId(node, ctx, resolver)
+      node = resolveNodeId(node, ctx, resolver, false)
 
     if (options.root) {
       if (resolver.rootNodeResolve)
         resolver.rootNodeResolve(node, ctx)
-      ctx.addNode(node, ctx)
+      ctx.addNode(node)
       return idReference(node['@id'])
     }
 

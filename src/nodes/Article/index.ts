@@ -11,15 +11,12 @@ import {
   asArray,
   idReference,
   resolvableDateToIso,
-  resolveId,
-  resolveType,
-  resolveWithBaseUrl,
-  setIfEmpty,
-  trimLength,
+  resolveDefaultType,
+  resolveWithBase,
+  setIfEmpty, trimLength,
 } from '../../utils'
 import type { WebPage } from '../WebPage'
 import { PrimaryWebPageId } from '../WebPage'
-import type { Organization } from '../Organization'
 import type { Person } from '../Person'
 import type { Image } from '../Image'
 import type { Video } from '../Video'
@@ -132,46 +129,39 @@ export const articleResolver = defineSchemaOrgResolver<Article>({
     'datePublished',
     { meta: 'title', key: 'headline' },
   ],
+  idPrefix: ['url', PrimaryArticleId],
   resolve(node, ctx) {
-    // @todo check it doesn't exist
-    setIfEmpty(node, '@id', prefixId(ctx.meta.url, PrimaryArticleId))
-    resolveId(node, ctx.meta.url)
-    if (node.author) {
-      node.author = resolveRelation(node.author, ctx, personResolver, {
-        root: true,
-      })
-    }
-    if (node.dateModified)
-      node.dateModified = resolvableDateToIso(node.dateModified)
-    if (node.datePublished)
-      node.datePublished = resolvableDateToIso(node.datePublished)
-    if (node['@type'])
-      node['@type'] = resolveType(node['@type'], 'Article') as Arrayable<ValidArticleSubTypes>
+    node.author = resolveRelation(node.author, ctx, personResolver, {
+      root: true,
+    })
+    node.dateModified = resolvableDateToIso(node.dateModified)
+    node.datePublished = resolvableDateToIso(node.datePublished)
+    resolveDefaultType(node, 'Article')
+
     // Headlines should not exceed 110 characters.
-    if (node.headline)
-      node.headline = trimLength(node.headline, 110)
+    node.headline = trimLength(node.headline, 110)
     return node
   },
-  rootNodeResolve(article, { findNode, meta }) {
+  rootNodeResolve(node, { findNode, meta }) {
     const webPage = findNode<WebPage>(PrimaryWebPageId)
-    const identity = findNode<Organization | Person>(IdentityId)
+    const identity = findNode<Identity>(IdentityId)
 
-    if (article.image && !article.thumbnailUrl) {
-      const firstImage = asArray(article.image)[0] as Image
+    if (node.image && !node.thumbnailUrl) {
+      const firstImage = asArray(node.image)[0] as Image
       if (typeof firstImage === 'string')
-        setIfEmpty(article, 'thumbnailUrl', resolveWithBaseUrl(meta.host, firstImage))
+        setIfEmpty(node, 'thumbnailUrl', resolveWithBase(meta.host, firstImage))
       else if (firstImage?.['@id'])
-        setIfEmpty(article, 'thumbnailUrl', findNode<Image>(firstImage['@id'])?.url)
+        setIfEmpty(node, 'thumbnailUrl', findNode<Image>(firstImage['@id'])?.url)
     }
 
     if (identity) {
-      setIfEmpty(article, 'publisher', idReference(identity))
-      setIfEmpty(article, 'author', idReference(identity))
+      setIfEmpty(node, 'publisher', idReference(identity))
+      setIfEmpty(node, 'author', idReference(identity))
     }
 
     if (webPage) {
-      setIfEmpty(article, 'isPartOf', idReference(webPage))
-      setIfEmpty(article, 'mainEntityOfPage', idReference(webPage))
+      setIfEmpty(node, 'isPartOf', idReference(webPage))
+      setIfEmpty(node, 'mainEntityOfPage', idReference(webPage))
       setIfEmpty(webPage, 'potentialAction', [
         {
           '@type': 'ReadAction',
@@ -179,10 +169,10 @@ export const articleResolver = defineSchemaOrgResolver<Article>({
         },
       ])
       // clone the dates to the webpage
-      setIfEmpty(webPage, 'dateModified', article.dateModified)
-      setIfEmpty(webPage, 'datePublished', article.datePublished)
+      setIfEmpty(webPage, 'dateModified', node.dateModified)
+      setIfEmpty(webPage, 'datePublished', node.datePublished)
       // setIfEmpty(webPage, 'author', article.author)
     }
-    return article
+    return node
   },
 })

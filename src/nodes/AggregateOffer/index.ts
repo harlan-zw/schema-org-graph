@@ -38,9 +38,7 @@ export const aggregateOfferResolver = defineSchemaOrgResolver<AggregateOffer>({
     '@type': 'AggregateOffer',
   },
   resolve(node, ctx) {
-    if (node.offers)
-      node.offers = resolveRelation(node.offers, ctx, offerResolver)
-
+    node.offers = resolveRelation(node.offers, ctx, offerResolver)
     setIfEmpty(node, 'offerCount', asArray(node.offers).length)
     return node
   },

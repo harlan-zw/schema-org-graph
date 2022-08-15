@@ -26,6 +26,45 @@ describe('defineEvent', () => {
     })
   })
 
+  it('handles performing group', () => {
+    useSetup(() => {
+      useSchemaOrg([
+        defineEvent({
+          name: 'test',
+          organizer: defineOrganization({
+            '@type': 'PerformingGroup',
+            'name': 'My Organisation',
+          }),
+        }),
+      ])
+
+      const { graphNodes } = injectSchemaOrg()
+
+      expect(graphNodes).toMatchInlineSnapshot(`
+        [
+          {
+            "@id": "https://example.com/#event",
+            "@type": "Event",
+            "inLanguage": "en-AU",
+            "name": "test",
+            "organizer": {
+              "@id": "https://example.com/#/schema/organization/PqBFgu8CTD",
+            },
+          },
+          {
+            "@id": "https://example.com/#/schema/organization/PqBFgu8CTD",
+            "@type": [
+              "Organization",
+              "PerformingGroup",
+            ],
+            "name": "My Organisation",
+            "url": "https://example.com/",
+          },
+        ]
+      `)
+    })
+  })
+
   it('handles startDate with time', () => {
     useSetup(() => {
       useSchemaOrg([
@@ -204,15 +243,14 @@ describe('defineEvent', () => {
                 "@id": "https://example.com/#/schema/organization/klOKg4ARc8",
               },
               "performer": {
-                "@id": "https://example.com/#identity",
+                "@id": "https://example.com/#/schema/performinggroup/tkm1kzXzg3",
               },
               "startDate": "2025-07-21T19:00-05:00",
             },
             {
-              "@id": "https://example.com/#identity",
+              "@id": "https://example.com/#/schema/performinggroup/tkm1kzXzg3",
               "@type": "PerformingGroup",
               "name": "Kira and Morrison",
-              "url": "https://example.com/",
             },
             {
               "@id": "https://example.com/#/schema/organization/klOKg4ARc8",

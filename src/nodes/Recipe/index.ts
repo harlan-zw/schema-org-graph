@@ -21,11 +21,6 @@ import type { Image } from '../Image'
 import type { Person } from '../Person'
 
 export interface RecipeLite extends Thing {
-  '@type'?: 'Recipe'
-  /**
-   * Referencing the WebPage or Article by ID.
-   */
-  mainEntityOfPage?: IdReference
   /**
    * A string describing the recipe.
    */
@@ -123,13 +118,9 @@ export const recipeResolver = defineSchemaOrgResolver<Recipe>({
     'image',
     'datePublished',
   ],
+  idPrefix: ['url', RecipeId],
   resolve(node, ctx) {
-    setIfEmpty(node, '@id', prefixId(ctx.meta.url, RecipeId))
-
-    resolveId(node, ctx.meta.url)
-    // @todo fix types
-    if (node.recipeInstructions)
-      node.recipeInstructions = resolveRelation(node.recipeInstructions, ctx, howToStepResolver)
+    node.recipeInstructions = resolveRelation(node.recipeInstructions, ctx, howToStepResolver)
     return node
   },
   rootNodeResolve(node, { findNode }) {

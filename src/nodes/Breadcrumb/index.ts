@@ -46,9 +46,8 @@ export const breadcrumbResolver = defineSchemaOrgResolver<Breadcrumb>({
   defaults: {
     '@type': 'BreadcrumbList',
   },
+  idPrefix: ['url', PrimaryBreadcrumbId],
   resolve(breadcrumb, ctx) {
-    setIfEmpty(breadcrumb, '@id', prefixId(ctx.meta.url, PrimaryBreadcrumbId))
-    resolveId(breadcrumb, ctx.meta.url)
     if (breadcrumb.itemListElement) {
       let index = 1
 
@@ -61,10 +60,10 @@ export const breadcrumbResolver = defineSchemaOrgResolver<Breadcrumb>({
     }
     return breadcrumb
   },
-  rootNodeResolve(breadcrumb, { findNode }) {
+  rootNodeResolve(node, { findNode }) {
     // merge breadcrumbs reference into the webpage
     const webPage = findNode<WebPage>(PrimaryWebPageId)
     if (webPage)
-      setIfEmpty(webPage, 'breadcrumb', idReference(breadcrumb))
+      setIfEmpty(webPage, 'breadcrumb', idReference(node))
   },
 })

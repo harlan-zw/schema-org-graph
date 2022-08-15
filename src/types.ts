@@ -54,8 +54,8 @@ export interface MetaInput {
 
 export interface SchemaOrgNodeDefinition<ResolvedInput> {
   alias?: string
-  root?: boolean
   cast?: (node: any, ctx: SchemaOrgContext) => ResolvedInput
+  idPrefix?: 'host' | 'url' | ['host' | 'url', string ]
   inheritMeta?: (keyof ResolvedMeta | { key: keyof ResolvedInput; meta: keyof ResolvedMeta })[]
   defaults?: DeepPartial<ResolvedInput> | ((ctx: SchemaOrgContext) => DeepPartial<any>)
   required?: (keyof ResolvedInput)[]

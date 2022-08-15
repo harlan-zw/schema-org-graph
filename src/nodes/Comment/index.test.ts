@@ -18,18 +18,17 @@ describe('defineComment', () => {
       expect(graphNodes).toMatchInlineSnapshot(`
         [
           {
-            "@id": "https://example.com/#/schema/comment/f0AuDJRYrl",
+            "@id": "https://example.com/#/schema/comment/V3foSKHFC7",
             "@type": "Comment",
             "author": {
-              "@id": "https://example.com/#identity",
+              "@id": "https://example.com/#/schema/person/W64wIB7mRH",
             },
             "text": "This is a comment",
           },
           {
-            "@id": "https://example.com/#identity",
+            "@id": "https://example.com/#/schema/person/W64wIB7mRH",
             "@type": "Person",
             "name": "Harlan Wilton",
-            "url": "https://example.com/",
           },
         ]
       `)

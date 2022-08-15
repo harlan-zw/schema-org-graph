@@ -123,31 +123,25 @@ export const webPageResolver = defineSchemaOrgResolver<WebPage>({
     }
     const defaults: Partial<WebPage> = {
       '@type': type,
-      '@id': prefixId(meta.url, PrimaryWebPageId),
-      'url': meta.url,
     }
     return defaults
   },
+  idPrefix: ['url', PrimaryWebPageId],
   inheritMeta: [
     { meta: 'title', key: 'name' },
     'description',
     'datePublished',
     'dateModified',
+    'url',
   ],
   resolve(node, ctx) {
-    resolveId(node, ctx.meta.url)
-    if (node.dateModified)
-      node.dateModified = resolvableDateToIso(node.dateModified)
+    node.dateModified = resolvableDateToIso(node.dateModified)
+    node.datePublished = resolvableDateToIso(node.datePublished)
 
-    if (node.datePublished)
-      node.datePublished = resolvableDateToIso(node.datePublished)
-
-    if (node['@type'])
-      node['@type'] = resolveType(node['@type'], 'WebPage') as Arrayable<ValidSubTypes>
+    resolveDefaultType(node, 'WebPage')
 
     // actions may be a function that need resolving
-    if (node.potentialAction)
-      node.potentialAction = resolveRelation(node.potentialAction, ctx, readActionResolver)
+    node.potentialAction = resolveRelation(node.potentialAction, ctx, readActionResolver)
 
     if (node['@type'] === 'WebPage') {
       // if the type hasn't been augmented

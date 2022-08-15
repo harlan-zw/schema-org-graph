@@ -20,7 +20,9 @@ export const resolvableDateToDate = (val: Date | string) => {
   return typeof val === 'string' ? val : val.toString()
 }
 
-export const resolvableDateToIso = (val: Date | string) => {
+export const resolvableDateToIso = (val: Date | string | undefined) => {
+  if (!val)
+    return val
   try {
     if (val instanceof Date)
       return val.toISOString()
@@ -76,7 +78,10 @@ export const prefixId = (url: string, id: Id | string) => {
   return joinURL(url, id) as Id
 }
 
-export const trimLength = (val: string, length: number) => {
+export const trimLength = (val: string | undefined, length: number) => {
+  if (!val)
+    return val
+
   if (val.length > length) {
     const trimmedString = val.substring(0, length)
     return trimmedString.substring(0, Math.min(trimmedString.length, trimmedString.lastIndexOf(' ')))
@@ -84,45 +89,41 @@ export const trimLength = (val: string, length: number) => {
   return val
 }
 
-export const resolveType = (val: Arrayable<string>, defaultType: Arrayable<string>) => {
+export const resolveDefaultType = (node: Thing, defaultType: Arrayable<string>) => {
+  const val = node['@type']
   if (val === defaultType)
-    return val
+    return
   const types = new Set<string>([
     ...asArray(defaultType),
     ...asArray(val),
   ])
-  return types.size === 1 ? val : [...types.values()]
+  node['@type'] = types.size === 1 ? val : [...types.values()]
 }
 
-export const resolveWithBaseUrl = (base: string, urlOrPath: string) => {
+export const resolveWithBase = (base: string, urlOrPath: string) => {
   // can't apply base if there's a protocol
   if (!urlOrPath || hasProtocol(urlOrPath) || (!urlOrPath.startsWith('/') && !urlOrPath.startsWith('#')))
     return urlOrPath
   return withBase(urlOrPath, base)
 }
 
-export const resolveUrl = <T extends Thing>(node: T, key: keyof T, prefix: string) => {
-  if (node[key] && typeof node[key] === 'string')
-    // @ts-expect-error untyped
-    node[key] = resolveWithBaseUrl(prefix, node[key])
+export const resolveAsGraphKey = (key?: Id | string) => {
+  if (!key)
+    return key
+  return key.substring(key.lastIndexOf('#')) as Id
 }
-
-export const resolveId = (node: any, prefix: string) => {
-  if (node['@id'])
-    node['@id'] = resolveWithBaseUrl(prefix, node['@id']) as Id
-}
-
-export const resolveAsGraphKey = (key: string) => key.substring(key.lastIndexOf('#')) as Id
 
 /**
  * Removes attributes which have a null or undefined value
  */
-export const cleanAttributes = (obj: any) => {
+export const stripEmptyProperties = (obj: any) => {
   Object.keys(obj).forEach((k) => {
-    // if (isRef(obj[k]))
-    //   return
+    // avoid walking vue reactivity
+    if (k === 'value')
+      return
+
     if (obj[k] && typeof obj[k] === 'object') {
-      cleanAttributes(obj[k])
+      stripEmptyProperties(obj[k])
       return
     }
     if (obj[k] === '' || obj[k] === null || typeof obj[k] === 'undefined')

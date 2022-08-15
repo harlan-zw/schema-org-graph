@@ -86,19 +86,14 @@ export const productResolver = defineSchemaOrgResolver<Product>({
     'image',
     { meta: 'title', key: 'name' },
   ],
+  idPrefix: ['url', ProductId],
   resolve(node, ctx) {
-    setIfEmpty(node, '@id', prefixId(ctx.meta.url, ProductId))
-    resolveId(node, ctx.meta.url)
     // provide a default sku
     setIfEmpty(node, 'sku', hash(node.name))
-    if (node.aggregateOffer)
-      node.aggregateOffer = resolveRelation(node.aggregateOffer, ctx, aggregateOfferResolver)
-    if (node.aggregateRating)
-      node.aggregateRating = resolveRelation(node.aggregateRating, ctx, aggregateRatingResolver)
-    if (node.offers)
-      node.offers = resolveRelation(node.offers, ctx, offerResolver)
-    if (node.review)
-      node.review = resolveRelation(node.review, ctx, reviewResolver)
+    node.aggregateOffer = resolveRelation(node.aggregateOffer, ctx, aggregateOfferResolver)
+    node.aggregateRating = resolveRelation(node.aggregateRating, ctx, aggregateRatingResolver)
+    node.offers = resolveRelation(node.offers, ctx, offerResolver)
+    node.review = resolveRelation(node.review, ctx, reviewResolver)
     return node
   },
   rootNodeResolve(product, { findNode }) {

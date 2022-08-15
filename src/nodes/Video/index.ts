@@ -1,7 +1,6 @@
 import type { Id, NodeRelation, ResolvableDate, Thing } from '../../types'
 import {
   asArray,
-  provideResolver,
   resolvableDateToIso,
   resolveId,
   resolveWithBaseUrl, setIfEmpty,
@@ -119,5 +118,3 @@ export const videoResolver = defineSchemaOrgResolver<Video>({
     }
   },
 })
-
-export const defineVideo = <T extends Video>(input?: T) => provideResolver(input, videoResolver)

@@ -1,7 +1,4 @@
 import type { Thing } from '../../../types'
-import {
-  provideResolver,
-} from '../../../utils'
 import { defineSchemaOrgResolver } from '../../../core'
 
 export interface VirtualLocationLite extends Thing {
@@ -27,5 +24,3 @@ export const virtualLocationResolver = defineSchemaOrgResolver<VirtualLocation>(
     '@type': 'VirtualLocation',
   },
 })
-
-export const defineVirtualLocation = <T extends VirtualLocation>(input?: T) => provideResolver(input, virtualLocationResolver)

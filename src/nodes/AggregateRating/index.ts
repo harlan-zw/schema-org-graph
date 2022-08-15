@@ -1,6 +1,5 @@
 import type { Thing } from '../../types'
 import { defineSchemaOrgResolver } from '../../core'
-import { provideResolver } from '../../utils'
 
 export interface AggregateRatingLite extends Thing {
   '@type'?: 'AggregateRating'
@@ -38,5 +37,3 @@ export const aggregateRatingResolver = defineSchemaOrgResolver<AggregateRating>(
     '@type': 'AggregateRating',
   },
 })
-
-export const defineAggregateRating = <T extends AggregateRating>(input?: T) => provideResolver(input, aggregateRatingResolver)

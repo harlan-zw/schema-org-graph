@@ -1,7 +1,8 @@
 import { expect } from 'vitest'
 import { injectSchemaOrg, useSchemaOrg, useSetup } from '../../../.test'
 import type { Breadcrumb } from './index'
-import { PrimaryBreadcrumbId, defineBreadcrumb } from './index'
+import { PrimaryBreadcrumbId } from './index'
+import { defineBreadcrumb } from '#provider'
 
 describe('defineBreadcrumb', () => {
   it('can be registered', () => {

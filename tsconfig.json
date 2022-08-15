@@ -15,6 +15,9 @@
     "jsx": "preserve",
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "paths": {
+      "#provider": ["src/providers/simple.ts"],
+    }
   }
 }

@@ -8,7 +8,7 @@ import type {
 } from '../../types'
 import {
   IdentityId,
-  idReference, prefixId, provideResolver, resolvableDateToIso, resolveId, resolveType, setIfEmpty,
+  idReference, resolvableDateToIso, resolveDefaultType, setIfEmpty,
 } from '../../utils'
 import type { WebSite } from '../WebSite'
 import { PrimaryWebSiteId } from '../WebSite'
@@ -185,5 +185,3 @@ export const webPageResolver = defineSchemaOrgResolver<WebPage>({
     return webPage
   },
 })
-
-export const defineWebPage = <T extends WebPage>(input?: T) => provideResolver(input, webPageResolver)

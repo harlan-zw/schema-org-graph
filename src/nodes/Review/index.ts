@@ -4,7 +4,6 @@ import { ratingResolver } from '../Rating'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
 import type { Person } from '../Person'
 import { personResolver } from '../Person'
-import { provideResolver } from '../../utils'
 
 export interface ReviewLite extends Thing {
   '@type'?: 'Review'
@@ -51,6 +50,4 @@ export const reviewResolver = defineSchemaOrgResolver<Review>({
     return review
   },
 })
-
-export const defineReview = <T extends Review>(input?: T) => provideResolver(input, reviewResolver)
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { injectSchemaOrg, mockRoute, useSchemaOrg, useSetup } from '../../../.test'
-import { defineEvent } from './index'
+import { defineEvent, defineOrganization } from '#provider'
 
 describe('defineEvent', () => {
   it('can be registered', () => {

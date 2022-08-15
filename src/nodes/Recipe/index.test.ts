@@ -1,6 +1,6 @@
 import { expect } from 'vitest'
 import { injectSchemaOrg, useSchemaOrg, useSetup } from '../../../.test'
-import { defineRecipe } from './index'
+import { defineRecipe } from '#provider'
 
 describe('defineRecipe', () => {
   it('can be defined', () => {

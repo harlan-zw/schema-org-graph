@@ -1,9 +1,6 @@
 import type { IdReference, NodeRelations, Thing } from '../../types'
 import {
-  idReference,
-  prefixId,
-  provideResolver,
-  resolveId, setIfEmpty,
+  idReference, setIfEmpty,
 } from '../../utils'
 import { PrimaryWebPageId } from '../WebPage'
 import type { Video } from '../Video'
@@ -95,8 +92,6 @@ export const howToResolver = defineSchemaOrgResolver<HowTo>({
       setIfEmpty(node, 'mainEntityOfPage', idReference(webPage))
   },
 })
-
-export const defineHowTo = <T extends HowTo>(input?: T) => provideResolver(input, howToResolver)
 
 export * from './HowToStep'
 export * from './HowToStepDirection'

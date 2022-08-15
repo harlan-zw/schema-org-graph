@@ -5,6 +5,11 @@
 import { defineConfig } from 'vite'
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '#provider': './src/providers/simple',
+    }
+  },
   test: {
     globals: true,
     environment: 'jsdom',

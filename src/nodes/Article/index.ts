@@ -10,8 +10,6 @@ import {
   IdentityId,
   asArray,
   idReference,
-  prefixId,
-  provideResolver,
   resolvableDateToIso,
   resolveId,
   resolveType,
@@ -188,5 +186,3 @@ export const articleResolver = defineSchemaOrgResolver<Article>({
     return article
   },
 })
-
-export const defineArticle = <T extends Article>(input?: T) => provideResolver(input, articleResolver)

@@ -1,7 +1,4 @@
 import type { Arrayable, ResolvableDate, Thing } from '../../types'
-import {
-  provideResolver,
-} from '../../utils'
 import { defineSchemaOrgResolver } from '../../core'
 
 type DayOfWeek = 'Friday' |
@@ -48,5 +45,3 @@ export const resolveOpeningHours = defineSchemaOrgResolver<OpeningHours>({
     'closes': '23:59',
   },
 })
-
-export const defineOpeningHours = <T extends OpeningHours>(input?: T) => provideResolver(input, resolveOpeningHours)

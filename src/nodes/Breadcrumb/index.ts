@@ -1,8 +1,6 @@
 import type { NodeRelations, Thing } from '../../types'
 import {
   idReference,
-  prefixId, provideResolver,
-  resolveId,
   setIfEmpty,
 } from '../../utils'
 import type { WebPage } from '../WebPage'
@@ -70,5 +68,3 @@ export const breadcrumbResolver = defineSchemaOrgResolver<Breadcrumb>({
       setIfEmpty(webPage, 'breadcrumb', idReference(breadcrumb))
   },
 })
-
-export const defineBreadcrumb = <T extends Breadcrumb>(input?: T) => provideResolver(input, breadcrumbResolver)

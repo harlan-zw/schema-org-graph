@@ -1,6 +1,6 @@
 import type { NodeRelations, Thing } from '../../../types'
 import {
-  provideResolver, resolveWithBaseUrl,
+  resolveWithBase,
 } from '../../../utils'
 import type { Video } from '../../Video'
 import type { HowToDirection } from '../HowToStepDirection'
@@ -69,5 +69,3 @@ export const howToStepResolver = defineSchemaOrgResolver<HowToStep>({
     return step
   },
 })
-
-export const defineHowToStep = <T extends HowToStep>(input?: T) => provideResolver(input, howToStepResolver)

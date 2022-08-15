@@ -1,7 +1,4 @@
 import type { Thing } from '../../types'
-import {
-  provideResolver,
-} from '../../utils'
 import { defineSchemaOrgResolver } from '../../core'
 
 export interface PostalAddressLite extends Thing {
@@ -38,5 +35,3 @@ export const addressResolver = defineSchemaOrgResolver<PostalAddress>({
     '@type': 'PostalAddress',
   },
 })
-
-export const defineAddress = <T extends PostalAddress>(input?: T) => provideResolver(input, addressResolver)

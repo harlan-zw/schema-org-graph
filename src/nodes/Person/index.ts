@@ -2,8 +2,7 @@ import type { NodeRelations, Thing } from '../../types'
 import {
   IdentityId,
   idReference,
-  prefixId,
-  provideResolver, resolveAsGraphKey, resolveId, setIfEmpty,
+  resolveAsGraphKey, setIfEmpty,
 } from '../../utils'
 import type { WebPage } from '../WebPage'
 import { PrimaryWebPageId } from '../WebPage'
@@ -91,5 +90,3 @@ export const personResolver = defineSchemaOrgResolver<Person>({
       setIfEmpty(article, 'author', idReference(node))
   },
 })
-
-export const definePerson = <T extends Person>(input?: T) => provideResolver(input, personResolver)

@@ -3,8 +3,6 @@ import {
   asArray,
   dedupeMerge,
   idReference,
-  provideResolver,
-  resolveId,
 } from '../../utils'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
 import type { WebPage } from '../WebPage'
@@ -68,5 +66,3 @@ export const questionResolver = defineSchemaOrgResolver<Question>({
       dedupeMerge(webPage, 'mainEntity', idReference(question))
   },
 })
-
-export const defineQuestion = <T extends Question>(input?: T) => provideResolver(input, questionResolver)

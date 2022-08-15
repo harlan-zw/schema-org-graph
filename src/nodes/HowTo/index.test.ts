@@ -1,6 +1,6 @@
 import { expect } from 'vitest'
 import { injectSchemaOrg, useSchemaOrg, useSetup } from '../../../.test'
-import { defineHowTo } from './index'
+import { defineHowTo } from '#provider'
 
 describe('defineHowTo', () => {
   it('can be registered', () => {

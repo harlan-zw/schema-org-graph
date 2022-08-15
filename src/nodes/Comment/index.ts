@@ -1,8 +1,6 @@
 import type { IdReference, NodeRelation, Thing } from '../../types'
 import {
   idReference,
-  provideResolver,
-  resolveId,
   setIfEmpty,
 } from '../../utils'
 import type { Article } from '../Article'
@@ -50,5 +48,3 @@ export const commentResolver = defineSchemaOrgResolver<Comment>({
       setIfEmpty(node, 'about', idReference(article))
   },
 })
-
-export const defineComment = <T extends Comment>(input?: T) => provideResolver(input, commentResolver)

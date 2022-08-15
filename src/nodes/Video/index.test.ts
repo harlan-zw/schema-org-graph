@@ -1,6 +1,6 @@
 import { expect } from 'vitest'
 import { injectSchemaOrg, useSchemaOrg, useSetup } from '../../../.test'
-import { defineVideo } from './index'
+import { defineVideo } from '#provider'
 
 describe('defineVideo', () => {
   it('can be registered', () => {

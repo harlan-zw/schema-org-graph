@@ -3,7 +3,7 @@ import type { NodeRelation, NodeRelations, Thing } from '../../types'
 import {
   IdentityId,
   idReference,
-  prefixId, provideResolver, resolveAsGraphKey, resolveId, resolveType, setIfEmpty,
+  prefixId, resolveAsGraphKey, resolveDefaultType, setIfEmpty,
 } from '../../utils'
 import type { Image } from '../Image'
 import { imageResolver } from '../Image'
@@ -106,5 +106,3 @@ export const organizationResolver
       return node
     },
   })
-
-export const defineOrganization = <T extends Organization>(input?: T) => provideResolver(input, organizationResolver)

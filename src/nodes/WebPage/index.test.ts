@@ -1,10 +1,10 @@
 import { expect } from 'vitest'
 import { injectSchemaOrg, mockRoute, useSchemaOrg, useSetup } from '../../../.test'
-import { PrimaryWebSiteId, defineWebSite } from '../WebSite'
+import { PrimaryWebSiteId } from '../WebSite'
 import { IdentityId, idReference, prefixId } from '../../utils'
-import { defineOrganization } from '../Organization'
 import type { WebPage } from './index'
-import { PrimaryWebPageId, defineWebPage } from './index'
+import { PrimaryWebPageId } from './index'
+import { defineOrganization, defineWebPage, defineWebSite } from '#provider'
 
 const mockDate = new Date(Date.UTC(2021, 10, 10, 10, 10, 10, 0))
 

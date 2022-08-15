@@ -1,7 +1,7 @@
 import { withBase } from 'ufo'
 import type { OptionalSchemaOrgPrefix, ResolvableDate, Thing } from '../../types'
 import {
-  provideResolver, resolvableDateToIso, setIfEmpty,
+  resolvableDateToIso, setIfEmpty,
 } from '../../utils'
 import { defineSchemaOrgResolver } from '../../core'
 
@@ -71,5 +71,3 @@ export const offerResolver = defineSchemaOrgResolver<Offer>({
     return node
   },
 })
-
-export const defineOffer = <T extends Offer>(input?: T) => provideResolver(input, offerResolver)

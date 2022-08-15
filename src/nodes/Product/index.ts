@@ -2,10 +2,7 @@ import { hash } from 'ohash'
 import type { NodeRelation, NodeRelations, Thing } from '../../types'
 import {
   IdentityId,
-  idReference,
-  prefixId,
-  provideResolver,
-  resolveId, setIfEmpty,
+  idReference, setIfEmpty,
 } from '../../utils'
 import type { WebPage } from '../WebPage'
 import { PrimaryWebPageId } from '../WebPage'
@@ -117,5 +114,3 @@ export const productResolver = defineSchemaOrgResolver<Product>({
     return product
   },
 })
-
-export const defineProduct = <T extends Product>(input?: T) => provideResolver(input, productResolver)

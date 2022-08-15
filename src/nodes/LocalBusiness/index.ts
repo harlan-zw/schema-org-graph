@@ -1,7 +1,7 @@
 import {
   IdentityId,
-  prefixId,
-  provideResolver, resolveId, resolveType, setIfEmpty,
+  prefixId, resolveDefaultType,
+  setIfEmpty,
 } from '../../utils'
 import type { Organization } from '../Organization'
 import type { OpeningHours } from '../OpeningHours'
@@ -126,5 +126,3 @@ export const localBusinessResolver = defineSchemaOrgResolver<LocalBusiness>({
     return node
   },
 })
-
-export const defineLocalBusiness = <T extends LocalBusiness>(input?: T) => provideResolver(input, localBusinessResolver)

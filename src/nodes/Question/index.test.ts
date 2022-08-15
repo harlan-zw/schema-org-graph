@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { injectSchemaOrg, mockRoute, useSchemaOrg, useSetup } from '../../../.test'
-import { defineWebPage } from '../WebPage'
-import { defineQuestion } from './index'
+import { defineQuestion, defineWebPage } from '#provider'
 
 describe('defineQuestion', () => {
   it('can be registered', () => {

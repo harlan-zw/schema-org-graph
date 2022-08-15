@@ -7,8 +7,6 @@ import type {
 } from '../../types'
 import {
   idReference,
-  prefixId, provideResolver,
-  resolveId,
   setIfEmpty,
 } from '../../utils'
 import type { Article } from '../Article'
@@ -146,5 +144,3 @@ export const recipeResolver = defineSchemaOrgResolver<Recipe>({
     return node
   },
 })
-
-export const defineRecipe = <T extends Recipe>(input?: T) => provideResolver(input, recipeResolver)

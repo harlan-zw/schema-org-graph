@@ -1,7 +1,4 @@
 import type { NodeRelation, Thing } from '../../../types'
-import {
-  provideResolver,
-} from '../../../utils'
 import { defineSchemaOrgResolver, resolveRelation } from '../../../core'
 import type { PostalAddress } from '../../PostalAddress'
 import { addressResolver } from '../../PostalAddress'
@@ -28,5 +25,3 @@ export const placeResolver = defineSchemaOrgResolver<Place>({
     return node
   },
 })
-
-export const definePlace = <T extends Place>(input?: T) => provideResolver(input, placeResolver)

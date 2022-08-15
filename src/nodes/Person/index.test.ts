@@ -1,9 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { defineOrganization } from '../Organization'
 import { injectSchemaOrg, useSchemaOrg, useSetup } from '../../../.test'
 import type { Article } from '../Article'
-import { PrimaryArticleId, defineArticle } from '../Article'
-import { definePerson } from './index'
+import { PrimaryArticleId } from '../Article'
+import { defineArticle, defineOrganization, definePerson } from '#provider'
 
 describe('definePerson', () => {
   it('can be registered', () => {

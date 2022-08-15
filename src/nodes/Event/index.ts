@@ -9,8 +9,6 @@ import type {
 import {
   IdentityId,
   idReference,
-  prefixId,
-  provideResolver,
   resolvableDateToDate,
   resolvableDateToIso,
   resolveId,
@@ -166,5 +164,3 @@ export const eventResolver = defineSchemaOrgResolver<Event>({
       setIfEmpty(node, 'organizer', idReference(identity))
   },
 })
-
-export const defineEvent = <T extends Event>(input?: T) => provideResolver(input, eventResolver)

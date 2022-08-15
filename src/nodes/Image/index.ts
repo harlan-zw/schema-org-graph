@@ -88,5 +88,3 @@ export const imageResolver = defineSchemaOrgResolver<Image>({
     }
   },
 })
-
-export const defineImage = <T extends Image>(input?: T) => provideResolver(input, imageResolver)

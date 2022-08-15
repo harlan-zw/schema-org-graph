@@ -3,9 +3,7 @@ import type { Arrayable, Identity, NodeRelations, Thing } from '../../types'
 import {
   IdentityId,
   idReference,
-  prefixId,
-  provideResolver,
-  resolveAsGraphKey, resolveId, setIfEmpty,
+  resolveAsGraphKey, setIfEmpty,
 } from '../../utils'
 import type { Person } from '../Person'
 import type { Organization } from '../Organization'
@@ -93,7 +91,5 @@ export const webSiteResolver = defineSchemaOrgResolver<WebSite>({
     return node
   },
 })
-
-export const defineWebSite = <T extends WebSite>(input?: T) => provideResolver(input, webSiteResolver)
 
 export * from './SearchAction'

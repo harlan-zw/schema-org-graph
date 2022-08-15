@@ -1,6 +1,6 @@
 import { expect } from 'vitest'
 import { injectSchemaOrg, useSchemaOrg, useSetup } from '../../../.test'
-import { defineImage } from './index'
+import { defineImage } from '#provider'
 
 describe('defineImage', () => {
   it('can be registered', () => {

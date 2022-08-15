@@ -1,11 +1,9 @@
 import { expect } from 'vitest'
 import { injectSchemaOrg, useSchemaOrg, useSetup } from '../../../.test'
-import { definePerson } from '../Person'
 import { IdentityId, idReference, prefixId } from '../../utils'
-import { defineOrganization } from '../Organization'
-import { defineWebPage } from '../WebPage'
 import type { WebSite } from './index'
-import { PrimaryWebSiteId, defineWebSite } from './index'
+import { PrimaryWebSiteId } from './index'
+import { defineOrganization, definePerson, defineWebPage, defineWebSite } from '#provider'
 
 describe('defineWebSite', () => {
   it('can be registered', () => {

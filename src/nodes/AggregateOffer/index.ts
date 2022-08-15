@@ -1,7 +1,6 @@
 import type { NodeRelations, Thing } from '../../types'
 import {
   asArray,
-  provideResolver,
   setIfEmpty,
 } from '../../utils'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
@@ -46,5 +45,3 @@ export const aggregateOfferResolver = defineSchemaOrgResolver<AggregateOffer>({
     return node
   },
 })
-
-export const defineAggregateOffer = <T extends AggregateOffer>(input?: T) => provideResolver(input, aggregateOfferResolver)

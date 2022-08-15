@@ -1,6 +1,6 @@
 import { expect } from 'vitest'
 import { injectSchemaOrg, useSchemaOrg, useSetup } from '../../../.test'
-import { defineComment } from './index'
+import { defineComment } from '#provider'
 
 describe('defineComment', () => {
   it('can be registered', () => {

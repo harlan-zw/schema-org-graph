@@ -1,5 +1,5 @@
 import { defineBuildConfig } from 'unbuild'
-import {copyFile, readFile, writeFile} from 'fs-extra'
+import {copyFile, readFile, rename, writeFile} from 'fs-extra'
 
 export default defineBuildConfig({
   clean: true,
@@ -16,11 +16,11 @@ export default defineBuildConfig({
   ],
   hooks: {
     async 'mkdist:done'(ctx) {
-      const simpleDtsFile = `${ctx.options.outDir}/runtime/simple.d.ts`
+      const simpleDtsFile = `${ctx.options.outDir}/runtime/base.d.ts`
       const simpleDts = await readFile(simpleDtsFile, { encoding: 'utf-8' })
       await writeFile(simpleDtsFile, simpleDts.replace(/<T extends (.*?)>/gm, `<T extends import('schema-org-graph-js').$1>`), { encoding: 'utf-8'})
       await writeFile(`${ctx.options.outDir}/runtime/full.d.ts`, simpleDts.replace(/<T extends (.*?)>/gm, `<T extends import('schema-dts').$1>`), { encoding: 'utf-8'})
-      await copyFile(`${ctx.options.outDir}/runtime/simple.mjs`, `${ctx.options.outDir}/runtime/full.mjs`)
+      await rename(simpleDtsFile, `${ctx.options.outDir}/runtime/simple.d.ts`)
     }
   }
 })

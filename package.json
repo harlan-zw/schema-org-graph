@@ -28,11 +28,11 @@
     },
     "./simple": {
       "types": "./dist/runtime/simple.d.ts",
-      "import": "./dist/runtime/simple.mjs"
+      "import": "./dist/runtime/base.mjs"
     },
     "./full": {
       "types": "./dist/runtime/full.d.ts",
-      "import": "./dist/runtime/full.mjs"
+      "import": "./dist/runtime/base.mjs"
     }
   },
   "main": "dist/index.cjs",

@@ -6,7 +6,7 @@ export interface VirtualLocationLite extends Thing {
   url: string
 }
 
-export type VirtualLocation = VirtualLocationLite
+export interface VirtualLocation extends VirtualLocationLite {}
 
 /**
  * Describes a HowTo guide, which contains a series of steps.

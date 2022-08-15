@@ -9,7 +9,7 @@ export interface PlaceLite extends Thing {
   address: NodeRelation<PostalAddress>
 }
 
-export type Place = PlaceLite
+export interface Place extends PlaceLite {}
 
 /**
  * Describes a HowTo guide, which contains a series of steps.

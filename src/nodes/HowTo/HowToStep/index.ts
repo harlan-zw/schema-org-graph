@@ -39,7 +39,7 @@ export interface HowToStepLite extends Thing {
   itemListElement?: NodeRelations<HowToDirection | string>[]
 }
 
-export type HowToStep = HowToStepLite
+export interface HowToStep extends HowToStepLite {}
 
 /**
  * Describes a HowTo guide, which contains a series of steps.

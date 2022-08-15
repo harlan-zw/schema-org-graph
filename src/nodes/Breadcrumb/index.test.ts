@@ -1,6 +1,6 @@
 import { expect } from 'vitest'
 import { injectSchemaOrg, useSchemaOrg, useSetup } from '../../../.test'
-import type { Breadcrumb } from './index'
+import type { BreadcrumbList } from './index'
 import { PrimaryBreadcrumbId } from './index'
 import { defineBreadcrumb } from '#provider'
 
@@ -19,7 +19,7 @@ describe('defineBreadcrumb', () => {
 
       const { findNode } = injectSchemaOrg()
 
-      const breadcrumbs = findNode<Breadcrumb>(PrimaryBreadcrumbId)
+      const breadcrumbs = findNode<BreadcrumbList>(PrimaryBreadcrumbId)
 
       expect(breadcrumbs).toMatchInlineSnapshot(`
         {

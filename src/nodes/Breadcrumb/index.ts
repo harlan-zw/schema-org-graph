@@ -35,14 +35,14 @@ export interface BreadcrumbLite extends Thing {
   numberOfItems?: number
 }
 
-export interface Breadcrumb extends BreadcrumbLite {}
+export interface BreadcrumbList extends BreadcrumbLite {}
 
 export const PrimaryBreadcrumbId = '#breadcrumb'
 
 /**
  * Describes the hierarchical position a WebPage within a WebSite.
  */
-export const breadcrumbResolver = defineSchemaOrgResolver<Breadcrumb>({
+export const breadcrumbResolver = defineSchemaOrgResolver<BreadcrumbList>({
   defaults: {
     '@type': 'BreadcrumbList',
   },

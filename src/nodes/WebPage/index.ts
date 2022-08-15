@@ -14,7 +14,7 @@ import type { WebSite } from '../WebSite'
 import { PrimaryWebSiteId } from '../WebSite'
 import type { Organization } from '../Organization'
 import type { ImageObject } from '../Image'
-import type { Breadcrumb } from '../Breadcrumb'
+import type { BreadcrumbList } from '../Breadcrumb'
 import type { VideoObject } from '../Video'
 import { PrimaryBreadcrumbId } from '../Breadcrumb'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
@@ -75,7 +75,7 @@ export interface WebPageLite extends Thing {
   /**
    * A reference-by-ID to a node representing the page's breadrumb structure.
    */
-  breadcrumb?: NodeRelation<Breadcrumb>
+  breadcrumb?: NodeRelation<BreadcrumbList>
   /**
    * An array of all videos in the page content, referenced by ID.
    */
@@ -172,7 +172,7 @@ export const webPageResolver = defineSchemaOrgResolver<WebPage>({
       setIfEmpty(webPage, 'isPartOf', idReference(webSite))
 
     // it's possible that adding a new web page will revert the breadcrumb data
-    const breadcrumb = findNode<Breadcrumb>(PrimaryBreadcrumbId)
+    const breadcrumb = findNode<BreadcrumbList>(PrimaryBreadcrumbId)
     if (breadcrumb)
       setIfEmpty(webPage, 'breadcrumb', idReference(breadcrumb))
 

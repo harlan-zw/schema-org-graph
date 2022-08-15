@@ -37,10 +37,10 @@ It was built for [@vueuse/schema-org](https://github.com/vueuse/schema-org).
 
 ## Features
 
-- Two type providers: Simple ([Google](https://developers.google.com/search/docs/advanced/structured-data/search-gallery) and [Yoast](https://developer.yoast.com/features/schema/overview) best practices) and Full ([schema-dts](https://github.com/google/schema-dts))
-- 🧙 Automated relations, date and URL resolving 
-- 💡 Universal node meta
-- 🌳 Minimal code and optimised for tree-shaking
+- 😎 Providers based on your Schema.org knowledge: Simple ([Google](https://developers.google.com/search/docs/advanced/structured-data/search-gallery) and [Yoast](https://developer.yoast.com/features/schema/overview) best practices) and Full ([schema-dts](https://github.com/google/schema-dts))
+- 🧙 Automated relations, date and URL resolving
+- 💡 Universal meta
+- 🌳 Minimal code, optimised for tree-shaking
 
 ## Install
 

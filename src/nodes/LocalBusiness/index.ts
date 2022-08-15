@@ -4,7 +4,7 @@ import {
   setIfEmpty,
 } from '../../utils'
 import type { Organization } from '../Organization'
-import type { OpeningHours } from '../OpeningHours'
+import type { OpeningHoursSpecification } from '../OpeningHours'
 import { resolveOpeningHours } from '../OpeningHours'
 import { imageResolver } from '../Image'
 import type { NodeRelations } from '../../types'
@@ -83,7 +83,7 @@ export interface LocalBusinessLite extends Organization {
   /**
    * The operating hours of the business.
    */
-  openingHoursSpecification?: NodeRelations<OpeningHours>
+  openingHoursSpecification?: NodeRelations<OpeningHoursSpecification>
 }
 
 export interface LocalBusiness extends LocalBusinessLite {}

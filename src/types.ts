@@ -2,7 +2,7 @@ import type { DeepPartial } from 'utility-types'
 import type { SchemaOrgContext } from './core'
 import type { Organization } from './nodes/Organization'
 import type { Person } from './nodes/Person'
-import type { Image } from './nodes/Image'
+import type { ImageObject } from './nodes/Image'
 
 export type Arrayable<T> = T | Array<T>
 export type NodeRelation<T> = T | IdReference
@@ -79,7 +79,7 @@ export interface Thing {
    * - Must be at least 696 pixels wide.
    * - Must be of the following formats+file extensions: .jpg, .png, .gif ,or .webp.
    */
-  image?: NodeRelations<Image | string>
+  image?: NodeRelations<ImageObject | string>
 
   /**
    * Allow any arbitrary keys
@@ -90,6 +90,11 @@ export interface Thing {
 export interface RegisteredThing extends Thing {
   _resolver?: any
   _uid: number
+}
+
+export type WithResolver<T> = T & {
+  _resolver?: any
+  _uid?: number
 }
 
 export interface IdReference {

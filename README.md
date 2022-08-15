@@ -37,9 +37,9 @@ It was built for [@vueuse/schema-org](https://github.com/vueuse/schema-org).
 
 ## Features
 
-- 😊 No Schema.org knowledge required, get up and running in minutes with minimal configuration
-- ✨ 20+ Typed Schemas for best practice ([Google](https://developers.google.com/search/docs/advanced/structured-data/search-gallery), [Yoast](https://developer.yoast.com/features/schema/overview)) Rich Results
-- 🧙 Automated Schema: `@id`, URL / date resolving, route meta and more
+- Two type providers: Simple ([Google](https://developers.google.com/search/docs/advanced/structured-data/search-gallery) and [Yoast](https://developer.yoast.com/features/schema/overview) best practices) and Full ([schema-dts](https://github.com/google/schema-dts))
+- 🧙 Automated relations, date and URL resolving 
+- 💡 Universal node meta
 - 🌳 Minimal code and optimised for tree-shaking
 
 ## Install
@@ -54,7 +54,8 @@ will come soon.
 ## Setup Example
 
 ```ts
-import { createSchemaOrgGraph, defineWebPage, defineWebSite, renderCtxToSchemaOrgJson } from 'schema-org-graph-js'
+import { createSchemaOrgGraph, renderCtxToSchemaOrgJson } from 'schema-org-graph-js'
+import { defineWebPage, defineWebSite, defineOrganization } from 'schema-org-graph-js/simple'
 
 const ctx = createSchemaOrgGraph()
 

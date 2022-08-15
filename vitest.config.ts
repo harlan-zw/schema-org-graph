@@ -7,7 +7,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   resolve: {
     alias: {
-      '#provider': './src/providers/simple',
+      '#provider': './src/runtime/simple',
     }
   },
   test: {

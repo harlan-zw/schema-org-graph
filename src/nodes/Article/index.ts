@@ -18,8 +18,8 @@ import {
 import type { WebPage } from '../WebPage'
 import { PrimaryWebPageId } from '../WebPage'
 import type { Person } from '../Person'
-import type { Image } from '../Image'
-import type { Video } from '../Video'
+import type { ImageObject } from '../Image'
+import type { VideoObject } from '../Video'
 import { personResolver } from '../Person'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
 
@@ -59,7 +59,7 @@ export interface ArticleLite extends Thing {
   /**
    * An array of all videos in the article content, referenced by ID.
    */
-  video?: NodeRelations<Video>
+  video?: NodeRelations<VideoObject>
   /**
    * An image object or referenced by ID.
    * - Must be at least 696 pixels wide.
@@ -67,7 +67,7 @@ export interface ArticleLite extends Thing {
    *
    * Must have markup of it somewhere on the page.
    */
-  image?: NodeRelations<Image | string>
+  image?: NodeRelations<ImageObject | string>
   /**
    * An array of references by ID to comment pieces.
    */
@@ -147,11 +147,11 @@ export const articleResolver = defineSchemaOrgResolver<Article>({
     const identity = findNode<Identity>(IdentityId)
 
     if (node.image && !node.thumbnailUrl) {
-      const firstImage = asArray(node.image)[0] as Image
+      const firstImage = asArray(node.image)[0] as ImageObject
       if (typeof firstImage === 'string')
         setIfEmpty(node, 'thumbnailUrl', resolveWithBase(meta.host, firstImage))
       else if (firstImage?.['@id'])
-        setIfEmpty(node, 'thumbnailUrl', findNode<Image>(firstImage['@id'])?.url)
+        setIfEmpty(node, 'thumbnailUrl', findNode<ImageObject>(firstImage['@id'])?.url)
     }
 
     if (identity) {

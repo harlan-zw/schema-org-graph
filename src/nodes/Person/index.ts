@@ -11,7 +11,7 @@ import { PrimaryWebSiteId } from '../WebSite'
 import type { Article } from '../Article'
 import { PrimaryArticleId } from '../Article'
 import { defineSchemaOrgResolver } from '../../core'
-import type { Image } from '../Image'
+import type { ImageObject } from '../Image'
 
 /**
  * A person (alive, dead, undead, or fictional).
@@ -33,7 +33,7 @@ export interface PersonLite extends Thing {
   /**
    * An array of images which represent the person, referenced by ID.
    */
-  image?: NodeRelations<Image | string>
+  image?: NodeRelations<ImageObject | string>
   /**
    * The URL of the users' profile page (if they're affiliated with the site in question),
    * or to their personal homepage/website.

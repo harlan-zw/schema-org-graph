@@ -4,6 +4,7 @@ import type {
   Id,
   SchemaOrgNodeDefinition,
   Thing,
+  WithResolver,
 } from '../types'
 
 export const idReference = <T extends Thing>(node: T | string) => ({
@@ -132,12 +133,9 @@ export const stripEmptyProperties = (obj: any) => {
   return obj
 }
 
-export const provideResolver = <T>(input?: T, resolver?: SchemaOrgNodeDefinition<any>) => {
-  if (!input) {
-    // @ts-expect-error untyped
-    input = {}
+export const provideResolver = <T>(input?: T, resolver?: SchemaOrgNodeDefinition<T>) => {
+  return <WithResolver<T>> {
+    ...(input || {}),
+    _resolver: resolver,
   }
-  // @ts-expect-error untyped
-  input._resolver = resolver
-  return input
 }

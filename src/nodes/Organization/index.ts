@@ -4,7 +4,7 @@ import {
   idReference,
   prefixId, resolveAsGraphKey, resolveDefaultType, setIfEmpty,
 } from '../../utils'
-import type { Image } from '../Image'
+import type { ImageObject } from '../Image'
 import { imageResolver } from '../Image'
 import type { WebPage } from '../WebPage'
 import { PrimaryWebPageId } from '../WebPage'
@@ -26,7 +26,7 @@ export interface OrganizationLite extends Thing {
    * (for example, if the logo is mostly white or gray,
    * it may not look how you want it to look when displayed on a white background).
    */
-  logo?: NodeRelation<Image | string>
+  logo?: NodeRelation<ImageObject | string>
   /**
    * The site's home URL.
    */
@@ -43,7 +43,7 @@ export interface OrganizationLite extends Thing {
   /**
    * An array of images which represent the organization (including the logo ), referenced by ID.
    */
-  image?: NodeRelations<Image | string>
+  image?: NodeRelations<ImageObject | string>
   /**
    * A reference-by-ID to an PostalAddress piece.
    */
@@ -88,7 +88,7 @@ export const organizationResolver
         })
 
         if (webPage)
-          setIfEmpty(webPage, 'primaryImageOfPage', idReference(node.logo as Image))
+          setIfEmpty(webPage, 'primaryImageOfPage', idReference(node.logo as ImageObject))
       }
 
       if (isIdentity && webPage)

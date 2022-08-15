@@ -4,7 +4,7 @@ import {
   resolvableDateToIso,
   resolveWithBase, setIfEmpty,
 } from '../../utils'
-import type { Image } from '../Image'
+import type { ImageObject } from '../Image'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
 import { imageResolver } from '../Image'
 
@@ -21,7 +21,7 @@ export interface VideoLite extends Thing {
   /**
    * A reference-by-ID to an imageObject.
    */
-  thumbnailUrl?: NodeRelation<Image>
+  thumbnailUrl?: NodeRelation<ImageObject>
   /**
    * The date the video was published, in ISO 8601 format (e.g., 2020-01-20).
    */
@@ -69,12 +69,12 @@ export interface VideoLite extends Thing {
   embedUrl?: string
 }
 
-export interface Video extends VideoLite {}
+export interface VideoObject extends VideoLite {}
 
 /**
  * Describes an individual video (usually in the context of an embedded media object).
  */
-export const videoResolver = defineSchemaOrgResolver<Video>({
+export const videoResolver = defineSchemaOrgResolver<VideoObject>({
   cast(input) {
     if (typeof input === 'string') {
       input = {
@@ -112,8 +112,8 @@ export const videoResolver = defineSchemaOrgResolver<Video>({
   },
   rootNodeResolve(video, { findNode }) {
     if (video.image && !video.thumbnailUrl) {
-      const firstImage = asArray(video.image)[0] as Image
-      setIfEmpty(video, 'thumbnailUrl', findNode<Image>(firstImage['@id'] as Id)?.url)
+      const firstImage = asArray(video.image)[0] as ImageObject
+      setIfEmpty(video, 'thumbnailUrl', findNode<ImageObject>(firstImage['@id'] as Id)?.url)
     }
   },
 })

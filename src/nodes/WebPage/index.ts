@@ -13,9 +13,9 @@ import {
 import type { WebSite } from '../WebSite'
 import { PrimaryWebSiteId } from '../WebSite'
 import type { Organization } from '../Organization'
-import type { Image } from '../Image'
+import type { ImageObject } from '../Image'
 import type { Breadcrumb } from '../Breadcrumb'
-import type { Video } from '../Video'
+import type { VideoObject } from '../Video'
 import { PrimaryBreadcrumbId } from '../Breadcrumb'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
 import type { Person } from '../Person'
@@ -71,7 +71,7 @@ export interface WebPageLite extends Thing {
   /**
    * A reference-by-ID to a node representing the page's featured image.
    */
-  primaryImageOfPage?: NodeRelation<Image | string>
+  primaryImageOfPage?: NodeRelation<ImageObject | string>
   /**
    * A reference-by-ID to a node representing the page's breadrumb structure.
    */
@@ -79,7 +79,7 @@ export interface WebPageLite extends Thing {
   /**
    * An array of all videos in the page content, referenced by ID.
    */
-  video?: NodeRelations<Video>
+  video?: NodeRelations<VideoObject>
   /**
    * A SpeakableSpecification object which identifies any content elements suitable for spoken results.
    */
@@ -157,7 +157,7 @@ export const webPageResolver = defineSchemaOrgResolver<WebPage>({
   rootNodeResolve(webPage, { findNode, meta }) {
     const identity = findNode<Person | Organization>(IdentityId)
     const webSite = findNode<WebSite>(PrimaryWebSiteId)
-    const logo = findNode<Image>('#logo')
+    const logo = findNode<ImageObject>('#logo')
 
     /*
      * When it's a homepage, add additional about property which references the identity of the site.

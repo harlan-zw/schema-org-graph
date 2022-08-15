@@ -3,8 +3,8 @@ import {
   idReference, setIfEmpty,
 } from '../../utils'
 import { PrimaryWebPageId } from '../WebPage'
-import type { Video } from '../Video'
-import type { Image } from '../Image'
+import type { VideoObject } from '../Video'
+import type { ImageObject } from '../Image'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
 import type { HowToStep } from './HowToStep'
 import { howToStepResolver } from './HowToStep'
@@ -41,7 +41,7 @@ export interface HowToLite extends Thing {
   /**
    * Image of the completed how-to.
    */
-  image?: NodeRelations<Image | string>
+  image?: NodeRelations<ImageObject | string>
   /**
    * A supply consumed when performing instructions or a direction.
    */
@@ -54,7 +54,7 @@ export interface HowToLite extends Thing {
    * A video of the how-to. Follow the list of required and recommended Video properties.
    * Mark steps of the video with hasPart.
    */
-  video?: NodeRelations<Video | string>
+  video?: NodeRelations<VideoObject | string>
 }
 
 export interface HowTo extends HowToLite {}

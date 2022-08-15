@@ -17,7 +17,8 @@
     "skipDefaultLibCheck": true,
     "noUnusedLocals": true,
     "paths": {
-      "#provider": ["src/providers/simple.ts"],
+      "#provider": ["src/runtime/simple.ts"],
+      "schema-org-graph-js": ["src/index.ts"],
     }
   }
 }

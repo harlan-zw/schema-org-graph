@@ -15,7 +15,7 @@ import {
 } from '../../utils'
 import type { Organization } from '../Organization'
 import type { Person } from '../Person'
-import type { Image } from '../Image'
+import type { ImageObject } from '../Image'
 import { personResolver } from '../Person'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
 import type { Offer } from '../Offer'
@@ -54,7 +54,7 @@ export interface EventLite extends Thing {
    * Including an image helps users understand and engage with your event.
    * We recommend that images are 1920px wide (the minimum width is 720px).
    */
-  image?: NodeRelations<Image | string>
+  image?: NodeRelations<ImageObject | string>
   /**
    * The location of the event.
    * There are different requirements depending on if the event is happening online or at a physical location
@@ -153,3 +153,6 @@ export const eventResolver = defineSchemaOrgResolver<Event>({
       setIfEmpty(node, 'organizer', idReference(identity))
   },
 })
+
+export * from './VirtualLocation'
+export * from './Place'

@@ -17,7 +17,7 @@ import type { AggregateOffer } from '../AggregateOffer'
 import { aggregateOfferResolver } from '../AggregateOffer'
 import type { Offer } from '../Offer'
 import { offerResolver } from '../Offer'
-import type { Image } from '../Image'
+import type { ImageObject } from '../Image'
 
 /**
  * Any offered product or service.
@@ -34,7 +34,7 @@ export interface ProductLite extends Thing {
    * - Must be at least 696 pixels wide.
    * - Must be of the following formats+file extensions: .jpg, .png, .gif ,or .webp.
    */
-  image: NodeRelations<Image | string>
+  image: NodeRelations<ImageObject | string>
   /**
    *  An array of references-by-ID to one or more Offer or aggregateOffer pieces.
    */

@@ -13,11 +13,11 @@ import type { Article } from '../Article'
 import { PrimaryArticleId } from '../Article'
 import type { WebPage } from '../WebPage'
 import { PrimaryWebPageId } from '../WebPage'
-import type { Video } from '../Video'
+import type { VideoObject } from '../Video'
 import type { HowToStep } from '../HowTo'
 import { howToStepResolver } from '../HowTo'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
-import type { Image } from '../Image'
+import type { ImageObject } from '../Image'
 import type { Person } from '../Person'
 
 export interface RecipeLite extends Thing {
@@ -28,7 +28,7 @@ export interface RecipeLite extends Thing {
   /**
    * An image representing the completed recipe, referenced by ID.
    */
-  image?: NodeRelation<Image | string>
+  image?: NodeRelation<ImageObject | string>
   /**
    * An array of strings representing each ingredient and quantity (e.g., "3 apples").
    */
@@ -81,7 +81,7 @@ export interface RecipeLite extends Thing {
   /**
    *  A reference to a video representing the recipe instructions, by ID.
    */
-  video?: NodeRelations<Video | IdReference>
+  video?: NodeRelations<VideoObject | IdReference>
   /**
    * The language code for the guide; e.g., en-GB.
    */

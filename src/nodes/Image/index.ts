@@ -37,12 +37,12 @@ export interface ImageLite extends Thing {
   inLanguage?: string
 }
 
-export interface Image extends ImageLite {}
+export interface ImageObject extends ImageLite {}
 
 /**
  * Describes an individual image (usually in the context of an embedded media object).
  */
-export const imageResolver = defineSchemaOrgResolver<Image>({
+export const imageResolver = defineSchemaOrgResolver<ImageObject>({
   alias: 'image',
   cast(input) {
     if (typeof input === 'string') {

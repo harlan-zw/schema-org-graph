@@ -2,9 +2,9 @@ import type { NodeRelations, Thing } from '../../../types'
 import {
   resolveWithBase,
 } from '../../../utils'
-import type { Video } from '../../Video'
+import type { VideoObject } from '../../Video'
 import type { HowToDirection } from '../HowToStepDirection'
-import type { Image } from '../../Image'
+import type { ImageObject } from '../../Image'
 import { defineSchemaOrgResolver, resolveRelation } from '../../../core'
 import { imageResolver } from '../../Image'
 import { howToStepDirectionResolver } from '../HowToStepDirection'
@@ -28,11 +28,11 @@ export interface HowToStepLite extends Thing {
   /**
    * An image representing the step, referenced by ID.
    */
-  image?: NodeRelations<Image | string>
+  image?: NodeRelations<ImageObject | string>
   /**
    * A video for this step or a clip of the video.
    */
-  video?: NodeRelations<Video | string>
+  video?: NodeRelations<VideoObject | string>
   /**
    * A list of detailed substeps, including directions or tips.
    */

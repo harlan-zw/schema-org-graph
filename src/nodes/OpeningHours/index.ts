@@ -36,9 +36,9 @@ export interface OpeningHoursLite extends Thing {
   validThrough?: ResolvableDate
 }
 
-export interface OpeningHours extends OpeningHoursLite {}
+export interface OpeningHoursSpecification extends OpeningHoursLite {}
 
-export const resolveOpeningHours = defineSchemaOrgResolver<OpeningHours>({
+export const resolveOpeningHours = defineSchemaOrgResolver<OpeningHoursSpecification>({
   defaults: {
     '@type': 'OpeningHoursSpecification',
     'opens': '00:00',

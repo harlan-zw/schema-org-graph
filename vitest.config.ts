@@ -7,7 +7,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   resolve: {
     alias: {
-      '#provider': './src/runtime/simple',
+      '#provider': './src/runtime/base',
       'schema-org-graph-js': './src/index',
     }
   },

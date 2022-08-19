@@ -1,6 +1,7 @@
 import type {
   AggregateOffer, AggregateRating,
   Article,
+  Book, BookEdition,
   BreadcrumbList,
   Comment,
   Course,
@@ -32,7 +33,8 @@ import {
   addressResolver,
   aggregateOfferResolver,
   aggregateRatingResolver,
-  articleResolver,
+  articleResolver, bookEditionResolver,
+  bookResolver,
   breadcrumbResolver,
   commentResolver,
   courseResolver,
@@ -63,6 +65,8 @@ export const defineAddress = <T extends PostalAddress>(input?: T) => provideReso
 export const defineAggregateOffer = <T extends AggregateOffer>(input?: T) => provideResolver(input, aggregateOfferResolver as SchemaOrgNodeDefinition<T>)
 export const defineAggregateRating = <T extends AggregateRating>(input?: T) => provideResolver(input, aggregateRatingResolver as SchemaOrgNodeDefinition<T>)
 export const defineArticle = <T extends Article>(input?: T) => provideResolver(input, articleResolver as SchemaOrgNodeDefinition<T>)
+export const defineBook = <T extends Book>(input?: T) => provideResolver(input, bookResolver as SchemaOrgNodeDefinition<T>)
+export const defineBookEdition = <T extends BookEdition>(input?: T) => provideResolver(input, bookEditionResolver as SchemaOrgNodeDefinition<T>)
 export const defineBreadcrumb = <T extends BreadcrumbList>(input?: T) => provideResolver(input, breadcrumbResolver as SchemaOrgNodeDefinition<T>)
 export const defineComment = <T extends Comment>(input?: T) => provideResolver(input, commentResolver as SchemaOrgNodeDefinition<T>)
 export const defineCourse = <T extends Course>(input?: T) => provideResolver(input, courseResolver as SchemaOrgNodeDefinition<T>)

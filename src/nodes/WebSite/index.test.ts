@@ -3,7 +3,7 @@ import { injectSchemaOrg, useSchemaOrg, useSetup } from '../../../.test'
 import { IdentityId, idReference, prefixId } from '../../utils'
 import type { WebSite } from './index'
 import { PrimaryWebSiteId } from './index'
-import {defineOrganization, definePerson, defineSearchAction, defineWebPage, defineWebSite} from '#provider'
+import { defineOrganization, definePerson, defineSearchAction, defineWebPage, defineWebSite } from '#provider'
 
 describe('defineWebSite', () => {
   it('can be registered', () => {

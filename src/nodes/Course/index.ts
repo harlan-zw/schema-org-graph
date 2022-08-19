@@ -1,5 +1,4 @@
-import { hash } from 'ohash'
-import type {Identity, NodeRelation, Thing} from '../../types'
+import type { Identity, NodeRelation, Thing } from '../../types'
 import {
   IdentityId,
   idReference, setIfEmpty,

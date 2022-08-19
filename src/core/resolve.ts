@@ -87,7 +87,7 @@ export function resolveRelation(input: Arrayable<any>, ctx: SchemaOrgContext,
 
   const ids = asArray(input).map((a) => {
     // filter out id references
-    if (Object.keys(input).length === 1 && input['@id'])
+    if (Object.keys(a).length === 1 && a['@id'])
       return a
 
     let resolver = fallbackResolver

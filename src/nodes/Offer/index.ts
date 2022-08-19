@@ -1,7 +1,7 @@
 import { withBase } from 'ufo'
 import type { OptionalSchemaOrgPrefix, ResolvableDate, Thing } from '../../types'
 import {
-  resolvableDateToIso, setIfEmpty,
+  resolvableDateToIso, resolveWithBase, setIfEmpty,
 } from '../../utils'
 import { defineSchemaOrgResolver } from '../../core'
 
@@ -61,7 +61,8 @@ export const offerResolver = defineSchemaOrgResolver<Offer>({
   resolve(node, ctx) {
     setIfEmpty(node, 'priceCurrency', ctx.meta.currency)
     setIfEmpty(node, 'priceValidUntil', new Date(Date.UTC(new Date().getFullYear() + 1, 12, -1, 0, 0, 0)))
-    setIfEmpty(node, 'url', ctx.meta.url)
+    if (node.url)
+      resolveWithBase(ctx.meta.host, node.url)
 
     if (node.availability)
       node.availability = withBase(node.availability, 'https://schema.org/') as ItemAvailability

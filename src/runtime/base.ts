@@ -9,6 +9,7 @@ import type {
   HowTo,
   HowToStep,
   ImageObject,
+  ItemList,
   LocalBusiness,
   Movie,
   Offer,
@@ -42,6 +43,7 @@ import {
   howToResolver,
   howToStepResolver,
   imageResolver,
+  itemListResolver,
   localBusinessResolver,
   movieResolver,
   offerResolver,
@@ -52,8 +54,8 @@ import {
   provideResolver,
   questionResolver,
   readActionResolver,
-  recipeResolver,
-  resolveOpeningHours, reviewResolver,
+  recipeResolver, resolveOpeningHours,
+  reviewResolver,
   searchActionResolver,
   videoResolver,
   virtualLocationResolver,
@@ -75,6 +77,7 @@ export const defineVirtualLocation = <T extends VirtualLocation>(input?: T) => p
 export const definePlace = <T extends Place>(input?: T) => provideResolver(input, placeResolver as SchemaOrgNodeDefinition<T>)
 export const defineHowTo = <T extends HowTo>(input?: T) => provideResolver(input, howToResolver as SchemaOrgNodeDefinition<T>)
 export const defineHowToStep = <T extends HowToStep>(input?: T) => provideResolver(input, howToStepResolver as SchemaOrgNodeDefinition<T>)
+export const defineItemList = <T extends ItemList>(input?: T) => provideResolver(input, itemListResolver as SchemaOrgNodeDefinition<T>)
 export const defineImage = <T extends ImageObject>(input?: T) => provideResolver(input, imageResolver as SchemaOrgNodeDefinition<T>)
 export const defineLocalBusiness = <T extends LocalBusiness>(input?: T) => provideResolver(input, localBusinessResolver as SchemaOrgNodeDefinition<T>)
 export const defineMovie = <T extends Movie>(input?: T) => provideResolver(input, movieResolver as SchemaOrgNodeDefinition<T>)

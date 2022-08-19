@@ -20,7 +20,7 @@ export const executeResolverOnNode = <T extends Thing>(node: T, ctx: SchemaOrgCo
     let defaults = resolver.defaults || {}
     if (typeof defaults === 'function')
       defaults = defaults(ctx)
-    node = defu(node, defaults)
+    node = defu(node, defaults) as T
   }
 
   // handle meta inherits
@@ -79,7 +79,7 @@ export const resolveNodeId = <T extends Thing>(node: T, ctx: SchemaOrgContext, r
 }
 
 export function resolveRelation(input: Arrayable<any>, ctx: SchemaOrgContext,
-  resolver: SchemaOrgNodeDefinition<any>,
+  fallbackResolver: SchemaOrgNodeDefinition<any>,
   options: ResolverOptions = {},
 ) {
   if (!input)
@@ -90,9 +90,12 @@ export function resolveRelation(input: Arrayable<any>, ctx: SchemaOrgContext,
     if (Object.keys(input).length === 1 && input['@id'])
       return a
 
+    let resolver = fallbackResolver
     // remove resolver if the user is using define functions nested
-    if (a._resolver)
+    if (a._resolver) {
+      resolver = a._resolver
       delete a._resolver
+    }
 
     let node = executeResolverOnNode(a, ctx, resolver)
     if (options.afterResolve)

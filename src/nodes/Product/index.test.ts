@@ -57,7 +57,6 @@ describe('defineProduct', () => {
               "price": 50,
               "priceCurrency": "AUD",
               "priceValidUntil": "2023-12-30T00:00:00.000Z",
-              "url": "https://example.com/",
             },
             "review": {
               "@type": "Review",

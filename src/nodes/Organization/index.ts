@@ -1,4 +1,4 @@
-import type { NodeRelation, NodeRelations, Thing } from '../../types'
+import type { Arrayable, NodeRelation, NodeRelations, Thing } from '../../types'
 import {
   IdentityId,
   idReference,
@@ -39,7 +39,7 @@ export interface OrganizationLite extends Thing {
    * An array of URLs representing declared social/authoritative profiles of the organization
    * (e.g., a Wikipedia page, or Facebook profile).
    */
-  sameAs?: string[]
+  sameAs?: Arrayable<string>
   /**
    * An array of images which represent the organization (including the logo ), referenced by ID.
    */

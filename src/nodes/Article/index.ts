@@ -17,7 +17,6 @@ import {
 } from '../../utils'
 import type { WebPage } from '../WebPage'
 import { PrimaryWebPageId } from '../WebPage'
-import type { Person } from '../Person'
 import type { ImageObject } from '../Image'
 import type { VideoObject } from '../Video'
 import { personResolver } from '../Person'
@@ -51,7 +50,7 @@ export interface ArticleLite extends Thing {
   /**
    * A reference-by-ID to the author of the article.
    */
-  author?: NodeRelations<Person>
+  author?: NodeRelations<Identity>
   /**
    * A reference-by-ID to the publisher of the article.
    */
@@ -134,6 +133,7 @@ export const articleResolver = defineSchemaOrgResolver<Article>({
     node.author = resolveRelation(node.author, ctx, personResolver, {
       root: true,
     })
+    node.publisher = resolveRelation(node.publisher, ctx)
     node.dateModified = resolvableDateToIso(node.dateModified)
     node.datePublished = resolvableDateToIso(node.datePublished)
     resolveDefaultType(node, 'Article')

@@ -79,7 +79,7 @@ export const resolveNodeId = <T extends Thing>(node: T, ctx: SchemaOrgContext, r
 }
 
 export function resolveRelation(input: Arrayable<any>, ctx: SchemaOrgContext,
-  fallbackResolver: SchemaOrgNodeDefinition<any>,
+  fallbackResolver?: SchemaOrgNodeDefinition<any>,
   options: ResolverOptions = {},
 ) {
   if (!input)
@@ -96,6 +96,10 @@ export function resolveRelation(input: Arrayable<any>, ctx: SchemaOrgContext,
       resolver = a._resolver
       delete a._resolver
     }
+
+    // no resolver, resolve as is
+    if (!resolver)
+      return a
 
     let node = executeResolverOnNode(a, ctx, resolver)
     if (options.afterResolve)

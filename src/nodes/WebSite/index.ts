@@ -63,6 +63,7 @@ export const webSiteResolver = defineSchemaOrgResolver<WebSite>({
     node.potentialAction = resolveRelation(node.potentialAction, ctx, searchActionResolver, {
       array: true,
     })
+    node.publisher = resolveRelation(node.publisher, ctx)
     return node
   },
   rootNodeResolve(node, { findNode }) {

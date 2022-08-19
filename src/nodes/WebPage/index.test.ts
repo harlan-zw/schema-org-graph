@@ -4,7 +4,7 @@ import { PrimaryWebSiteId } from '../WebSite'
 import { IdentityId, idReference, prefixId } from '../../utils'
 import type { WebPage } from './index'
 import { PrimaryWebPageId } from './index'
-import { defineOrganization, defineWebPage, defineWebSite } from '#provider'
+import { defineOrganization, defineReadAction, defineWebPage, defineWebSite } from '#provider'
 
 const mockDate = new Date(Date.UTC(2021, 10, 10, 10, 10, 10, 0))
 
@@ -148,7 +148,7 @@ describe('defineWebPage', () => {
     })
   })
 
-  it('as readAction', () => {
+  it('can add readAction', () => {
     mockRoute({
       path: '/our-pages/about-us',
     }, () => {
@@ -156,6 +156,11 @@ describe('defineWebPage', () => {
         useSchemaOrg([
           defineWebPage({
             name: 'Webpage',
+            potentialAction: defineReadAction({
+              target: [
+                'test',
+              ],
+            }),
           }),
         ])
 
@@ -170,6 +175,13 @@ describe('defineWebPage', () => {
               "AboutPage",
             ],
             "name": "Webpage",
+            "potentialAction": {
+              "@type": "ReadAction",
+              "target": [
+                "https://example.com/our-pages/about-us",
+                "test",
+              ],
+            },
             "url": "https://example.com/our-pages/about-us",
           }
         `)

@@ -89,7 +89,7 @@ export interface WebPageLite extends Thing {
    *
    * Note it's on by default for most page types.
    */
-  potentialAction?: (ReadAction | unknown)[]
+  potentialAction?: Arrayable<(ReadAction | unknown)>
 }
 
 export interface WebPage extends WebPageLite {}
@@ -179,3 +179,5 @@ export const webPageResolver = defineSchemaOrgResolver<WebPage>({
     return webPage
   },
 })
+
+export * from './ReadAction'

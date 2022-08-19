@@ -3,7 +3,7 @@ import { injectSchemaOrg, useSchemaOrg, useSetup } from '../../../.test'
 import { IdentityId, idReference, prefixId } from '../../utils'
 import type { WebSite } from './index'
 import { PrimaryWebSiteId } from './index'
-import { defineOrganization, definePerson, defineWebPage, defineWebSite } from '#provider'
+import {defineOrganization, definePerson, defineSearchAction, defineWebPage, defineWebSite} from '#provider'
 
 describe('defineWebSite', () => {
   it('can be registered', () => {
@@ -57,10 +57,48 @@ describe('defineWebSite', () => {
         defineWebSite({
           name: 'test',
           potentialAction: [
-            {
+            defineSearchAction({
               target: '/search?query={search_term_string}',
-            },
+            }),
           ],
+        }),
+      ])
+
+      const { findNode } = injectSchemaOrg()
+
+      const website = findNode<WebSite>(PrimaryWebSiteId)
+
+      expect(website?.potentialAction).toMatchInlineSnapshot(`
+        [
+          {
+            "@type": "SearchAction",
+            "query-input": {
+              "@type": "PropertyValueSpecification",
+              "valueName": "search_term_string",
+              "valueRequired": true,
+            },
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://example.com/search?query={search_term_string}",
+            },
+          },
+        ]
+      `)
+      expect(website?.potentialAction).toBeDefined()
+      // @ts-expect-error weird typing
+      expect(website?.potentialAction?.[0]?.target.urlTemplate).toEqual('https://example.com/search?query={search_term_string}')
+    })
+  })
+
+  it('can set search action - flat', () => {
+    useSetup(() => {
+      useSchemaOrg([
+        defineWebSite({
+          name: 'test',
+          potentialAction:
+            defineSearchAction({
+              target: '/search?query={search_term_string}',
+            }),
         }),
       ])
 

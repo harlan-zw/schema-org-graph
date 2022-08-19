@@ -37,7 +37,7 @@ export interface WebSiteLite extends Thing {
   /**
    * A SearchAction object describing the site's internal search.
    */
-  potentialAction?: (SearchAction | unknown)[]
+  potentialAction?: Arrayable<(SearchAction | unknown)>
   /**
    * The language code for the WebSite; e.g., en-GB.
    * If the website is available in multiple languages, then output an array of inLanguage values.

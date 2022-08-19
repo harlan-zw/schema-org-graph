@@ -17,9 +17,10 @@ import type {
   PostalAddress,
   Product,
   Question,
+  ReadAction,
   Recipe,
-  Review,
-  SchemaOrgNodeDefinition,
+  Review, SchemaOrgNodeDefinition,
+  SearchAction,
   VideoObject,
   VirtualLocation,
   WebPage,
@@ -46,9 +47,10 @@ import {
   productResolver,
   provideResolver,
   questionResolver,
+  readActionResolver,
   recipeResolver,
-  resolveOpeningHours,
-  reviewResolver,
+  resolveOpeningHours, reviewResolver,
+  searchActionResolver,
   videoResolver,
   virtualLocationResolver,
   webPageResolver,
@@ -80,3 +82,5 @@ export const defineReview = <T extends Review>(input?: T) => provideResolver(inp
 export const defineVideo = <T extends VideoObject>(input?: T) => provideResolver(input, videoResolver as SchemaOrgNodeDefinition<T>)
 export const defineWebPage = <T extends WebPage>(input?: T) => provideResolver(input, webPageResolver as SchemaOrgNodeDefinition<T>)
 export const defineWebSite = <T extends WebSite>(input?: T) => provideResolver(input, webSiteResolver as SchemaOrgNodeDefinition<T>)
+export const defineSearchAction = <T extends SearchAction>(input?: T) => provideResolver(input, searchActionResolver as SchemaOrgNodeDefinition<T>)
+export const defineReadAction = <T extends ReadAction>(input?: T) => provideResolver(input, readActionResolver as SchemaOrgNodeDefinition<T>)

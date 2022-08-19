@@ -22,7 +22,9 @@ import type {
   Question,
   ReadAction,
   Recipe,
-  Review, SchemaOrgNodeDefinition,
+  Review,
+  SoftwareApp,
+  SchemaOrgNodeDefinition,
   SearchAction,
   VideoObject,
   VirtualLocation,
@@ -56,7 +58,7 @@ import {
   readActionResolver,
   recipeResolver, resolveOpeningHours,
   reviewResolver,
-  searchActionResolver,
+  searchActionResolver, softwareAppResolver,
   videoResolver,
   virtualLocationResolver,
   webPageResolver,
@@ -88,6 +90,7 @@ export const definePerson = <T extends Person>(input?: T) => provideResolver(inp
 export const defineProduct = <T extends Product>(input?: T) => provideResolver(input, productResolver as SchemaOrgNodeDefinition<T>)
 export const defineQuestion = <T extends Question>(input?: T) => provideResolver(input, questionResolver as SchemaOrgNodeDefinition<T>)
 export const defineRecipe = <T extends Recipe>(input?: T) => provideResolver(input, recipeResolver as SchemaOrgNodeDefinition<T>)
+export const defineSoftwareApp = <T extends SoftwareApp>(input?: T) => provideResolver(input, softwareAppResolver as SchemaOrgNodeDefinition<T>)
 export const defineReview = <T extends Review>(input?: T) => provideResolver(input, reviewResolver as SchemaOrgNodeDefinition<T>)
 export const defineVideo = <T extends VideoObject>(input?: T) => provideResolver(input, videoResolver as SchemaOrgNodeDefinition<T>)
 export const defineWebPage = <T extends WebPage>(input?: T) => provideResolver(input, webPageResolver as SchemaOrgNodeDefinition<T>)

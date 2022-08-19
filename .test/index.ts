@@ -1,4 +1,4 @@
-import {buildResolvedGraphCtx, dedupeAndFlattenNodes, createSchemaOrgGraph} from "../src/core";
+import {buildResolvedGraphCtx, organiseNodes, createSchemaOrgGraph} from "../src/core";
 import {resolveAsGraphKey} from "../src/utils";
 import {Id, MetaInput} from "../src/types";
 
@@ -27,7 +27,7 @@ export function injectSchemaOrg() {
     path: '/',
     ...ctxData
   })
-  const graphNodes = dedupeAndFlattenNodes(resolvedCtx.nodes)
+  const graphNodes = organiseNodes(resolvedCtx.nodes)
   resolvedCtx.findNode = (id) => {
     const key = resolveAsGraphKey(id) as Id
     return graphNodes

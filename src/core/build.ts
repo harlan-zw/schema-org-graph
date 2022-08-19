@@ -10,7 +10,7 @@ import { executeResolverOnNode, resolveNodeId, resolveRelation } from './resolve
 export const renderNodesToSchemaOrgJson = (nodes: RegisteredThing[]) => {
   return {
     '@context': 'https://schema.org',
-    '@graph': Object.values(nodes),
+    '@graph': nodes,
   }
 }
 
@@ -18,28 +18,43 @@ export const renderNodesToSchemaOrgHtml = (nodes: RegisteredThing[], options = {
   return JSON.stringify(renderNodesToSchemaOrgJson(nodes), undefined, options.spaces)
 }
 
-export const dedupeAndFlattenNodes = (nodes: RegisteredThing[]) => {
-  const keys = nodes
+const groupBy = <T>(array: T[], predicate: (value: T, index: number, array: T[]) => string) =>
+  array.reduce((acc, value, index, array) => {
+    (acc[predicate(value, index, array)] ||= []).push(value)
+    return acc
+  }, {} as { [key: string]: T[] })
+
+/**
+ * Dedupe, flatten and a collection of nodes. Will also sort node keys and remove meta keys.
+ * @param nodes
+ */
+export const organiseNodes = (nodes: RegisteredThing[]) => {
+  const sortedNodeKeys = nodes
     .sort((a, b) => a._uid - b._uid)
     .keys()
 
   // assign based on id to dedupe across context
   const dedupedNodes: Record<Id, RegisteredThing> = {}
-  for (const key of keys) {
+  for (const key of sortedNodeKeys) {
     const n = nodes[key]
     const nodeKey = resolveAsGraphKey(n['@id'] || hash(n)) as Id
-    dedupedNodes[nodeKey] = Object.keys(n)
-      .sort()
-      .reduce(
-        (obj: any, key) => {
-          obj[key] = n[key]
-          return obj
-        },
-        {},
-      )
-    // node priority is resolved, no longer need
-    // @ts-expect-error untyped
-    delete dedupedNodes[nodeKey]._uid
+    const groupedKeys = groupBy(Object.keys(n), (key) => {
+      const val = n[key]
+      if (key.startsWith('_'))
+        return 'ignored'
+      if (Array.isArray(val) || typeof val === 'object')
+        return 'relations'
+      return 'primitives'
+    })
+
+    const keys = [
+      ...(groupedKeys.primitives || []).sort(),
+      ...(groupedKeys.relations || []).sort(),
+    ]
+    const newNode = {} as RegisteredThing
+    for (const key of keys)
+      newNode[key] = n[key]
+    dedupedNodes[nodeKey] = newNode
   }
   return Object.values(dedupedNodes)
 }
@@ -111,6 +126,6 @@ export const buildResolvedGraphCtx = (nodes: Thing[], meta: MetaInput) => {
 
 export const renderCtxToSchemaOrgJson = (ctx: SchemaOrgContext, meta: MetaInput) => {
   const resolvedCtx = buildResolvedGraphCtx(ctx.nodes, meta)
-  const graphNodes = dedupeAndFlattenNodes(resolvedCtx.nodes)
+  const graphNodes = organiseNodes(resolvedCtx.nodes)
   return renderNodesToSchemaOrgJson(graphNodes)
 }

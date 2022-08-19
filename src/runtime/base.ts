@@ -3,6 +3,7 @@ import type {
   Article,
   BreadcrumbList,
   Comment,
+  Course,
   Event,
   HowTo,
   HowToStep,
@@ -32,6 +33,7 @@ import {
   articleResolver,
   breadcrumbResolver,
   commentResolver,
+  courseResolver,
   eventResolver,
   howToResolver,
   howToStepResolver,
@@ -59,6 +61,7 @@ export const defineAggregateRating = <T extends AggregateRating>(input?: T) => p
 export const defineArticle = <T extends Article>(input?: T) => provideResolver(input, articleResolver as SchemaOrgNodeDefinition<T>)
 export const defineBreadcrumb = <T extends BreadcrumbList>(input?: T) => provideResolver(input, breadcrumbResolver as SchemaOrgNodeDefinition<T>)
 export const defineComment = <T extends Comment>(input?: T) => provideResolver(input, commentResolver as SchemaOrgNodeDefinition<T>)
+export const defineCourse = <T extends Course>(input?: T) => provideResolver(input, courseResolver as SchemaOrgNodeDefinition<T>)
 export const defineEvent = <T extends Event>(input?: T) => provideResolver(input, eventResolver as SchemaOrgNodeDefinition<T>)
 export const defineVirtualLocation = <T extends VirtualLocation>(input?: T) => provideResolver(input, virtualLocationResolver as SchemaOrgNodeDefinition<T>)
 export const definePlace = <T extends Place>(input?: T) => provideResolver(input, placeResolver as SchemaOrgNodeDefinition<T>)

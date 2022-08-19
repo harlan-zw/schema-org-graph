@@ -49,7 +49,7 @@
     "lint": "eslint \"{src,test}/**/*.{ts,vue,json,yml}\" --fix"
   },
   "dependencies": {
-    "defu": "^6.0.0",
+    "defu": "^6.1.0",
     "ohash": "^0.1.5",
     "schema-dts": "^1.1.0",
     "ufo": "^0.8.5",
@@ -58,14 +58,14 @@
   "devDependencies": {
     "@antfu/eslint-config": "^0.26.1",
     "@types/fs-extra": "^9.0.13",
-    "@vitest/ui": "^0.21.1",
+    "@vitest/ui": "^0.22.1",
     "bumpp": "^8.2.1",
     "eslint": "^8.22.0",
     "fs-extra": "^10.1.0",
     "jsdom": "^20.0.0",
     "typescript": "^4.7.4",
-    "unbuild": "^0.8.8",
+    "unbuild": "^0.8.9",
     "utility-types": "^3.10.0",
-    "vitest": "^0.21.1"
+    "vitest": "^0.22.1"
   }
 }

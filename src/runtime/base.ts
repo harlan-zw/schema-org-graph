@@ -9,6 +9,7 @@ import type {
   HowToStep,
   ImageObject,
   LocalBusiness,
+  Movie,
   Offer,
   OpeningHoursSpecification,
   Organization,
@@ -40,6 +41,7 @@ import {
   howToStepResolver,
   imageResolver,
   localBusinessResolver,
+  movieResolver,
   offerResolver,
   organizationResolver,
   personResolver,
@@ -71,6 +73,7 @@ export const defineHowTo = <T extends HowTo>(input?: T) => provideResolver(input
 export const defineHowToStep = <T extends HowToStep>(input?: T) => provideResolver(input, howToStepResolver as SchemaOrgNodeDefinition<T>)
 export const defineImage = <T extends ImageObject>(input?: T) => provideResolver(input, imageResolver as SchemaOrgNodeDefinition<T>)
 export const defineLocalBusiness = <T extends LocalBusiness>(input?: T) => provideResolver(input, localBusinessResolver as SchemaOrgNodeDefinition<T>)
+export const defineMovie = <T extends Movie>(input?: T) => provideResolver(input, movieResolver as SchemaOrgNodeDefinition<T>)
 export const defineOffer = <T extends Offer>(input?: T) => provideResolver(input, offerResolver as SchemaOrgNodeDefinition<T>)
 export const defineOpeningHours = <T extends OpeningHoursSpecification>(input?: T) => provideResolver(input, resolveOpeningHours as SchemaOrgNodeDefinition<T>)
 export const defineOrganization = <T extends Organization>(input?: T) => provideResolver(input, organizationResolver as SchemaOrgNodeDefinition<T>)

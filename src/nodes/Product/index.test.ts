@@ -55,6 +55,7 @@ describe('defineProduct', () => {
               "@type": "Offer",
               "availability": "https://schema.org/InStock",
               "price": 50,
+              "priceCurrency": "AUD",
               "priceValidUntil": "2023-12-30T00:00:00.000Z",
               "url": "https://example.com/",
             },

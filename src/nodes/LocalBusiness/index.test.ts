@@ -47,6 +47,7 @@ describe('defineLocalBusiness', () => {
               "postalCode": "2000",
               "streetAddress": "123 st",
             },
+            "currenciesAccepted": "AUD",
             "logo": {
               "@id": "https://example.com/#logo",
               "@type": "ImageObject",

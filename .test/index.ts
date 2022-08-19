@@ -24,6 +24,7 @@ export function injectSchemaOrg() {
   const resolvedCtx = buildResolvedGraphCtx(graph.nodes, {
     inLanguage: 'en-AU',
     host: 'https://example.com/',
+    currency: 'AUD',
     path: '/',
     ...ctxData
   })

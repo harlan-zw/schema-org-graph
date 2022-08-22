@@ -37,7 +37,7 @@ export const aggregateOfferResolver = defineSchemaOrgResolver<AggregateOffer>({
     '@type': 'AggregateOffer',
   },
   inheritMeta: [
-    { meta: 'currency', key: 'priceCurrency' }
+    { meta: 'currency', key: 'priceCurrency' },
   ],
   resolve(node, ctx) {
     node.offers = resolveRelation(node.offers, ctx, offerResolver)

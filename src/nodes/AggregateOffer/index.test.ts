@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { injectSchemaOrg, useSchemaOrg, useSetup } from '../../../.test'
-import {defineAggregateOffer } from '#provider'
-
+import { defineAggregateOffer } from '#provider'
 
 describe('defineAggregateOffer', () => {
   it('can be registered simple', () => {
@@ -36,12 +35,12 @@ describe('defineAggregateOffer', () => {
           highPrice: 200,
           offers: [
             {
-              price: '1.00'
+              price: '1.00',
             },
             {
-              price: '2.00'
+              price: '2.00',
             },
-          ]
+          ],
         }),
       ])
 
@@ -76,5 +75,4 @@ describe('defineAggregateOffer', () => {
       `)
     })
   })
-
 })

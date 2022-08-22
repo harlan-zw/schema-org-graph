@@ -1,6 +1,6 @@
 import { expect } from 'vitest'
 import { injectSchemaOrg, useSchemaOrg, useSetup } from '../../../.test'
-import { defineAggregateRating, defineMovie, defineReview } from '#provider'
+import { defineMovie } from '#provider'
 
 describe('defineMovie', () => {
   it('can be defined', () => {

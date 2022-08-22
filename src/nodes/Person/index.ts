@@ -1,4 +1,4 @@
-import type {Arrayable, NodeRelations, Thing} from '../../types'
+import type { Arrayable, NodeRelations, Thing } from '../../types'
 import {
   IdentityId,
   idReference,

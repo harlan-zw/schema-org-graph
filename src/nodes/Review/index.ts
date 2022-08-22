@@ -5,8 +5,7 @@ import { defineSchemaOrgResolver, resolveRelation } from '../../core'
 import type { Person } from '../Person'
 import { personResolver } from '../Person'
 
-export interface ReviewLite extends Thing {
-  '@type'?: 'Review'
+export interface ReviewSimple extends Thing {
   /**
    * A title for the review.
    */
@@ -33,7 +32,7 @@ export interface ReviewLite extends Thing {
   reviewBody?: string
 }
 
-export interface Review extends ReviewLite {}
+export interface Review extends ReviewSimple {}
 
 export const reviewResolver = defineSchemaOrgResolver<Review>({
   defaults: {

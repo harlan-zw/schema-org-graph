@@ -5,7 +5,7 @@ import { resolveWithBase } from '../../utils'
 /**
  * A list item, e.g. a step in a checklist or how-to description.
  */
-export interface ListItemLite extends Thing {
+export interface ListItemSimple extends Thing {
   '@type'?: 'ListItem'
   /**
    *  The name of the page in question, as it appears in the breadcrumb navigation.
@@ -23,7 +23,7 @@ export interface ListItemLite extends Thing {
   position?: number
 }
 
-export interface ListItem extends ListItemLite {}
+export interface ListItem extends ListItemSimple {}
 
 export const resolveListItem = defineSchemaOrgResolver<ListItem>({
   cast(node) {

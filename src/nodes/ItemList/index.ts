@@ -4,9 +4,9 @@ import { defineSchemaOrgResolver, resolveRelation } from '../../core'
 import { resolveListItem } from '../ListItem'
 import { setIfEmpty } from '../../utils'
 
-export interface ItemListLite extends Thing {
+export interface ItemListSimple extends Thing {
   /**
-   * Resolved breadcrumb list
+   * Resolved item list
    */
   itemListElement: NodeRelations<ListItem>
   /**
@@ -25,7 +25,7 @@ export interface ItemListLite extends Thing {
   numberOfItems?: number
 }
 
-export interface ItemList extends ItemListLite {}
+export interface ItemList extends ItemListSimple {}
 
 export const itemListResolver = defineSchemaOrgResolver<ItemList>({
   defaults: {

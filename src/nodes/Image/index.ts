@@ -4,8 +4,7 @@ import {
 } from '../../utils'
 import { defineSchemaOrgResolver } from '../../core'
 
-export interface ImageLite extends Thing {
-  '@type'?: 'ImageObject'
+export interface ImageSimple extends Thing {
   /**
    * The URL of the image file (e.g., /images/cat.jpg).
    */
@@ -37,7 +36,7 @@ export interface ImageLite extends Thing {
   inLanguage?: string
 }
 
-export interface ImageObject extends ImageLite {}
+export interface ImageObject extends ImageSimple {}
 
 /**
  * Describes an individual image (usually in the context of an embedded media object).

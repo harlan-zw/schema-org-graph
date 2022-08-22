@@ -15,8 +15,7 @@ import { searchActionResolver } from './SearchAction'
 /**
  * A WebSite is a set of related web pages and other items typically served from a single web domain and accessible via URLs.
  */
-export interface WebSiteLite extends Thing {
-  '@type'?: 'WebSite'
+export interface WebSiteSimple extends Thing {
   /**
    * The site's home URL (excluding a trailing slash).
    */
@@ -45,7 +44,7 @@ export interface WebSiteLite extends Thing {
   inLanguage?: Arrayable<string>
 }
 
-export interface WebSite extends WebSiteLite {}
+export interface WebSite extends WebSiteSimple {}
 
 export const PrimaryWebSiteId = '#website'
 

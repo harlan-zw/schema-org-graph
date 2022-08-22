@@ -12,11 +12,11 @@ import { defineSchemaOrgResolver, resolveRelation } from '../../core'
  * A BreadcrumbList is an ItemList consisting of a chain of linked Web pages,
  * typically described using at least their URL and their name, and typically ending with the current page.
  */
-export interface BreadcrumbLite extends ItemList {
+export interface BreadcrumbSimple extends ItemList {
   '@type'?: 'BreadcrumbList'
 }
 
-export interface BreadcrumbList extends BreadcrumbLite {}
+export interface BreadcrumbList extends BreadcrumbSimple {}
 
 export const PrimaryBreadcrumbId = '#breadcrumb'
 

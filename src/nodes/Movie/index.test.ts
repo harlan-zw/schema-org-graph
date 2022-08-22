@@ -12,16 +12,16 @@ describe('defineMovie', () => {
           image: 'https://example.com/photos/6x9/photo.jpg',
           dateCreated: '2018-02-16',
           director: 'Ryan Coogle',
-          review: defineReview({
+          review: {
             reviewRating: 2,
             author: 'Trevor R',
             reviewBody: 'I didn\'t like the lighting and CGI in this movie.',
-          }),
-          aggregateRating: defineAggregateRating({
+          },
+          aggregateRating: {
             ratingValue: 96,
             bestRating: 100,
             ratingCount: 88211,
-          }),
+          },
         }),
       ])
 

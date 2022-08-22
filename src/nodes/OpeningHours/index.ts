@@ -12,7 +12,7 @@ type DayOfWeek = 'Friday' |
 
 type Time = `${number}${number}:${number}${number}`
 
-export interface OpeningHoursLite extends Thing {
+export interface OpeningHoursSimple extends Thing {
   '@type'?: 'OpeningHoursSpecification'
   /**
    * The day of the week for which these opening hours are valid.
@@ -36,7 +36,7 @@ export interface OpeningHoursLite extends Thing {
   validThrough?: ResolvableDate
 }
 
-export interface OpeningHoursSpecification extends OpeningHoursLite {}
+export interface OpeningHoursSpecification extends OpeningHoursSimple {}
 
 export const resolveOpeningHours = defineSchemaOrgResolver<OpeningHoursSpecification>({
   defaults: {

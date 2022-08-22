@@ -14,7 +14,7 @@ import { personResolver } from '../Person'
 import type { Review } from '../Review'
 import { reviewResolver } from '../Review'
 
-export interface MovieLite extends Thing {
+export interface MovieSimple extends Thing {
   /**
    * An image that represents the movie.
    */
@@ -41,7 +41,7 @@ export interface MovieLite extends Thing {
   review?: NodeRelations<Review>
 }
 
-export interface Movie extends MovieLite {}
+export interface Movie extends MovieSimple {}
 
 export const movieResolver = defineSchemaOrgResolver<Movie>({
   defaults: {

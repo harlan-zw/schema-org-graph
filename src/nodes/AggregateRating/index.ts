@@ -1,7 +1,7 @@
 import type { Thing } from '../../types'
 import { defineSchemaOrgResolver } from '../../core'
 
-export interface AggregateRatingLite extends Thing {
+export interface AggregateRatingSimple extends Thing {
   '@type'?: 'AggregateRating'
   /**
    * The total number of ratings for the item on your site. At least one of ratingCount or reviewCount is required.
@@ -30,7 +30,7 @@ export interface AggregateRatingLite extends Thing {
   worstRating?: number | string
 }
 
-export interface AggregateRating extends AggregateRatingLite {}
+export interface AggregateRating extends AggregateRatingSimple {}
 
 export const aggregateRatingResolver = defineSchemaOrgResolver<AggregateRating>({
   defaults: {

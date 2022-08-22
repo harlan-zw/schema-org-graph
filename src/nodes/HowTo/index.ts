@@ -12,7 +12,7 @@ import { howToStepResolver } from './HowToStep'
 /**
  * Instructions that explain how to achieve a result by performing a sequence of steps.
  */
-export interface HowToLite extends Thing {
+export interface HowToSimple extends Thing {
   /**
    * A string describing the guide.
    */
@@ -57,7 +57,7 @@ export interface HowToLite extends Thing {
   video?: NodeRelations<VideoObject | string>
 }
 
-export interface HowTo extends HowToLite {}
+export interface HowTo extends HowToSimple {}
 
 export const HowToId = '#howto'
 

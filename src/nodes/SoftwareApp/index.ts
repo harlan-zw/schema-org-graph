@@ -32,7 +32,7 @@ type ApplicationCategory =
 'UtilitiesApplication' |
 'ReferenceApplication'
 
-export interface SoftwareAppLite extends Thing {
+export interface SoftwareAppSimple extends Thing {
   '@type'?: Arrayable<'SoftwareApplication' | 'MobileApplication' | 'VideoGame' | 'WebApplication'>
   /**
    * The name of the app.
@@ -62,7 +62,7 @@ export interface SoftwareAppLite extends Thing {
   operatingSystem?: string
 }
 
-export interface SoftwareApp extends SoftwareAppLite {}
+export interface SoftwareApp extends SoftwareAppSimple {}
 
 export const softwareAppResolver = defineSchemaOrgResolver<SoftwareApp>({
   defaults: {

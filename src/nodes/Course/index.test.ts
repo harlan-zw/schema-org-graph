@@ -9,10 +9,10 @@ describe('defineCourse', () => {
         defineCourse({
           name: 'Introduction to Computer Science and Programming',
           description: 'Introductory CS course laying out the basics.',
-          provider: defineOrganization({
+          provider: {
             name: 'University of Technology - Eureka',
             sameAs: 'http://www.ut-eureka.edu',
-          }),
+          },
         }),
       ])
 

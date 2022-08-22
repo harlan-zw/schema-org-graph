@@ -1,7 +1,7 @@
 import type { Thing } from '../../types'
 import { defineSchemaOrgResolver } from '../../core'
 
-export interface PostalAddressLite extends Thing {
+export interface PostalAddressSimple extends Thing {
   /**
    * The building number and street (e.g., 123 fake road ).
    */
@@ -28,7 +28,7 @@ export interface PostalAddressLite extends Thing {
   postOfficeBoxNumber?: string
 }
 
-export interface PostalAddress extends PostalAddressLite {}
+export interface PostalAddress extends PostalAddressSimple {}
 
 export const addressResolver = defineSchemaOrgResolver<PostalAddress>({
   defaults: {

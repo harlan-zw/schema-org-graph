@@ -13,7 +13,7 @@ import { answerResolver } from './Answer'
 /**
  * A specific question - e.g. from a user seeking answers online, or collected in a Frequently Asked Questions (FAQ) document.
  */
-export interface QuestionLite extends Thing {
+export interface QuestionSimple extends Thing {
   /**
    * The text content of the question.
    */
@@ -35,7 +35,7 @@ export interface QuestionLite extends Thing {
    */
   answer?: string
 }
-export interface Question extends QuestionLite {}
+export interface Question extends QuestionSimple {}
 
 /**
  * Describes a Question. Most commonly used in FAQPage or QAPage content.

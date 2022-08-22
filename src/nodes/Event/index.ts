@@ -29,7 +29,7 @@ import { virtualLocationResolver } from './VirtualLocation'
 type EventAttendanceModeTypes = 'OfflineEventAttendanceMode' | 'OnlineEventAttendanceMode' | 'MixedEventAttendanceMode'
 type EventStatusTypes = 'EventCancelled' | 'EventMovedOnline' | 'EventPostponed' | 'EventRescheduled' | 'EventScheduled'
 
-export interface EventLite extends Thing {
+export interface EventSimple extends Thing {
   /**
    * Description of the event.
    * Describe all details of the event to make it easier for users to understand and attend the event.
@@ -76,7 +76,6 @@ export interface EventLite extends Thing {
   /**
    * A performer at the event—for example, a presenter, musician, musical group or actor.
    */
-  // @todo allow PerformingGroup
   performer?: NodeRelation<Person>
   /**
    * Used in conjunction with eventStatus for rescheduled or cancelled events.
@@ -91,7 +90,7 @@ export interface EventLite extends Thing {
   startDate?: ResolvableDate
 }
 
-export interface Event extends EventLite {}
+export interface Event extends EventSimple {}
 
 export const PrimaryEventId = '#event'
 

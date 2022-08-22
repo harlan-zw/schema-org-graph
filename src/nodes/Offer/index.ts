@@ -17,7 +17,7 @@ type ItemAvailability =
   'PreSale' |
   'SoldOut'
 
-export interface OfferLite extends Thing {
+export interface OfferSimple extends Thing {
   '@type'?: 'Offer'
   /**
    * A schema.org URL representing a schema itemAvailability value (e.g., https://schema.org/OutOfStock).
@@ -43,7 +43,7 @@ export interface OfferLite extends Thing {
   url?: string
 }
 
-export interface Offer extends OfferLite {}
+export interface Offer extends OfferSimple {}
 
 export const offerResolver = defineSchemaOrgResolver<Offer>({
   cast(node) {

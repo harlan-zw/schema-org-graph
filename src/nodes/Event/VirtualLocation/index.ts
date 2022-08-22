@@ -1,12 +1,12 @@
 import type { Thing } from '../../../types'
 import { defineSchemaOrgResolver } from '../../../core'
 
-export interface VirtualLocationLite extends Thing {
+export interface VirtualLocationSimple extends Thing {
   '@type'?: 'VirtualLocation'
   url: string
 }
 
-export interface VirtualLocation extends VirtualLocationLite {}
+export interface VirtualLocation extends VirtualLocationSimple {}
 
 /**
  * Describes a HowTo guide, which contains a series of steps.

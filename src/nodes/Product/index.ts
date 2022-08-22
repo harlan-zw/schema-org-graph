@@ -24,7 +24,7 @@ import type { ImageObject } from '../Image'
  * For example: a pair of shoes; a concert ticket; the rental of a car;
  * a haircut; or an episode of a TV show streamed online.
  */
-export interface ProductLite extends Thing {
+export interface ProductSimple extends Thing {
   /**
    * The name of the product.
    */
@@ -73,7 +73,7 @@ export interface ProductLite extends Thing {
   manufacturer?: NodeRelation<Organization>
 }
 
-export interface Product extends ProductLite {}
+export interface Product extends ProductSimple {}
 
 export const ProductId = '#product'
 

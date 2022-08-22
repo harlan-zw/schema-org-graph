@@ -15,7 +15,7 @@ import {
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
 import type { ReadAction } from '../WebPage'
 
-export interface BookLite extends Thing {
+export interface BookSimple extends Thing {
   /**
    * The title of the book.
    */
@@ -42,11 +42,11 @@ export interface BookLite extends Thing {
   workExample: NodeRelations<BookEdition>
 }
 
-export interface Book extends BookLite {}
+export interface Book extends BookSimple {}
 
 type BookFormat = OptionalSchemaOrgPrefix<'AudiobookFormat'> | OptionalSchemaOrgPrefix<'EBook'> | OptionalSchemaOrgPrefix<'Hardcover'> | OptionalSchemaOrgPrefix<'Paperback'>
 
-export interface BookEditionLite extends Thing {
+export interface BookEditionSimple extends Thing {
   /**
    * The title of the edition. Only use this when the title of the edition is different from the title of the work.
    */
@@ -93,7 +93,7 @@ export interface BookEditionLite extends Thing {
   url?: string
 }
 
-export interface BookEdition extends BookEditionLite {}
+export interface BookEdition extends BookEditionSimple {}
 
 export const bookEditionResolver = defineSchemaOrgResolver<BookEdition>({
   defaults: {

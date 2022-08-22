@@ -1,7 +1,7 @@
 import type { Thing } from '../../types'
 import { defineSchemaOrgResolver } from '../../core'
 
-export interface RatingLite extends Thing {
+export interface RatingSimple extends Thing {
   '@type'?: 'Rating'
   /**
    * A numerical quality rating for the item, either a number, fraction, or percentage
@@ -22,7 +22,7 @@ export interface RatingLite extends Thing {
   worstRating?: number
 }
 
-export interface Rating extends RatingLite {}
+export interface Rating extends RatingSimple {}
 
 export const ratingResolver = defineSchemaOrgResolver<Rating>({
   cast(node) {

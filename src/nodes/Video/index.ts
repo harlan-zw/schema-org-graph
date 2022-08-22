@@ -8,8 +8,7 @@ import type { ImageObject } from '../Image'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
 import { imageResolver } from '../Image'
 
-export interface VideoLite extends Thing {
-  '@type'?: 'VideoObject'
+export interface VideoSimple extends Thing {
   /**
    * The title of the video.
    */
@@ -69,7 +68,7 @@ export interface VideoLite extends Thing {
   embedUrl?: string
 }
 
-export interface VideoObject extends VideoLite {}
+export interface VideoObject extends VideoSimple {}
 
 /**
  * Describes an individual video (usually in the context of an embedded media object).

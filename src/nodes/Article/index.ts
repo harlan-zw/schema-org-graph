@@ -24,7 +24,7 @@ import { defineSchemaOrgResolver, resolveRelation } from '../../core'
 
 type ValidArticleSubTypes = 'Article' | 'AdvertiserContentArticle' | 'NewsArticle' | 'Report' | 'SatiricalArticle' | 'ScholarlyArticle' | 'SocialMediaPosting' | 'TechArticle'
 
-export interface ArticleLite extends Thing {
+export interface ArticleSimple extends Thing {
   ['@type']?: Arrayable<ValidArticleSubTypes>
   /**
    * The headline of the article (falling back to the title of the WebPage).
@@ -109,7 +109,7 @@ export interface ArticleLite extends Thing {
   copyrightHolder?: NodeRelations<Identity>
 }
 
-export interface Article extends ArticleLite {}
+export interface Article extends ArticleSimple {}
 
 export const PrimaryArticleId = '#article'
 

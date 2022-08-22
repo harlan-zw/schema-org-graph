@@ -29,7 +29,7 @@ type ValidSubTypes = 'WebPage' | 'AboutPage' | 'CheckoutPage' | 'CollectionPage'
  * Every web page is implicitly assumed to be declared to be of type WebPage,
  * so the various properties about that webpage, such as breadcrumb may be used.
  */
-export interface WebPageLite extends Thing {
+export interface WebPageSimple extends Thing {
   ['@type']?: Arrayable<ValidSubTypes>
   /**
    * The unmodified canonical URL of the page.
@@ -92,7 +92,7 @@ export interface WebPageLite extends Thing {
   potentialAction?: Arrayable<(ReadAction | unknown)>
 }
 
-export interface WebPage extends WebPageLite {}
+export interface WebPage extends WebPageSimple {}
 
 export const PrimaryWebPageId = '#webpage'
 

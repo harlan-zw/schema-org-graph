@@ -12,7 +12,7 @@ import { organizationResolver } from '../Organization'
  * For example: a pair of shoes; a concert ticket; the rental of a car;
  * a haircut; or an episode of a TV show streamed online.
  */
-export interface CourseLite extends Thing {
+export interface CourseSimple extends Thing {
   /**
    * The title of the course.
    */
@@ -27,7 +27,7 @@ export interface CourseLite extends Thing {
   provider?: NodeRelation<Organization>
 }
 
-export interface Course extends CourseLite {}
+export interface Course extends CourseSimple {}
 
 export const courseResolver = defineSchemaOrgResolver<Course>({
   defaults: {

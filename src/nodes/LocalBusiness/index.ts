@@ -42,7 +42,7 @@ type ValidLocalBusinessSubTypes = 'AnimalShelter' |
 'TouristInformationCenter' |
 'TravelAgency'
 
-export interface LocalBusinessLite extends Organization {
+export interface LocalBusinessSimple extends Organization {
   '@type'?: ['Organization', 'LocalBusiness'] | ['Organization', 'LocalBusiness', ValidLocalBusinessSubTypes] | ValidLocalBusinessSubTypes
   /**
    * The primary public telephone number of the business.
@@ -86,7 +86,7 @@ export interface LocalBusinessLite extends Organization {
   openingHoursSpecification?: NodeRelations<OpeningHoursSpecification>
 }
 
-export interface LocalBusiness extends LocalBusinessLite {}
+export interface LocalBusiness extends LocalBusinessSimple {}
 
 /**
  * Describes a business which allows public visitation.

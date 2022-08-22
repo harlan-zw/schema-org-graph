@@ -9,7 +9,7 @@ import { defineSchemaOrgResolver, resolveRelation } from '../../../core'
 import { imageResolver } from '../../Image'
 import { howToStepDirectionResolver } from '../HowToStepDirection'
 
-export interface HowToStepLite extends Thing {
+export interface HowToStepSimple extends Thing {
   /**
    * A link to a fragment identifier (an 'ID anchor') of the individual step
    * (e.g., https://www.example.com/example-page/#recipe-step-5).
@@ -39,7 +39,7 @@ export interface HowToStepLite extends Thing {
   itemListElement?: NodeRelations<HowToDirection | string>[]
 }
 
-export interface HowToStep extends HowToStepLite {}
+export interface HowToStep extends HowToStepSimple {}
 
 /**
  * Describes a HowTo guide, which contains a series of steps.

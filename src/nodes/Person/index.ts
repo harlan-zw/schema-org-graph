@@ -1,4 +1,4 @@
-import type { NodeRelations, Thing } from '../../types'
+import type {Arrayable, NodeRelations, Thing} from '../../types'
 import {
   IdentityId,
   idReference,
@@ -16,7 +16,7 @@ import type { ImageObject } from '../Image'
 /**
  * A person (alive, dead, undead, or fictional).
  */
-export interface PersonLite extends Thing {
+export interface PersonSimple extends Thing {
   /**
    * The full name of the Person.
    */
@@ -29,7 +29,7 @@ export interface PersonLite extends Thing {
    * An array of URLs representing declared social/authoritative profiles of the person
    * (e.g., a Wikipedia page, or Facebook profile).
    */
-  sameAs?: string[]
+  sameAs?: Arrayable<string>
   /**
    * An array of images which represent the person, referenced by ID.
    */
@@ -41,7 +41,7 @@ export interface PersonLite extends Thing {
   url?: string
 }
 
-export interface Person extends PersonLite {}
+export interface Person extends PersonSimple {}
 
 /**
  * Describes an individual person. Most commonly used to identify the author of a piece of content (such as an Article or Comment).

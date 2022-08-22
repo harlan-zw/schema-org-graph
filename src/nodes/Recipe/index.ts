@@ -20,7 +20,7 @@ import { defineSchemaOrgResolver, resolveRelation } from '../../core'
 import type { ImageObject } from '../Image'
 import type { Person } from '../Person'
 
-export interface RecipeLite extends Thing {
+export interface RecipeSimple extends Thing {
   /**
    * A string describing the recipe.
    */
@@ -96,7 +96,7 @@ export interface RecipeLite extends Thing {
   datePublished?: ResolvableDate
 }
 
-export interface Recipe extends RecipeLite {}
+export interface Recipe extends RecipeSimple {}
 
 export interface NutritionInformation extends Thing {
   '@type': 'NutritionInformation'

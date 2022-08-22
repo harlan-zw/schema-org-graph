@@ -9,7 +9,7 @@ import type { Person } from '../Person'
 import { personResolver } from '../Person'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
 
-export interface CommentLite extends Thing {
+export interface CommentSimple extends Thing {
   /**
    * The textual content of the comment, stripping HTML tags.
    */
@@ -24,7 +24,7 @@ export interface CommentLite extends Thing {
   author: NodeRelation<Person>
 }
 
-export interface Comment extends CommentLite {}
+export interface Comment extends CommentSimple {}
 
 /**
  * Describes a review. Usually in the context of an Article or a WebPage.

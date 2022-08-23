@@ -9,7 +9,8 @@ export default defineBuildConfig({
   },
   entries: [
     { input: 'src/index', name: 'index' },
-    { input: 'src/runtime/', outDir: 'dist/runtime', builder: 'mkdist', declaration: true },
+    { input: 'src/runtime/', outDir: 'dist/runtime', builder: 'mkdist', format: 'cjs', ext: 'cjs' },
+    { input: 'src/runtime/', outDir: 'dist/runtime', builder: 'mkdist', format: 'mjs', ext: 'mjs' },
   ],
   externals: [
     'schema-dts'

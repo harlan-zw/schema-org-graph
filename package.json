@@ -27,10 +27,12 @@
       "import": "./dist/index.mjs"
     },
     "./simple": {
+      "require": "./dist/runtime/base.cjs",
       "types": "./dist/runtime/simple.d.ts",
       "import": "./dist/runtime/base.mjs"
     },
     "./full": {
+      "require": "./dist/runtime/base.cjs",
       "types": "./dist/runtime/full.d.ts",
       "import": "./dist/runtime/base.mjs"
     }

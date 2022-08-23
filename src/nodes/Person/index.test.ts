@@ -55,7 +55,8 @@ describe('definePerson', () => {
       ])
 
       const client = injectSchemaOrg()
-      expect(client.graphNodes[1]['@id']).toMatchInlineSnapshot('"https://example.com/#/schema/person/Q1Nkx8kUSt"')
+      expect(client.graphNodes.length).toBe(2)
+      expect(client.graphNodes[0]['@type']).toBe('Person')
     })
   })
 

@@ -369,7 +369,7 @@ describe('defineWebPage', () => {
     })
   })
 
-  it('relation resolving works both ways #2', () => {
+  it('relation resolving works both ways #3', () => {
     useSetup(() => {
       useSchemaOrg([
         defineWebSite({
@@ -393,6 +393,41 @@ describe('defineWebPage', () => {
       expect(webPage?.about).toEqual(idReference(prefixId('https://example.com/', IdentityId)))
       expect(webPage?.isPartOf).toEqual(idReference(prefixId('https://example.com/', PrimaryWebSiteId)))
       expect(webPage?.primaryImageOfPage).toEqual(idReference(prefixId('https://example.com/', '#logo')))
+    })
+  })
+
+  it('duplicate entries resolve as single', () => {
+    useSetup(() => {
+      useSchemaOrg([
+        defineWebPage(),
+      ])
+
+      useSchemaOrg([
+        defineWebPage({
+          name: 'Harlan Wilton',
+        }),
+      ])
+
+      const { graphNodes } = injectSchemaOrg()
+
+      expect(graphNodes).toMatchInlineSnapshot(`
+        [
+          {
+            "@id": "https://example.com/#webpage",
+            "@type": "WebPage",
+            "name": "Harlan Wilton",
+            "potentialAction": [
+              {
+                "@type": "ReadAction",
+                "target": [
+                  "https://example.com/",
+                ],
+              },
+            ],
+            "url": "https://example.com/",
+          },
+        ]
+      `)
     })
   })
 })

@@ -92,29 +92,6 @@ describe('defineBreadcrumb', () => {
             "itemListElement": [
               {
                 "@type": "ListItem",
-                "item": "https://example.com",
-                "name": "Home",
-                "position": 1,
-              },
-              {
-                "@type": "ListItem",
-                "item": "https://example.com/blog",
-                "name": "Blog",
-                "position": 2,
-              },
-              {
-                "@type": "ListItem",
-                "name": "My Article",
-                "position": 4,
-              },
-            ],
-          },
-          {
-            "@id": "https://example.com/#/schema/breadcrumblist/XYJRR9nagB",
-            "@type": "BreadcrumbList",
-            "itemListElement": [
-              {
-                "@type": "ListItem",
                 "item": "https://example.com/blog/test",
                 "name": "Some joining page",
                 "position": 3,

@@ -55,10 +55,8 @@ export const resolveNodeId = <T extends Thing>(node: T, ctx: SchemaOrgContext, r
   const rootId = Array.isArray(resolver.idPrefix) ? resolver.idPrefix?.[1] : undefined
   // transform ['host', PrimaryWebPageId] to https://host.com/#webpage
   if (resolveAsRoot && rootId) {
-    // make sure it doesn't exist
-    const existingNode = ctx.findNode(rootId)
-    if (!existingNode)
-      node['@id'] = prefixId(ctx.meta[prefix], rootId)
+    // allow overriding root ids
+    node['@id'] = prefixId(ctx.meta[prefix], rootId)
   }
   // transform 'host' to https://host.com/#schema/webpage/gj5g59gg
   if (!node['@id']) {

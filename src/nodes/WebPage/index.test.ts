@@ -4,7 +4,7 @@ import { PrimaryWebSiteId } from '../WebSite'
 import { IdentityId, idReference, prefixId } from '../../utils'
 import type { WebPage } from './index'
 import { PrimaryWebPageId } from './index'
-import { defineOrganization, defineReadAction, defineWebPage, defineWebSite } from '#provider'
+import { defineImage, defineOrganization, defineReadAction, defineWebPage, defineWebSite } from '#provider'
 
 const mockDate = new Date(Date.UTC(2021, 10, 10, 10, 10, 10, 0))
 
@@ -416,6 +416,41 @@ describe('defineWebPage', () => {
             "@id": "https://example.com/#webpage",
             "@type": "WebPage",
             "name": "Harlan Wilton",
+            "potentialAction": [
+              {
+                "@type": "ReadAction",
+                "target": [
+                  "https://example.com/",
+                ],
+              },
+            ],
+            "url": "https://example.com/",
+          },
+        ]
+      `)
+    })
+  })
+
+  it.only('arbitrary resolves', () => {
+    useSetup(() => {
+      useSchemaOrg([
+        // @ts-expect-error broken type
+        defineWebPage({ name: defineImage({ url: '/logo.png' }) }),
+      ])
+
+      const { graphNodes } = injectSchemaOrg()
+
+      expect(graphNodes).toMatchInlineSnapshot(`
+        [
+          {
+            "@id": "https://example.com/#webpage",
+            "@type": "WebPage",
+            "name": {
+              "@type": "ImageObject",
+              "contentUrl": "https://example.com/logo.png",
+              "inLanguage": "en-AU",
+              "url": "https://example.com/logo.png",
+            },
             "potentialAction": [
               {
                 "@type": "ReadAction",

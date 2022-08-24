@@ -35,6 +35,12 @@ export const executeResolverOnNode = <T extends Thing>(node: T, ctx: SchemaOrgCo
   if (resolver?.resolve)
     node = resolver.resolve(node, ctx)
 
+  // if user registers some resolver we haven't coded
+  for (const k in node) {
+    const v = node[k]
+    if (typeof v === 'object' && v?._resolver)
+      node[k] = resolveRelation(v, ctx, v._resolver)
+  }
   stripEmptyProperties(node)
   return node
 }

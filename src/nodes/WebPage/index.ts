@@ -16,11 +16,14 @@ import type { Organization } from '../Organization'
 import type { ImageObject } from '../Image'
 import type { BreadcrumbList } from '../Breadcrumb'
 import type { VideoObject } from '../Video'
-import { PrimaryBreadcrumbId } from '../Breadcrumb'
+import { PrimaryBreadcrumbId, breadcrumbResolver } from '../Breadcrumb'
 import { defineSchemaOrgResolver, resolveRelation } from '../../core'
 import type { Person } from '../Person'
-import type { ReadAction } from './ReadAction'
+import { organizationResolver } from '../Organization'
+import { personResolver } from '../Person'
+import { imageResolver } from '../Image'
 import { readActionResolver } from './ReadAction'
+import type { ReadAction } from './ReadAction'
 
 type ValidSubTypes = 'WebPage' | 'AboutPage' | 'CheckoutPage' | 'CollectionPage' | 'ContactPage' | 'FAQPage' | 'ItemPage' | 'MedicalWebPage' | 'ProfilePage' | 'QAPage' | 'RealEstateListing' | 'SearchResultsPage'
 
@@ -140,6 +143,10 @@ export const webPageResolver = defineSchemaOrgResolver<WebPage>({
 
     resolveDefaultType(node, 'WebPage')
 
+    node.about = resolveRelation(node.about, ctx, organizationResolver)
+    node.breadcrumb = resolveRelation(node.breadcrumb, ctx, breadcrumbResolver)
+    node.author = resolveRelation(node.author, ctx, personResolver)
+    node.primaryImageOfPage = resolveRelation(node.primaryImageOfPage, ctx, imageResolver)
     // actions may be a function that need resolving
     node.potentialAction = resolveRelation(node.potentialAction, ctx, readActionResolver)
 

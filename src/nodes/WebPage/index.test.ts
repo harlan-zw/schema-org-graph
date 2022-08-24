@@ -431,7 +431,7 @@ describe('defineWebPage', () => {
     })
   })
 
-  it.only('arbitrary resolves', () => {
+  it('arbitrary resolves', () => {
     useSetup(() => {
       useSchemaOrg([
         // @ts-expect-error broken type

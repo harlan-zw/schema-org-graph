@@ -5,7 +5,7 @@ describe('client', () => {
 
   it('has no nodes to start', () => {
     const graph = createSchemaOrgGraph()
-    expect(graph.entries()).toMatchInlineSnapshot('[]')
+    expect(graph.nodes).toMatchInlineSnapshot('[]')
   })
 
 })

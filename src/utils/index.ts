@@ -119,7 +119,6 @@ export const resolveAsGraphKey = (key?: Id | string) => {
  */
 export const stripEmptyProperties = (obj: any) => {
   Object.keys(obj).forEach((k) => {
-
     if (obj[k] && typeof obj[k] === 'object') {
       // avoid walking vue reactivity
       if (obj[k].__v_isReadonly || obj[k].__v_isRef)

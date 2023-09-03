@@ -1,4 +1,6 @@
-<h1 align='center'>schema-org-graph-js</h1>
+
+
+<h1 align='center'>Moved to <a href="https://github.com/unjs/unhead">Unhead</a>.</h1>
 
 <p align="center">
 <a href='https://github.com/harlan-zw/schema-org-graph-js/actions/workflows/test.yml'>
